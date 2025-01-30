@@ -1,0 +1,9 @@
+# Dependências do frontend
+node_modules/
+
+# Arquivos de build
+dist/
+build/
+
+# Logs
+*.log
