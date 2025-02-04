@@ -3,6 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import Config
 
+# from .models import 
+# from .views import
+
 db = SQLAlchemy()
 
 def create_app():

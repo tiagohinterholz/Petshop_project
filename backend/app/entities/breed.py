@@ -1,5 +1,4 @@
 from datetime import date
-import regex as re
 
 class Breed:
     def __init__(self, description: str):

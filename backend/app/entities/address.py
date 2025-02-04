@@ -1,5 +1,4 @@
 from datetime import date
-import regex as re
  
 class Address:
     def __init__(self, id_client: int, street: str, city: str, neighborhood: str, complement: str):

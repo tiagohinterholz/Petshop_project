@@ -1,5 +1,4 @@
 from datetime import date
-import regex as re
 
 class Appointment:
     def __init__(self, id_pet: int, desc_appoint: str, price: float, date_appoint: date):
