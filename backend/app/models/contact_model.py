@@ -1,5 +1,5 @@
 from backend import db
-from backend.models.client_model import Client
+from app.models.client_model import Client
 import enum
 
 class ContactTypeEnum(enum.Enum):

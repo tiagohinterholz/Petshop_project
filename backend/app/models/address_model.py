@@ -1,5 +1,5 @@
 from backend import db
-from backend.models.client import Client
+from app.models.client_model import Client
 
 class Address(db.Model):
     __tablename__= 'address'

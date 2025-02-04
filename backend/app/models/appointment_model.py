@@ -1,5 +1,5 @@
 from backend import db
-from backend.models.pet_model import Pet
+from app.models.pet_model import Pet
 
 class Appointment(db.Model):
     __tablename__ = 'appointment'

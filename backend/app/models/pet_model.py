@@ -1,6 +1,6 @@
 from backend import db
-from backend.models.breed_model import Breed
-from backend.models.client_model import Client
+from app.models.breed_model import Breed
+from app.models.client_model import Client
 
 class Pet(db.Model):
     __tablename__ = 'pet'
