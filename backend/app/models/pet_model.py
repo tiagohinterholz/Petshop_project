@@ -10,7 +10,7 @@ class Pet(db.Model):
     birth_date = db.Column(db.Date, nullable=False)
     name = db.Column(db.String(50), nullable=False)
     
-    breed = db.relationship('Breed', backref=db.backref('pets', lazy='dynamic'))
-    client = db.relationship('Client', backref=db.backref('pets', lazy='dynamic'))
+    breed = db.relationship(Breed, backref=db.backref('pets', lazy='dynamic'))
+    client = db.relationship(Client, backref=db.backref('pets', lazy='dynamic'))
     
     

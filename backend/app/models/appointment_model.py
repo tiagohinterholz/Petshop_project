@@ -9,5 +9,5 @@ class Appointment(db.Model):
     price = db.Column(db.Numeric(10,2), nullable=False)
     date_appoint = db.Column(db.Date, nullable=False)
     
-    pet = db.relationship('Pet', backref=db.backref('appointments', lazy='dynamic'))
+    pet = db.relationship(Pet, backref=db.backref('appointments', lazy='dynamic'))
     
