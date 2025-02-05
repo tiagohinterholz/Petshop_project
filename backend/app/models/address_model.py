@@ -1,4 +1,4 @@
-from backend import db
+from app import db
 from app.models.client_model import Client
 
 class Address(db.Model):

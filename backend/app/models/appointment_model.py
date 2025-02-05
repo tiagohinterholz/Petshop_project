@@ -1,4 +1,4 @@
-from backend import db
+from app import db
 from app.models.pet_model import Pet
 
 class Appointment(db.Model):
