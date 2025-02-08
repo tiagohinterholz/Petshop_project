@@ -1,5 +1,7 @@
 from app import db
 from app.models.client_model import Client
+from app.models.user_model import User
+from app.models.user_model import ProfileEnum
 
 def register_client(client):
     client_db = Client(name=client.name,
@@ -9,6 +11,18 @@ def register_client(client):
     
     db.session.add(client_db)
     db.session.commit()
+    
+    # Criar usuário automaticamente com profile="client"
+    user_db = User(
+        cpf=client.cpf,
+        name=client.name,
+        profile=ProfileEnum.CLIENT,  # Forçar CLIENT
+        password=hash_password(client.password)  # Precisamos de uma função para hash
+    )
+
+    db.session.add(user_db)
+    db.session.commit()
+        
     return client_db
 
 def list_clients():
