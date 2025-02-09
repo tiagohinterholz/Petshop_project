@@ -1,6 +1,7 @@
 from app import db
 from app.models.client_model import Client
 import enum
+from passlib.hash import pbkdf2_sha256
 
 class ProfileEnum(enum.Enum):
     CLIENT = 'client'
@@ -14,3 +15,9 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)
     
     client = db.relationship(Client, backref=db.backref('user', uselist=False))
+    
+    def encrypt_password(self):
+        self.password = pbkdf2_sha256.hash(self.senha)
+    
+    def verify_password(self, password):
+        return pbkdf2_sha256.verify(password, self.password)

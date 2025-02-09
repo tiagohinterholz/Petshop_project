@@ -3,9 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import Config
 from flask_marshmallow import Marshmallow
-
-# from .models import 
-# from .views import
+from flask_jwt_extended import JWTManager
 
 db = SQLAlchemy()
 ma = Marshmallow()
@@ -18,6 +16,7 @@ def create_app():
     ma.init_app(app)
     db.init_app(app)
     Migrate(app, db)
+    jwt = JWTManager(app)
     
     #Registro de rotas
     from app.routes import main
