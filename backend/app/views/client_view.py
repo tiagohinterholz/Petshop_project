@@ -29,7 +29,7 @@ class ClientDetail(Resource):
         """Buscar cliente pelo ID"""
         client = list_client_id(id)
         if not client:
-            return make_response(jsonify({'error': 'Raça não encontrada'}), 404)
+            return make_response(jsonify({'error': 'Cliente não encontrada'}), 404)
         
         schema = ClientSchema()
         return make_response(jsonify(schema.dump(client)), 200)
@@ -38,7 +38,7 @@ class ClientDetail(Resource):
         """Atualizar clientes por ID"""
         client_db = list_client_id(id)
         if not client_db:
-            return make_response(jsonify({'error': 'Raça não encontrada'}), 404)
+            return make_response(jsonify({'error': 'Cliente não encontrada'}), 404)
         
         schema = ClientSchema()
         errors = schema.validate(request.json)
@@ -53,7 +53,7 @@ class ClientDetail(Resource):
         """Excluir cliente por id"""
         client = list_client_id(id)
         if not client:
-            return make_response(jsonify({'error': 'Raça não encontrada'}), 404)
+            return make_response(jsonify({'error': 'Cliente não encontrada'}), 404)
         
         delete_client(client)
         return make_response('', 204)

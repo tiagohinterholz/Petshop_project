@@ -4,7 +4,7 @@ from app import api
 from app.services.breed_service import (
     list_breeds, list_breed_id, register_breed, update_breed, delete_breed
 )
-from app. schemas.breed_schema import BreedSchema
+from app.schemas.breed_schema import BreedSchema
 
 class BreedList(Resource):
     def get(self):

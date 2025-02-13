@@ -7,3 +7,14 @@ def register_user(user):
     db.session.add(user_db)
     db.session.commit()
     return user_db
+
+def list_user_id(cpf):
+    return User.query.filter_by(cpf=cpf).first()
+
+def delete_user(cpf):
+    user = User.query.filter_by(cpf=cpf).first()
+    if not user:
+        return False
+    db.session.delete(user)
+    db.session.commit()
+    return True
