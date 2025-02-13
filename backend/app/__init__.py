@@ -19,7 +19,7 @@ def create_app():
     jwt = JWTManager(app)
     
     #Registro de rotas
-    from app.routes import main
+    from backend.tests.routes import main
     app.register_blueprint(main)
     
     from app.models import (
