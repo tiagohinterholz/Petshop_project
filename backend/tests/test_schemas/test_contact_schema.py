@@ -1,7 +1,7 @@
 import unittest
-from app import create_app, db
-from app.schemas.contact_schema import ContactSchema
-from app.models.contact_model import ContactTypeEnum
+from backend_app import create_app, db
+from backend_app.schemas.contact_schema import ContactSchema
+from backend_app.models.contact_model import ContactTypeEnum
 
 class TestContactSchema(unittest.TestCase):
     

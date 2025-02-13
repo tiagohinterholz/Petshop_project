@@ -1,6 +1,6 @@
-from app import create_app, db
-from app.models.user_model import User, ProfileEnum
-from app.models.client_model import Client
+from backend_app import create_app, db
+from backend_app.models.user_model import User, ProfileEnum
+from backend_app.models.client_model import Client
 
 app = create_app()
 
