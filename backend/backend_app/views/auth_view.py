@@ -20,12 +20,18 @@ class Login(Resource):
 class UserProfile(Resource):
     @jwt_required()
     def get(self):
-        """Retorna dados do user autenticado"""
-        user = get_current_user()
+        """Retorna dados do usuário autenticado"""
+        cpf = get_jwt_identity()  # CPF é apenas uma string
+        user = get_current_user(cpf)  # Buscar no banco pelo CPF
+
         if not user:
             return make_response(jsonify({"error": "Usuário não encontrado"}), 404)
         
-        return make_response(jsonify(user), 200)
+        return make_response(jsonify({
+            "cpf": user.cpf,
+            "name": user.name,
+            "profile": user.profile.value
+        }), 200)
 
 api.add_resource(Login, '/login')
 api.add_resource(UserProfile, '/profile')

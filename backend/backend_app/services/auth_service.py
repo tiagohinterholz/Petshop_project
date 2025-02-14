@@ -8,7 +8,11 @@ def authenticate_user(cpf, password):
     user = User.query.filter_by(cpf=cpf).first()
     
     if user and pbkdf2_sha256.verify(password, user.password):
-        access_token = create_access_token(identity={"cpf": user.cpf, "profile": user.profile.value}, expires_delta=timedelta(hours=1))
+        access_token = create_access_token(
+                identity=str(user.cpf),  # CPF como string
+                additional_claims={"profile": user.profile.value},  # Informações extras
+                expires_delta=timedelta(hours=1)
+)
         return access_token
 
     return None

@@ -1,13 +1,21 @@
 from flask import request, jsonify, make_response
 from flask_restful import Resource
 from backend_app import api
-from backend_app.services.user_service import register_user, delete_user, list_user_id, update_user
+from backend_app.services.user_service import register_user, delete_user, list_user_id, update_user, list_users
 from backend_app.schemas.user_schema import UserSchema
 from flask_jwt_extended import jwt_required, get_jwt_identity
-class UserList(Resource):   
+class UserList(Resource):
+    
+    @jwt_required()  # Protegendo a rota com JWT
+    def get(self):
+        """Listar todos os usuários"""
+        users = list_users()
+        schema = UserSchema(many=True)
+        return make_response(jsonify(schema.dump(users)), 200)
+    
+    @jwt_required()
     def post(self):        
-        """Cadastrar novo user"""
-              
+        """Cadastrar novo user"""       
         schema = UserSchema()
         errors = schema.validate(request.json)
         if errors:
