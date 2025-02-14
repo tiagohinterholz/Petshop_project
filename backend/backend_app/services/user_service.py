@@ -11,6 +11,12 @@ def register_user(user):
 def list_user_id(cpf):
     return User.query.filter_by(cpf=cpf).first()
 
+def update_user(user_db, new_user):
+    user_db.name = new_user.name
+    user_db.password = new_user.password  # Aqui já estará encriptada no schema
+    db.session.commit()
+    return user_db
+
 def delete_user(cpf):
     user = User.query.filter_by(cpf=cpf).first()
     if not user:
