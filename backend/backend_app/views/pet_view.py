@@ -5,7 +5,7 @@ from backend_app.services.pet_service import (
     list_pets, list_pet_id, register_pet, update_pet, delete_pet
 )
 from backend_app.schemas.pet_schema import PetSchema
-
+from flask_jwt_extended import jwt_required
 class PetList(Resource):
     def get(self):
         """Listar todos pets"""
@@ -13,6 +13,7 @@ class PetList(Resource):
         schema = PetSchema(many=True)
         return make_response(jsonify(schema.dump(pets)), 200)
     
+    @jwt_required()
     def post(self):        
         """Cadastrar novo pet"""
               
@@ -35,6 +36,7 @@ class PetDetail(Resource):
         schema = PetSchema()
         return make_response(jsonify(schema.dump(pet)), 200)
     
+    @jwt_required()
     def put(self, id):
         """Atualizar raças por ID"""
         pet_db = list_pet_id(id)
@@ -50,6 +52,7 @@ class PetDetail(Resource):
         update_pet = update_pet(pet_db, new_pet)
         return make_response(schema.jsonify(update_pet), 200)
     
+    @jwt_required()
     def delete(self, id):
         """Excluir raça por id"""
         pet = list_pet_id(id)

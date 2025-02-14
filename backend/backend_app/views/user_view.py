@@ -3,7 +3,7 @@ from flask_restful import Resource
 from backend_app import api
 from backend_app.services.user_service import register_user, delete_user, list_user_id
 from backend_app.schemas.user_schema import UserSchema
-
+from flask_jwt_extended import jwt_required
 class UserList(Resource):   
     def post(self):        
         """Cadastrar novo user"""
@@ -17,7 +17,8 @@ class UserList(Resource):
         new_user = register_user(user)
         return make_response(schema.jsonify(new_user), 201)
 
-class UserDetail(Resource):    
+class UserDetail(Resource):
+    @jwt_required()    
     def delete(self, cpf):
         """Excluir user por id"""
         user = list_user_id(cpf)

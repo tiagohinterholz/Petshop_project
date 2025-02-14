@@ -5,7 +5,7 @@ from backend_app.services.address_service import (
     list_addresses, list_address_id, register_address, update_address, delete_address
 )
 from backend_app.schemas.address_schema import AddressSchema
-
+from flask_jwt_extended import jwt_required
 class AddressList(Resource):
     def get(self):
         """Listar todos endereços"""
@@ -13,6 +13,7 @@ class AddressList(Resource):
         schema = AddressSchema(many=True)
         return make_response(jsonify(schema.dump(addresses)), 200)
     
+    @jwt_required()
     def post(self):        
         """Cadastrar novo endereço"""
               
@@ -35,6 +36,7 @@ class AddressDetail(Resource):
         schema = AddressSchema()
         return make_response(jsonify(schema.dump(address)), 200)
     
+    @jwt_required()
     def put(self, id):
         """Atualizar endereços por ID"""
         address_db = list_address_id(id)
@@ -50,6 +52,7 @@ class AddressDetail(Resource):
         update_address = update_address(address_db, new_address)
         return make_response(schema.jsonify(update_address), 200)
     
+    @jwt_required()
     def delete(self, id):
         """Excluir endereço por id"""
         address = list_address_id(id)

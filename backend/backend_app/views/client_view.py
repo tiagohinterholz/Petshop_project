@@ -5,7 +5,7 @@ from backend_app.services.client_service import (
     list_clients, list_client_id, register_client, update_client, delete_client
 )
 from backend_app.schemas.client_schema import ClientSchema
-
+from flask_jwt_extended import jwt_required
 class ClientList(Resource):
     def get(self):
         """Listar todos clientes"""
@@ -13,6 +13,7 @@ class ClientList(Resource):
         schema = ClientSchema(many=True)
         return make_response(jsonify(schema.dump(clients)), 200)
     
+    @jwt_required()
     def post(self):
         """Cadastrar novo cliente"""
         schema = ClientSchema()
@@ -34,6 +35,7 @@ class ClientDetail(Resource):
         schema = ClientSchema()
         return make_response(jsonify(schema.dump(client)), 200)
     
+    @jwt_required()
     def put(self, id):
         """Atualizar clientes por ID"""
         client_db = list_client_id(id)
@@ -49,6 +51,7 @@ class ClientDetail(Resource):
         updated_client = update_client(client_db, new_client_data)
         return make_response(schema.jsonify(updated_client), 200)
     
+    @jwt_required()
     def delete(self, id):
         """Excluir cliente por id"""
         client = list_client_id(id)

@@ -5,6 +5,7 @@ from backend_app.services.appointment_service import (
     list_appointments, list_appointment_id, register_appointment, update_appointment, delete_appointment
 )
 from backend_app.schemas.appointment_schema import AppointmentSchema
+from flask_jwt_extended import jwt_required
 
 class AppointmentList(Resource):
     def get(self):
@@ -13,6 +14,7 @@ class AppointmentList(Resource):
         schema = AppointmentSchema(many=True)
         return make_response(jsonify(schema.dump(appointment)), 200)
     
+    @jwt_required()
     def post(self):        
         """Cadastrar novo atendimento"""
               
@@ -35,6 +37,7 @@ class AppointmentDetail(Resource):
         schema = AppointmentSchema()
         return make_response(jsonify(schema.dump(appointment)), 200)
     
+    @jwt_required()
     def put(self, id):
         """Atualizar atendimentos por ID"""
         appointment_db = list_appointment_id(id)
@@ -50,6 +53,7 @@ class AppointmentDetail(Resource):
         update_appointment = update_appointment(appointment_db, new_appointment)
         return make_response(schema.jsonify(update_appointment), 200)
     
+    @jwt_required()
     def delete(self, id):
         """Excluir atendimentos por id"""
         appointment = list_appointment_id(id)

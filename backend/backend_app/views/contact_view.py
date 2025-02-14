@@ -5,6 +5,7 @@ from backend_app.services.contact_service import (
     list_contacts, list_contact_id, register_contact, update_contact, delete_contact
 )
 from backend_app.schemas.contact_schema import ContactSchema
+from flask_jwt_extended import jwt_required
 
 class ContactList(Resource):
     def get(self):
@@ -13,6 +14,7 @@ class ContactList(Resource):
         schema = ContactSchema(many=True)
         return make_response(jsonify(schema.dump(contacts)), 200)
     
+    @jwt_required()
     def post(self):        
         """Cadastrar novo contact"""
               
@@ -35,6 +37,7 @@ class ContactDetail(Resource):
         schema = ContactSchema()
         return make_response(jsonify(schema.dump(contact)), 200)
     
+    @jwt_required()
     def put(self, id):
         """Atualizar raças por ID"""
         contact_db = list_contact_id(id)
@@ -50,6 +53,7 @@ class ContactDetail(Resource):
         update_contact = update_contact(contact_db, new_contact)
         return make_response(schema.jsonify(update_contact), 200)
     
+    @jwt_required()
     def delete(self, id):
         """Excluir raça por id"""
         contact = list_contact_id(id)
