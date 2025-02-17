@@ -25,6 +25,7 @@ backend/
 │   ├── schemas/          # Schemas do Marshmallow
 │   ├── services/         # Lógica de negócios
 │   ├── views/            # Rotas da API
+│   ├── utils/            # Funções decoradoras de proteção
 │   ├── config.py         # Configurações da aplicação
 │   ├── __init__.py       # Inicialização da aplicação
 │── migrations/           # Migrações do banco de dados
