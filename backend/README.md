@@ -97,7 +97,8 @@ A autenticação é feita via **JWT**. Para obter um token:
 - **Resposta:**
   ```json
   {
-    "access_token": "seu_token_aqui"
+    "access_token": "seu_token_aqui",
+    "refresh_token": "seu_refresh_token_aqui"
   }
   ```
 
@@ -106,6 +107,20 @@ A partir disso, utilize o token nas requisições autenticadas:
 Authorization: Bearer seu_token_aqui
 ```
 
+### **🔄 Refresh Token**
+- **Endpoint:** `POST /token/refresh`
+- **Body:**
+  ```json
+  {
+    "refresh_token": "seu_refresh_token_aqui"
+  }
+  ```
+- **Resposta:**
+  ```json
+  {
+    "access_token": "novo_access_token_aqui"
+  }
+  ```
 ---
 
 ## 📌 Endpoints Principais
@@ -136,8 +151,19 @@ Authorization: Bearer seu_token_aqui
 - `POST /appointments` → Cria um agendamento (cliente autenticado)
 - `GET /appointments` → Lista agendamentos (admin ou cliente autenticado)
 
-### **Autenticação**
-- `POST /logout` → Invalida o token atual
+### **🚪 Logout**
+- **Endpoint:** `POST /logout`
+- **Headers:**
+  ```json
+  {
+    "Authorization": "Bearer seu_token_aqui"
+  }
+
+-- **Resposta**
+  ```json
+  {
+    "detail": "Logout realizado com sucesso."
+  }
 
 ---
 

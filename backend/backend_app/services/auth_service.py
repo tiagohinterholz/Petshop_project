@@ -1,7 +1,8 @@
-from flask_jwt_extended import create_access_token, get_jwt_identity
+from flask_jwt_extended import create_access_token, get_jwt_identity, create_refresh_token
 from backend_app.models.user_model import User
 from passlib.hash import pbkdf2_sha256
 from datetime import timedelta
+from flask import jsonify, make_response
 
 def authenticate_user(cpf, password):
     """Autentica o user verificando cpf e senha"""
@@ -12,8 +13,10 @@ def authenticate_user(cpf, password):
                 identity=str(user.cpf),  # CPF como string
                 additional_claims={"profile": user.profile.value},  # Informações extras
                 expires_delta=timedelta(hours=1)
-)
-        return access_token
+)       
+        refresh_token = create_refresh_token(identity=str(user.cpf))
+        
+        return access_token, refresh_token
 
     return None
 
