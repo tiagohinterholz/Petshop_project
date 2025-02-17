@@ -6,15 +6,19 @@ from backend_app.services.appointment_service import (
 )
 from backend_app.schemas.appointment_schema import AppointmentSchema
 from flask_jwt_extended import jwt_required
+from ..utils.decorators import role_required, client_owns_data
 
 class AppointmentList(Resource):
+    
+    @role_required('admin')
     def get(self):
         """Listar todos atendimentos"""
         appointment = list_appointments()
         schema = AppointmentSchema(many=True)
+        
         return make_response(jsonify(schema.dump(appointment)), 200)
     
-    @jwt_required()
+    @role_required('client')
     def post(self):        
         """Cadastrar novo atendimento"""
               
@@ -28,6 +32,8 @@ class AppointmentList(Resource):
         return make_response(schema.jsonify(new_appointment), 201)
 
 class AppointmentDetail(Resource):
+    
+    @client_owns_data(lambda id: list_appointment_id(id).user_cpf)
     def get(self, id):
         """Buscar atendimento pelo ID"""
         appointment = list_appointment_id(id)
@@ -37,7 +43,7 @@ class AppointmentDetail(Resource):
         schema = AppointmentSchema()
         return make_response(jsonify(schema.dump(appointment)), 200)
     
-    @jwt_required()
+    @client_owns_data(lambda id: list_appointment_id(id).user_cpf)
     def put(self, id):
         """Atualizar atendimentos por ID"""
         appointment_db = list_appointment_id(id)
@@ -53,7 +59,7 @@ class AppointmentDetail(Resource):
         update_appointment = update_appointment(appointment_db, new_appointment)
         return make_response(schema.jsonify(update_appointment), 200)
     
-    @jwt_required()
+    @role_required('admin')
     def delete(self, id):
         """Excluir atendimentos por id"""
         appointment = list_appointment_id(id)

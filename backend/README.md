@@ -164,7 +164,7 @@ Authorization: Bearer seu_token_aqui
   {
     "detail": "Logout realizado com sucesso."
   }
-
+```
 ---
 
 ## 🧪 Executando Testes

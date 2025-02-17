@@ -6,14 +6,18 @@ from backend_app.services.pet_service import (
 )
 from backend_app.schemas.pet_schema import PetSchema
 from flask_jwt_extended import jwt_required
+from ..utils.decorators import role_required, client_owns_data
+
 class PetList(Resource):
+    
+    @role_required('admin')
     def get(self):
         """Listar todos pets"""
         pets = list_pets()
         schema = PetSchema(many=True)
         return make_response(jsonify(schema.dump(pets)), 200)
     
-    @jwt_required()
+    @client_owns_data(lambda id: list_pet_id(id).user_cpf)
     def post(self):        
         """Cadastrar novo pet"""
               
@@ -27,6 +31,8 @@ class PetList(Resource):
         return make_response(schema.jsonify(new_pet), 201)
 
 class PetDetail(Resource):
+    
+    @role_required('client')
     def get(self, id):
         """Buscar raça pelo ID"""
         pet = list_pet_id(id)
@@ -36,7 +42,7 @@ class PetDetail(Resource):
         schema = PetSchema()
         return make_response(jsonify(schema.dump(pet)), 200)
     
-    @jwt_required()
+    @role_required('admin')
     def put(self, id):
         """Atualizar raças por ID"""
         pet_db = list_pet_id(id)
@@ -52,7 +58,7 @@ class PetDetail(Resource):
         update_pet = update_pet(pet_db, new_pet)
         return make_response(schema.jsonify(update_pet), 200)
     
-    @jwt_required()
+    @role_required('admin')
     def delete(self, id):
         """Excluir raça por id"""
         pet = list_pet_id(id)

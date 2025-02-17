@@ -5,6 +5,7 @@ from backend_app import api
 from backend_app.services.auth_service import authenticate_user, get_current_user
 
 class Login(Resource):
+ 
     def post(self):
         """Autentica usuario e gera um token"""
         data = request.json

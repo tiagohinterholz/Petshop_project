@@ -6,14 +6,17 @@ from backend_app.services.address_service import (
 )
 from backend_app.schemas.address_schema import AddressSchema
 from flask_jwt_extended import jwt_required
+from ..utils.decorators import role_required, client_owns_data
+
 class AddressList(Resource):
+    @role_required('admin')
     def get(self):
         """Listar todos endereços"""
         addresses = list_addresses()
         schema = AddressSchema(many=True)
         return make_response(jsonify(schema.dump(addresses)), 200)
     
-    @jwt_required()
+    @role_required('client')
     def post(self):        
         """Cadastrar novo endereço"""
               
@@ -27,6 +30,7 @@ class AddressList(Resource):
         return make_response(schema.jsonify(new_address), 201)
 
 class AddressDetail(Resource):
+    @client_owns_data(lambda id: list_address_id(id).user_cpf)
     def get(self, id):
         """Buscar endereço pelo ID"""
         address = list_address_id(id)
@@ -36,7 +40,7 @@ class AddressDetail(Resource):
         schema = AddressSchema()
         return make_response(jsonify(schema.dump(address)), 200)
     
-    @jwt_required()
+    @client_owns_data(lambda id: list_address_id(id).user_cpf)
     def put(self, id):
         """Atualizar endereços por ID"""
         address_db = list_address_id(id)
@@ -52,7 +56,7 @@ class AddressDetail(Resource):
         update_address = update_address(address_db, new_address)
         return make_response(schema.jsonify(update_address), 200)
     
-    @jwt_required()
+    @role_required('admin')
     def delete(self, id):
         """Excluir endereço por id"""
         address = list_address_id(id)

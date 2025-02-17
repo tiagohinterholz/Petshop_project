@@ -6,15 +6,17 @@ from backend_app.services.breed_service import (
 )
 from backend_app.schemas.breed_schema import BreedSchema
 from flask_jwt_extended import jwt_required
+from ..utils.decorators import role_required, client_owns_data
 
 class BreedList(Resource):
+    @role_required('client')
     def get(self):
         """Listar todas raças"""
         breeds = list_breeds()
         schema = BreedSchema(many=True)
         return make_response(jsonify(schema.dump(breeds)), 200)
     
-    @jwt_required()
+    @role_required('client')
     def post(self):
         """Cadastrar nova raça"""
         schema = BreedSchema()
@@ -27,6 +29,7 @@ class BreedList(Resource):
         return make_response(schema.jsonify(new_breed), 201)
 
 class BreedDetail(Resource):
+    @jwt_required()
     def get(self, id):
         """Buscar raça pelo ID"""
         breed = list_breed_id(id)
@@ -36,7 +39,7 @@ class BreedDetail(Resource):
         schema = BreedSchema()
         return make_response(jsonify(schema.dump(breed)), 200)
     
-    @jwt_required()
+    @role_required('admin')
     def put(self, id):
         """Atualizar raças por ID"""
         breed_db = list_breed_id(id)
@@ -52,7 +55,7 @@ class BreedDetail(Resource):
         update_breed = update_breed(breed_db, new_breed)
         return make_response(schema.jsonify(update_breed), 200)
     
-    @jwt_required()
+    @role_required('admin')
     def delete(self, id):
         """Excluir raça por id"""
         breed = list_breed_id(id)

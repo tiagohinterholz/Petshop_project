@@ -4,16 +4,17 @@ from backend_app import api
 from backend_app.services.user_service import register_user, delete_user, list_user_id, update_user, list_users
 from backend_app.schemas.user_schema import UserSchema
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from ..utils.decorators import role_required
 class UserList(Resource):
     
-    @jwt_required()  # Protegendo a rota com JWT
+    @role_required('admin')  # Protegendo a rota com JWT
     def get(self):
         """Listar todos os usuários"""
         users = list_users()
         schema = UserSchema(many=True)
         return make_response(jsonify(schema.dump(users)), 200)
     
-    @jwt_required()
+    #@role_required('admin')
     def post(self):        
         """Cadastrar novo user"""       
         schema = UserSchema()
@@ -32,7 +33,7 @@ class UserList(Resource):
 
 class UserDetail(Resource):
     
-    @jwt_required()
+    @role_required('admin')
     def put(self, cpf):
         """Atualiza dados de PERFIL do usuário apenas por ADMIN"""
         user_db = list_user_id(cpf)
@@ -55,7 +56,7 @@ class UserDetail(Resource):
         updated_user = update_user(user_db, new_user)
         return make_response(schema.jsonify(updated_user), 200)
         
-    @jwt_required()    
+    @role_required('admin')   
     def delete(self, cpf):
         """Excluir user por id"""
         user = list_user_id(cpf)

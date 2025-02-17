@@ -6,15 +6,18 @@ from backend_app.services.contact_service import (
 )
 from backend_app.schemas.contact_schema import ContactSchema
 from flask_jwt_extended import jwt_required
+from ..utils.decorators import role_required, client_owns_data
 
 class ContactList(Resource):
+    
+    @role_required('admin')
     def get(self):
         """Listar todos contatos"""
         contacts = list_contacts()
         schema = ContactSchema(many=True)
         return make_response(jsonify(schema.dump(contacts)), 200)
     
-    @jwt_required()
+    @role_required('client')
     def post(self):        
         """Cadastrar novo contact"""
               
@@ -28,8 +31,10 @@ class ContactList(Resource):
         return make_response(schema.jsonify(new_contact), 201)
 
 class ContactDetail(Resource):
+    
+    @role_required('admin')
     def get(self, id):
-        """Buscar raça pelo ID"""
+        """Buscar contato pelo ID"""
         contact = list_contact_id(id)
         if not contact:
             return make_response(jsonify({'error': 'Contato não encontrado'}), 404)
@@ -37,9 +42,9 @@ class ContactDetail(Resource):
         schema = ContactSchema()
         return make_response(jsonify(schema.dump(contact)), 200)
     
-    @jwt_required()
+    @client_owns_data(lambda id: list_contact_id(id).user_cpf)
     def put(self, id):
-        """Atualizar raças por ID"""
+        """Atualizar contato por ID"""
         contact_db = list_contact_id(id)
         if not contact_db:
             return make_response(jsonify({'error': 'Contato não encontrado'}), 404)
@@ -53,9 +58,9 @@ class ContactDetail(Resource):
         update_contact = update_contact(contact_db, new_contact)
         return make_response(schema.jsonify(update_contact), 200)
     
-    @jwt_required()
+    @role_required('admin')
     def delete(self, id):
-        """Excluir raça por id"""
+        """Excluir contato por id"""
         contact = list_contact_id(id)
         if not contact:
             return make_response(jsonify({'error': 'Contato não encontrado'}), 404)
