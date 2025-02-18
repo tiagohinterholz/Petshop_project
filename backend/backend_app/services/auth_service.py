@@ -25,5 +25,5 @@ def get_current_user():
     """Obtem user autenticado pelo token"""
     identity = get_jwt_identity()
     if not identity:
-        return None
+        return {"error": "Usuário não autenticado"}, 400
     return identity

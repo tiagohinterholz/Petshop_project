@@ -5,68 +5,62 @@ from backend_app.services.pet_service import (
     list_pets, list_pet_id, register_pet, update_pet, delete_pet
 )
 from backend_app.schemas.pet_schema import PetSchema
-from flask_jwt_extended import jwt_required
 from ..utils.decorators import role_required, client_owns_data
 
 class PetList(Resource):
     
     @role_required('admin')
     def get(self):
-        """Listar todos pets"""
+        """Listar todos os pets"""
         pets = list_pets()
         schema = PetSchema(many=True)
         return make_response(jsonify(schema.dump(pets)), 200)
     
-    @client_owns_data(lambda id: list_pet_id(id).user_cpf)
-    def post(self):        
+    @role_required('client')
+    def post(self):
         """Cadastrar novo pet"""
-              
         schema = PetSchema()
         errors = schema.validate(request.json)
         if errors:
             return make_response(jsonify(errors), 400)
-        
+
         pet = schema.load(request.json)
-        new_pet = register_pet(pet)
-        return make_response(schema.jsonify(new_pet), 201)
+        new_pet, status = register_pet(pet)
+        return make_response(jsonify(schema.dump(new_pet)), status)
 
 class PetDetail(Resource):
     
-    @role_required('client')
+    @client_owns_data(lambda id: list_pet_id(id)[0].client_id if isinstance(list_pet_id(id)[0], dict) else None)
     def get(self, id):
-        """Buscar raça pelo ID"""
-        pet = list_pet_id(id)
-        if not pet:
-            return make_response(jsonify({'error': 'Raça não encontrada'}), 404)
-        
-        schema = PetSchema()
-        return make_response(jsonify(schema.dump(pet)), 200)
-    
-    @role_required('admin')
+        """Buscar pet pelo ID"""
+        pet, status = list_pet_id(id)
+        return make_response(jsonify(pet), status)
+
+    @client_owns_data(lambda id: list_pet_id(id)[0].client_id if isinstance(list_pet_id(id)[0], dict) else None)
     def put(self, id):
-        """Atualizar raças por ID"""
-        pet_db = list_pet_id(id)
-        if not pet_db:
-            return make_response(jsonify({'error': 'Raça não encontrada'}), 404)
-        
+        """Atualizar pet por ID"""
+        pet_db, status = list_pet_id(id)
+        if status != 200:
+            return make_response(jsonify(pet_db), status)
+
         schema = PetSchema()
         errors = schema.validate(request.json)
         if errors:
             return make_response(jsonify(errors), 400)
-        
+
         new_pet = schema.load(request.json)
-        update_pet = update_pet(pet_db, new_pet)
-        return make_response(schema.jsonify(update_pet), 200)
+        updated_pet, status = update_pet(pet_db, new_pet)
+        return make_response(jsonify(schema.dump(updated_pet)), status)
     
     @role_required('admin')
     def delete(self, id):
-        """Excluir raça por id"""
-        pet = list_pet_id(id)
-        if not pet:
-            return make_response(jsonify({'error': 'Raça não encontrada'}), 404)
-        
+        """Excluir pet por ID"""
+        pet, status = list_pet_id(id)
+        if status != 200:
+            return make_response(jsonify(pet), status)
+
         delete_pet(pet)
-        return make_response('', 204)
+        return make_response(jsonify({"message": "Pet excluído com sucesso"}), 200)
 
 api.add_resource(PetList, '/pets')
 api.add_resource(PetDetail, '/pets/<int:id>')

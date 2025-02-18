@@ -1,6 +1,5 @@
 from functools import wraps
 from flask_jwt_extended import get_jwt, verify_jwt_in_request, get_jwt_identity
-from flask import jsonify
 
 def role_required(required_role):
     """
@@ -14,8 +13,13 @@ def role_required(required_role):
             claims = get_jwt()
             user_role = claims.get("profile")
 
+            if not user_role:
+                return {"message": "Token inválido ou ausente."}, 401
+
             if user_role != required_role:
-                return jsonify({"message": "Acesso negado. Permissão insuficiente."}), 403
+                return {
+                    "message": f"Acesso negado. Permissão insuficiente. Requer: {required_role}, Seu perfil: {user_role}"
+                }, 403
             
             return func(*args, **kwargs)
         
@@ -26,7 +30,7 @@ def role_required(required_role):
 def client_owns_data(get_user_id_func):
     """
     Decorator para garantir que o cliente só acesse os próprios dados.
-    :param get_user_id_func: Função que recebe *args, **kwargs e retorna o ID do usuário da requisição.
+    :param get_user_id_func: Função que recebe *args, **kwargs e retorna o CPF do usuário da requisição.
     """
     def decorator(func):
         @wraps(func)
@@ -37,15 +41,18 @@ def client_owns_data(get_user_id_func):
             user_cpf = get_jwt_identity()
             
             # Obtém o CPF do usuário referente à requisição
-            requested_user_id = get_user_id_func(*args, **kwargs)
+            requested_user_cpf = get_user_id_func(*args, **kwargs)
+            
+            if not requested_user_cpf:
+                return {"message": "Usuário não encontrado ou não autorizado."}, 404
             
             # Se for admin, permite acesso total
             if user_role == "admin":
                 return func(*args, **kwargs)
             
             # Se for client, verifica se está acessando os próprios dados
-            if user_role == "client" and str(requested_user_id) != str(user_cpf):
-                return jsonify({"message": "Acesso negado. Você só pode acessar seus próprios dados."}), 403
+            if user_role == "client" and str(requested_user_cpf) != str(user_cpf):
+                return {"message": "Acesso negado. Você só pode acessar seus próprios dados."}, 403
             
             return func(*args, **kwargs)
         

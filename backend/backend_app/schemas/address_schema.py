@@ -13,4 +13,4 @@ class AddressSchema(ma.SQLAlchemyAutoSchema):
     street = fields.String(required=True)
     city = fields.String(required=True)
     neighborhood = fields.String(required=True)
-    complement = fields.String(missing=None)
+    complement = fields.String(load_default=None)

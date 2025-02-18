@@ -1,15 +1,16 @@
-from flask import request, jsonify
+from flask import jsonify, make_response
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt
 from backend_app import api
 
-TOKEN_BLACKLIST = set()  # Conjunto para armazenar tokens inválidos
+TOKEN_BLACKLIST = set()
 
 class LogoutResource(Resource):
     @jwt_required()
     def post(self):
+        """Realiza logout do usuário invalidando o token atual"""
         jti = get_jwt()["jti"]  # Identificador único do token
         TOKEN_BLACKLIST.add(jti)  # Adiciona o token à blacklist
-        return jsonify({"detail": "Logout realizado com sucesso."})
+        return make_response(jsonify({"message": "Logout realizado com sucesso."}), 200)
 
 api.add_resource(LogoutResource, '/logout')
