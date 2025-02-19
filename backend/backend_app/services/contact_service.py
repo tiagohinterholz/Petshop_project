@@ -5,15 +5,17 @@ from backend_app.schemas.contact_schema import ContactSchema
 
 def register_contact(contact_data):
     """Cadastra um novo contato."""
-    client_exists = Client.query.get(contact_data["client_id"])
+    client_exists = Client.query.get(contact_data.client_id)
+
     if not client_exists:    
         return {"error": "Cliente não encontrado"}, 400
     
     contact_db = Contact(
-        client_id=contact_data["client_id"],
-        type_contact=contact_data["type_contact"],
-        value_contact=contact_data["value_contact"]
+        client_id=contact_data.client_id,
+        type_contact=contact_data.type_contact,
+        value_contact=contact_data.value_contact
     )
+
     db.session.add(contact_db)
     db.session.commit()
     

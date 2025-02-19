@@ -2,13 +2,14 @@ from backend_app import db
 from backend_app.models.pet_model import Pet
 from backend_app.models.breed_model import Breed
 from backend_app.models.client_model import Client
-from backend_app.schemas.pet_schema import PetSchema  
+from backend_app.schemas.pet_schema import PetSchema 
+from datetime import datetime
 
 def register_pet(pet_data):
     """Cadastra um novo pet."""
     
-    client_exists = db.session.get(Client, pet_data["client_id"])  
-    breed_exists = db.session.get(Breed, pet_data["breed_id"])
+    client_exists = db.session.get(Client, pet_data.client_id) 
+    breed_exists = db.session.get(Breed, pet_data.breed_id)
     
     if not client_exists:
         return {"error": "Cliente não encontrado"}, 404 
@@ -16,11 +17,14 @@ def register_pet(pet_data):
     if not breed_exists:
         return {"error": "Raça não encontrada"}, 404 
     
+    if isinstance(pet_data.birth_date, str):
+        pet_data.birth_date = datetime.strptime(pet_data.birth_date, "%Y-%m-%d").date()
+    
     pet_db = Pet(
-        client_id=pet_data["client_id"],
-        breed_id=pet_data["breed_id"],
-        birth_date=pet_data["birth_date"],
-        name=pet_data["name"]
+        client_id=pet_data.client_id,
+        breed_id=pet_data.breed_id,
+        birth_date=pet_data.birth_date,
+        name=pet_data.name
     )
 
     db.session.add(pet_db)

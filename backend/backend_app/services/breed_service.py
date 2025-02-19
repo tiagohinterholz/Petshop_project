@@ -4,7 +4,13 @@ from backend_app.schemas.breed_schema import BreedSchema
 
 def register_breed(breed_data):
     """Cadastra uma nova raça."""
-    breed_db = Breed(description=breed_data["description"])
+    
+    # Verifica se a raça já existe
+    existing_breed = Breed.query.filter_by(description=breed_data.description).first()
+    if existing_breed:
+        return {"error": "Já existe uma raça com essa descrição."}, 400
+    
+    breed_db = Breed(description=breed_data.description)
     db.session.add(breed_db)
     db.session.commit()
     

@@ -11,5 +11,15 @@ class ContactSchema(ma.SQLAlchemyAutoSchema):
         sqla_session = db.session
     
     client_id = fields.Integer(required=True)
-    type_contact = fields.Enum(ContactTypeEnum, by_value=True, required=True)
+    type_contact = fields.Method("serialize_enum", deserialize="deserialize_enum")
     value_contact = fields.String(required=True)
+
+    def serialize_enum(self, obj):
+        """Converte ENUM para string na saída"""
+        if isinstance(obj, dict):  
+            return obj["type_contact"]  #  Se for dicionário
+        return obj.type_contact.value  #  Se for objeto SQLAlchemy
+
+    def deserialize_enum(self, value):
+        """Converte string para ENUM ao carregar os dados"""
+        return ContactTypeEnum(value)  # Converte String → ENUM

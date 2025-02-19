@@ -5,8 +5,9 @@ from backend_app.schemas.address_schema import AddressSchema
 
 def register_address(address_data):
     """Cadastra um novo endereço para um cliente."""
-    client_exists = Client.query.get(address_data["client_id"])
-    address_exists = Address.query.filter_by(client_id=address_data["client_id"]).first()
+    client_exists = Client.query.get(address_data.client_id)
+    address_exists = Address.query.filter_by(client_id=address_data.client_id).first()
+
 
     if not client_exists:  
         return {"error": "Cliente não encontrado"}, 404 
@@ -15,13 +16,13 @@ def register_address(address_data):
         return {"error": "Este cliente já possui um endereço cadastrado"}, 400 
     
     address_db = Address(
-        client_id=address_data["client_id"],
-        street=address_data["street"],
-        city=address_data["city"],
-        neighborhood=address_data["neighborhood"],
-        complement=address_data["complement"]
+        client_id=address_data.client_id,
+        street=address_data.street,
+        city=address_data.city,
+        neighborhood=address_data.neighborhood,
+        complement=address_data.complement
     )
-    
+
     db.session.add(address_db)
     db.session.commit()
     

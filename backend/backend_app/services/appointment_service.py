@@ -1,29 +1,30 @@
 from backend_app import db
 from backend_app.models.appointment_model import Appointment
 from backend_app.models.pet_model import Pet
-from backend_app.schemas.appointment_schema import AppointmentSchema  # ✅ Adicionando a serialização correta
+from backend_app.schemas.appointment_schema import AppointmentSchema
 from datetime import date
 
 def register_appointment(appointment_data):
     """Cadastra um novo agendamento."""
-    pet_exists = Pet.query.get(appointment_data["pet_id"])
+    pet_exists = Pet.query.get(appointment_data.pet_id)
     today = date.today()
 
-    if not pet_exists:  # ✅ O pet deve existir
+    if not pet_exists:  # O pet deve existir
         return {"error": "Pet não encontrado"}, 404  
 
-    if appointment_data.get("date_appoint") < today:  # ✅ Data deve ser futura
+    if appointment_data.date_appoint < today: #  Data deve ser futura
         return {"error": "Data precisa ser maior ou igual a hoje"}, 400  
 
-    if appointment_data.get("price", 0) < 0:  # ✅ Preço não pode ser negativo
+    if appointment_data.price < 0:  # Preço não pode ser negativo
         return {"error": "Preço não pode ser negativo"}, 400  
 
     appointment_db = Appointment(
-        pet_id=appointment_data["pet_id"],
-        desc_appoint=appointment_data["desc_appoint"],
-        price=appointment_data["price"],
-        date_appoint=appointment_data["date_appoint"]
+        pet_id=appointment_data.pet_id,
+        desc_appoint=appointment_data.desc_appoint,
+        price=appointment_data.price,
+        date_appoint=appointment_data.date_appoint
     )
+
 
     db.session.add(appointment_db)
     db.session.commit()
@@ -47,7 +48,7 @@ def update_appointment(appointment_db, new_appointment_data):
     if not appointment_db:
         return {"error": "Agendamento não encontrado"}, 404
 
-    pet_exists = Pet.query.get(new_appointment_data["pet_id"])
+    pet_exists = Pet.query.get(new_appointment_data.pet_id)
     if not pet_exists:
         return {"error": "Pet não encontrado"}, 404  
 

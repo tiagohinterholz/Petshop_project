@@ -6,6 +6,7 @@ from backend_app.services.pet_service import (
 )
 from backend_app.schemas.pet_schema import PetSchema
 from ..utils.decorators import role_required, client_owns_data
+from datetime import datetime
 
 class PetList(Resource):
     
@@ -20,6 +21,8 @@ class PetList(Resource):
     def post(self):
         """Cadastrar novo pet"""
         schema = PetSchema()
+        data = request.json
+        
         errors = schema.validate(request.json)
         if errors:
             return make_response(jsonify(errors), 400)
