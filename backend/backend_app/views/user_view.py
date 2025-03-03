@@ -11,16 +11,12 @@ class UserList(Resource):
     @role_required('admin')
     def get(self):
         """Listar todos os usuários"""
-        users = list_users()
-        return make_response(jsonify(users), 200)
+        users, status = list_users()
+        return make_response(jsonify(users), status)
 
     def post(self):
         """Cadastrar novo usuário"""
-        user_data = request.json
-        if user_data.get("profile", "").upper() == "ADMIN":
-            return make_response(jsonify({"error": "Não é permitido criar um usuário ADMIN."}), 403)
-
-        new_user, status = register_user(user_data)
+        new_user, status = register_user(request.json)
         return make_response(jsonify(new_user), status)
 
 class UserDetail(Resource):
@@ -32,27 +28,14 @@ class UserDetail(Resource):
             return make_response(jsonify(user_db), status)
 
         new_user_data = request.json
-        current_user = get_jwt_identity()
-        logged_user, status = list_user_id(current_user)
-
-        if status != 200:
-            return make_response(jsonify(logged_user), status)
-
-        if 'profile' in new_user_data and logged_user["profile"] != "admin":
-            return make_response(jsonify({"error": "Apenas administradores podem alterar perfis de usuário"}), 403)
-
         updated_user, status = update_user(user_db, new_user_data)
         return make_response(jsonify(updated_user), status)
 
     @role_required('admin')
     def delete(self, cpf):
         """Excluir usuário por CPF"""
-        user, status = list_user_id(cpf)
-        if status != 200:
-            return make_response(jsonify(user), status)
-
-        delete_user(cpf)
-        return make_response("", 204)
+        response, status = delete_user(cpf)
+        return make_response(jsonify(response), status)
 
 api.add_resource(UserList, '/users')
 api.add_resource(UserDetail, '/users/<string:cpf>')
