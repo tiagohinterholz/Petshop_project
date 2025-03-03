@@ -1,68 +1,77 @@
 from backend_app import db
 from backend_app.models.pet_model import Pet
-from backend_app.models.breed_model import Breed
-from backend_app.models.client_model import Client
 from backend_app.schemas.pet_schema import PetSchema 
-from datetime import datetime
-
-def register_pet(pet_data):
-    """Cadastra um novo pet."""
-    
-    client_exists = db.session.get(Client, pet_data.client_id) 
-    breed_exists = db.session.get(Breed, pet_data.breed_id)
-    
-    if not client_exists:
-        return {"error": "Cliente não encontrado"}, 404 
-    
-    if not breed_exists:
-        return {"error": "Raça não encontrada"}, 404 
-    
-    if isinstance(pet_data.birth_date, str):
-        pet_data.birth_date = datetime.strptime(pet_data.birth_date, "%Y-%m-%d").date()
-    
-    pet_db = Pet(
-        client_id=pet_data.client_id,
-        breed_id=pet_data.breed_id,
-        birth_date=pet_data.birth_date,
-        name=pet_data.name
-    )
-
-    db.session.add(pet_db)
-    db.session.commit()
-
-    return PetSchema().dump(pet_db), 201 
+from marshmallow import ValidationError
 
 def list_pets():
     """Lista todos os pets cadastrados."""
-    pets = Pet.query.all()
-    return PetSchema(many=True).dump(pets), 200
+    try:
+        pets = Pet.query.all()
+        return PetSchema(many=True).dump(pets), 200
+    except Exception as e:
+        return {"error": f"Erro ao listar todos os pets: {str(e)}"}, 500
+    
+def register_pet(pet_data):
+    """Cadastra um novo pet."""
+    schema = PetSchema()
+    
+    try:
+        validated_data = schema.load(pet_data)
+    except ValidationError as err:
+        return {"error": err.messages}, 400  
+    
+    pet_db = Pet(
+        client_id=validated_data["client_id"],
+        breed_id=validated_data["breed_id"],
+        birth_date=validated_data["birth_date"],
+        name=validated_data["name"]
+    )
 
+    try:
+        db.session.add(pet_db)
+        db.session.commit()
+        return schema.dump(pet_db), 201 
+    except Exception as e:
+        db.session.rollback()  # Evita inconsistências no banco
+        return {"error": f"Erro ao cadastrar pet: {str(e)}"}, 500
+    
 def list_pet_id(id):
     """Busca um pet pelo ID."""
-    pet = db.session.get(Pet, id)
-    if not pet:
-        return {"error": "Pet não encontrado"}, 404
-    return PetSchema().dump(pet), 200 
-
+    try:
+        pet = db.session.get(Pet, id)
+        if not pet:
+            return {"error": "Pet não encontrado"}, 404
+        return PetSchema().dump(pet), 200 
+    except Exception as e:
+        return {"error": f"Erro ao buscar pet: {str(e)}"}, 500
+    
 def update_pet(pet_db, new_pet_data):
     """Atualiza os dados de um pet."""
     if not pet_db:
         return {"error": "Pet não encontrado"}, 404
     
-    pet_db.client_id = new_pet_data["client_id"]
-    pet_db.breed_id = new_pet_data["breed_id"] 
-    pet_db.birth_date = new_pet_data["birth_date"]
-    pet_db.name = new_pet_data["name"]
+    try:
+        pet_db.client_id = new_pet_data["client_id"]
+        pet_db.breed_id = new_pet_data["breed_id"] 
+        pet_db.birth_date = new_pet_data["birth_date"]
+        pet_db.name = new_pet_data["name"]
+        
+        db.session.commit()
+        return PetSchema().dump(pet_db), 200
+    except Exception as e:
+        return {"error": f"Erro ao atualizar dados do pet: {e}"}, 500
     
-    db.session.commit()
-    
-    return PetSchema().dump(pet_db), 200
-def delete_pet(pet_db):
+def delete_pet(id):
     """Exclui um pet pelo ID."""
-    if not pet_db:
-        return {"error": "Pet não encontrado"}, 404 
+    try:
+        pet = db.session.get(Pet, id)
+        if not pet:
+            return {"error": "Pet não encontrado"}, 404
+        db.session.delete(pet)
+        db.session.commit()
+        return {"message": "Pet deletado com sucesso"}, 200 
+    except Exception as e:
+        db.session.rollback()
+        return {"error": f"Erro ao excluir pet: {str(e)}"}, 500
     
-    db.session.delete(pet_db)
-    db.session.commit()
     
-    return {"message": "Pet deletado com sucesso"}, 204 

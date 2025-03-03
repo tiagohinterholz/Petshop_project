@@ -20,13 +20,13 @@ class AddressList(Resource):
         return make_response(jsonify(new_address), status)
 
 class AddressDetail(Resource):
-    @client_owns_data(lambda id: list_address_id(id)[0].client_id if isinstance(list_address_id(id), tuple) else None)
+    @client_owns_data(lambda id: list_address_id(id)[0].get("client_id") if isinstance(list_address_id(id)[0], dict) else None)
     def get(self, id):
         """Buscar endereço pelo ID"""
         address, status = list_address_id(id)
         return make_response(jsonify(address), status)
 
-    @client_owns_data(lambda id: list_address_id(id)[0].client_id if isinstance(list_address_id(id), tuple) else None)
+    @client_owns_data(lambda id: list_address_id(id)[0].get("client_id") if isinstance(list_address_id(id)[0], dict) else None)
     def put(self, id):
         """Atualizar endereço por ID"""
         address_db, status = list_address_id(id)

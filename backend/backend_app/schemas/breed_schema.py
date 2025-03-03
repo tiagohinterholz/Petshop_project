@@ -1,7 +1,6 @@
 from backend_app import ma
 from backend_app.models.breed_model import Breed
 from marshmallow import fields, validates, ValidationError
-from backend_app import db
 
 class BreedSchema(ma.SQLAlchemyAutoSchema):
     

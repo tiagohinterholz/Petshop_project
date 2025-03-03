@@ -1,7 +1,6 @@
-from backend_app import ma
+from backend_app import ma, db
 from backend_app.models.address_model import Address, Client
 from marshmallow import fields, validates, ValidationError
-from backend_app import db
 
 class AddressSchema(ma.SQLAlchemyAutoSchema):
     

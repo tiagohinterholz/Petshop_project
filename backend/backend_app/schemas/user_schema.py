@@ -1,7 +1,6 @@
-from backend_app import ma
+from backend_app import ma, db
 from backend_app.models.user_model import User, ProfileEnum
 from marshmallow import fields, validates, ValidationError
-from backend_app import db
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
     
