@@ -1,7 +1,8 @@
-from backend_app import ma
-from backend_app.models.appointment_model import Appointment
-from marshmallow import fields, pre_load, post_load
-from datetime import datetime
+from backend_app import ma, db
+from backend_app.models.appointment_model import Appointment, Pet
+from marshmallow import fields, validates, ValidationError
+from datetime import date
+
 class AppointmentSchema(ma.SQLAlchemyAutoSchema):
     
     class Meta:
@@ -12,26 +13,22 @@ class AppointmentSchema(ma.SQLAlchemyAutoSchema):
     pet_id = fields.Integer(required=True)
     desc_appoint = fields.String(required=True)
     price = fields.Float(required=True)
-    date_appoint = fields.String(required=True)
+    date_appoint = fields.Date(required=True)
     
-    @pre_load
-    def process_date_appoint(self, data, **kwargs):
-        """Garante que o date_appoint sempre vai como string válida"""
-        print(f"\n[DEBUG] Antes da conversão: {data}")  
+    @validates('pet_id')
+    def validate_pet_id(self, value):
+        existing_id = db.session.get(Pet, value)
+        if not existing_id:
+            raise ValidationError("Pet informado não cadastrado")
         
-        if "date_appoint" in data and isinstance(data["date_appoint"], str):
-            try:
-                data["date_appoint"] = datetime.strptime(data["date_appoint"], "%Y-%m-%d").strftime("%Y-%m-%d")
-            except ValueError:
-                raise ValueError("Formato de data inválido, use YYYY-MM-DD")
-        
-        print(f"[DEBUG] Depois da conversão: {data}")  
-        return data
+    @validates('price')
+    def validate_price(self, value):
+        if value < 0:  # Preço não pode ser negativo
+            raise ValidationError("Preço não pode ser negativo")
+    
 
-    @post_load
-    def convert_date_appoint(self, data, **kwargs):
-        """Agora finalmente converte para `date` antes de ir pro banco"""
-        if "date_appoint" in data and isinstance(data["date_appoint"], str):
-            data["date_appoint"] = datetime.strptime(data["date_appoint"], "%Y-%m-%d").date()
-        print(f"[DEBUG] Depois da validação: {data}")
-        return data
+    @validates('date_appoint')
+    def validate_date_appoint(self, value):
+        today = date.today()   
+        if value < today: #  Data deve ser futura
+            raise ValidationError("Data precisa ser maior ou igual a hoje") 
