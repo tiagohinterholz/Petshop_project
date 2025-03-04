@@ -13,22 +13,20 @@ class ClientList(Resource):
     def get(self):
         """Listar todos clientes"""
         clients, status = list_clients()
-        return make_response(jsonify(clients), status)  # ✅ Agora sempre retorna JSON serializável
+        return make_response(jsonify(clients), status) 
     
     @jwt_required()
     def post(self):
         """Cadastrar novo cliente"""       
-        client_data = request.json
-        new_client, status = register_client(client_data)
-        return make_response(jsonify(new_client), status)  # ✅ Correção
-
+        new_client, status = register_client(request.json)
+        return make_response(jsonify(new_client), status)
 class ClientDetail(Resource):
 
     @role_required('admin')
     def get(self, id):
         """Buscar cliente pelo ID"""
         client, status = list_client_id(id)
-        return make_response(jsonify(client), status)  # ✅ Retorno corrigido
+        return make_response(jsonify(client), status)
 
     @client_owns_data(lambda id: list_client_id(id)[0].get("cpf") if isinstance(list_client_id(id)[0], dict) else None)
     def put(self, id):
@@ -37,19 +35,15 @@ class ClientDetail(Resource):
         if status != 200:
             return make_response(jsonify(client_db), status)
 
-        new_client_data = request.json
-        updated_client, status = update_client(client_db, new_client_data)
+        updated_client, status = update_client(client_db, request.json)
         return make_response(jsonify(updated_client), status)
 
     @role_required('admin')
     def delete(self, id):
         """Excluir cliente por ID"""
-        client, status = list_client_id(id)
-        if status != 200:
-            return make_response(jsonify(client), status)
-
-        message, status = delete_client(client)
-        return make_response(jsonify(message), status)  # ✅ Retorno sempre JSON
+        
+        response, status = delete_client(id)
+        return make_response(jsonify(response), status)
 
 api.add_resource(ClientList, '/clients')
 api.add_resource(ClientDetail, '/clients/<int:id>')
