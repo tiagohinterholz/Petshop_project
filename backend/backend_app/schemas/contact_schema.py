@@ -1,7 +1,12 @@
 from backend_app import ma, db
-from backend_app.models.contact_model import Contact, ContactTypeEnum
-from marshmallow import fields
+from backend_app.models.contact_model import Contact, Client
+from marshmallow import fields, validates, ValidationError
+import enum
 
+class ContactTypeEnum(enum.Enum):
+    PHONE = "phone"
+    EMAIL = "email"
+    WHATSAPP = "whatsapp"
 class ContactSchema(ma.SQLAlchemyAutoSchema):
     
     class Meta:
@@ -11,15 +16,11 @@ class ContactSchema(ma.SQLAlchemyAutoSchema):
         sqla_session = db.session
     
     client_id = fields.Integer(required=True)
-    type_contact = fields.Method("serialize_enum", deserialize="deserialize_enum")
+    type_contact = fields.Enum(ContactTypeEnum, by_value=True, required=True)
     value_contact = fields.String(required=True)
 
-    def serialize_enum(self, obj):
-        """Converte ENUM para string na saída"""
-        if isinstance(obj, dict):  
-            return obj["type_contact"]  #  Se for dicionário
-        return obj.type_contact.value  #  Se for objeto SQLAlchemy
-
-    def deserialize_enum(self, value):
-        """Converte string para ENUM ao carregar os dados"""
-        return ContactTypeEnum(value)  # Converte String → ENUM
+    @validates('client_id')
+    def validate_client_id(self, value):
+        existing_id = db.session.get(Client, value)
+        if not existing_id:
+            raise ValidationError("Cliente informado não cadastrado")

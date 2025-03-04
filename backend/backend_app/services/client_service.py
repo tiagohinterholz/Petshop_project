@@ -22,12 +22,12 @@ def register_client(client_data):
     except ValidationError as err:
         return {"error": err.messages}, 400
     
-    new_client = Client(
-        cpf=validated_data['cpf'],
-        name=validated_data["name"],
-        register_date=datetime.now(timezone.utc)
-    )
     try:
+        new_client = Client(
+            cpf=validated_data['cpf'],
+            name=validated_data["name"],
+            register_date=datetime.now(timezone.utc)
+        )
         db.session.add(new_client)
         db.session.commit()
         return schema.dump(new_client), 201 
@@ -59,7 +59,7 @@ def update_client(client_db, new_client_data):
         db.session.rollback()
         return {"error": f"Erro ao atualizar cliente: {str(e)}"}, 500
         
-def delete_client(id):
+def delete_client(client):
     """Excluir um cliente."""
     try:
         client = db.session.get(Client, id)
