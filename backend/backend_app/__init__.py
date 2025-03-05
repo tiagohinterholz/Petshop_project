@@ -19,5 +19,17 @@ jwt = JWTManager(app)
 
 
 #Registro de rotas
-from .views import breed_view, client_view, contact_view, address_view, pet_view, appointment_view, user_view, auth_view   
+from .views import (
+    address_view, 
+    appointment_view, 
+    breed_view, 
+    client_view, 
+    contact_view, 
+    forgot_password_view, 
+    login_view, 
+    logout_view, 
+    pet_view, 
+    user_view, 
+    refresh_token_view, 
+    reset_password_view)   
 from .models import breed_model, client_model, contact_model, address_model, pet_model, appointment_model, user_model  
