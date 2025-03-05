@@ -184,7 +184,7 @@ Isso garantirá que a API continua funcionando corretamente após modificações
 - ✅ Testes unitários criados e API testada
 - ✅ Tratar erros corretamente
 - 📌 Dockerizar a aplicação
-- 📌 Documentar a API (Swagger ou Redoc)
+- 📌 Documentar a API (Swagger)
 
 ---
 
