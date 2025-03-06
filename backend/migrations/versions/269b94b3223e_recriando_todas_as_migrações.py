@@ -1,8 +1,8 @@
-"""Tabela User para Users
+"""Recriando todas as migrações
 
-Revision ID: 2bd8fa67b0d4
-Revises: 4023ef8f2104
-Create Date: 2025-02-17 14:00:20.354152
+Revision ID: 269b94b3223e
+Revises: 
+Create Date: 2025-03-05 23:36:53.706452
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2bd8fa67b0d4'
-down_revision = '4023ef8f2104'
+revision = '269b94b3223e'
+down_revision = None
 branch_labels = None
 depends_on = None
 
@@ -21,7 +21,8 @@ def upgrade():
     op.create_table('breed',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('description', sa.String(length=50), nullable=False),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('description')
     )
     op.create_table('users',
     sa.Column('cpf', sa.String(length=14), nullable=False),
@@ -53,7 +54,7 @@ def upgrade():
     op.create_table('contact',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('client_id', sa.Integer(), nullable=False),
-    sa.Column('type_contact', sa.Enum('TELEFONE', 'EMAIL', name='contact_type_enum'), nullable=False),
+    sa.Column('type_contact', sa.Enum('telefone', 'email', name='contact_type_enum'), nullable=False),
     sa.Column('value_contact', sa.String(length=100), nullable=False),
     sa.ForeignKeyConstraint(['client_id'], ['client.id'], ),
     sa.PrimaryKeyConstraint('id')

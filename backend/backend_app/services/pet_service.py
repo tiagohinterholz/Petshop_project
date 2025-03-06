@@ -21,10 +21,10 @@ def register_pet(pet_data):
         return {"error": err.messages}, 400  
     
     pet_db = Pet(
-        client_id=validated_data["client_id"],
-        breed_id=validated_data["breed_id"],
-        birth_date=validated_data["birth_date"],
-        name=validated_data["name"]
+        client_id=validated_data.client_id,
+        breed_id=validated_data.breed_id,
+        birth_date=validated_data.birth_date,
+        name=validated_data.name
     )
 
     try:

@@ -1,6 +1,7 @@
 from backend_app import db
 from backend_app.models.breed_model import Breed
 from backend_app.models.client_model import Client
+from datetime import datetime, date
 
 class Pet(db.Model):
     __tablename__ = 'pet'
@@ -12,5 +13,3 @@ class Pet(db.Model):
     
     breed = db.relationship(Breed, backref=db.backref('pets', lazy='dynamic'))
     client = db.relationship(Client, backref=db.backref('pets', lazy='dynamic'))
-    
-    

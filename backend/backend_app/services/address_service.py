@@ -21,11 +21,11 @@ def register_address(address_data):
         return {"error": err.messages}, 400    
     
     address_db = Address(
-        client_id=validated_data["client_id"],
-        street=validated_data["street"],
-        city=validated_data["city"],
-        neighborhood=validated_data["neighborhood"],
-        complement=validated_data["complement"]
+        client_id=validated_data.client_id,
+        street=validated_data.street,
+        city=validated_data.city,
+        neighborhood=validated_data.neighborhood,
+        complement=validated_data.complement
     )
 
     try:

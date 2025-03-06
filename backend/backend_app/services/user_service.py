@@ -21,10 +21,10 @@ def register_user(user_data):
         return {"error": err.messages}, 400
     
     user_db = User(
-        cpf=validated_data["cpf"], 
-        name=validated_data["name"], 
-        profile=validated_data["profile"].upper(), 
-        password=validated_data["password"]
+        cpf=validated_data.cpf, 
+        name=validated_data.name, 
+        profile=validated_data.profile.value.upper(), 
+        password=validated_data.password
     )
     user_db.encrypt_password()
     

@@ -24,8 +24,8 @@ def register_client(client_data):
     
     try:
         new_client = Client(
-            cpf=validated_data['cpf'],
-            name=validated_data["name"],
+            cpf=validated_data.cpf,
+            name=validated_data.name,
             register_date=datetime.now(timezone.utc)
         )
         db.session.add(new_client)
@@ -59,7 +59,7 @@ def update_client(client_db, new_client_data):
         db.session.rollback()
         return {"error": f"Erro ao atualizar cliente: {str(e)}"}, 500
         
-def delete_client(client):
+def delete_client(id):
     """Excluir um cliente."""
     try:
         client = db.session.get(Client, id)

@@ -25,11 +25,12 @@ def register_contact(contact_data):
     
     try: 
         contact_db = Contact(
-            client_id=validated_data["client_id"],
-            type_contact=validated_data["type_contact"],
-            value_contact=validated_data["value_contact"]
+            client_id=validated_data.client_id,
+            type_contact=validated_data.type_contact,
+            value_contact=validated_data.value_contact
         )
         db.session.add(contact_db)
+        print("[DEBUG] Salvando contato no banco:", contact_db)
         db.session.commit()  
         return ContactSchema().dump(contact_db), 201 
     except Exception as e:

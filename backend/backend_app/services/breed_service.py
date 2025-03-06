@@ -22,7 +22,7 @@ def register_breed(breed_data):
         return {"error": err.messages}, 400
     
     try:         
-        breed_db = Breed(description=validated_data["description"])
+        breed_db = Breed(description=validated_data.description)
         db.session.add(breed_db)
         db.session.commit()
         return schema.dump(breed_db), 201

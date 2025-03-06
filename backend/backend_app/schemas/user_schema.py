@@ -9,7 +9,7 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         fields = ('cpf', 'name', 'profile', 'password')
     
-    cpf = fields.String(required=True, unique=True)
+    cpf = fields.String(required=True, metadata={"unique": True})
     name = fields.String(required=True)
     profile = fields.Enum(ProfileEnum, by_value=True, required=True)
     password = fields.String(required=True, load_only=True)

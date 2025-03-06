@@ -24,10 +24,10 @@ def register_appointment(appointment_data):
         
 
     appointment_db = Appointment(
-        pet_id=validated_data["pet_id"],
-        desc_appoint=validated_data["desc_appoint"],
-        price=validated_data["price"],
-        date_appoint=validated_data["date_appoint"]
+        pet_id=validated_data.pet_id,
+        desc_appoint=validated_data.desc_appoint,
+        price=validated_data.price,
+        date_appoint=validated_data.date_appoint
     )
     try:
         db.session.add(appointment_db)

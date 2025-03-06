@@ -10,7 +10,7 @@ class ClientSchema(ma.SQLAlchemyAutoSchema):
         fields = ("id", "name", "cpf", "register_date")
     
     name = fields.String(required=True)
-    cpf = fields.String(required=True)
+    cpf = fields.String(required=True, metadata={"unique": True})
     register_date = fields.Date(required=True)
     
     @validates('cpf')

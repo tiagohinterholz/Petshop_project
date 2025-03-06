@@ -1,5 +1,6 @@
 from backend_app.models.user_model import User
 from backend_app import db
+from datetime import datetime, date
 
 class Client(db.Model):
     __tablename__ = 'client'
