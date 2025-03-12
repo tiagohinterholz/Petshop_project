@@ -4,7 +4,7 @@ from backend_app import api
 from backend_app.services.contact_service import (
     list_contacts, list_contact_id, register_contact, update_contact, delete_contact
 )
-from backend_app.schemas.contact_schema import ContactSchema
+from backend.backend_app.repository.contact_repository import ContactSchema
 from ..utils.decorators import role_required, client_owns_data
 
 class ContactList(Resource):

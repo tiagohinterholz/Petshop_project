@@ -1,6 +1,6 @@
 from backend_app import db
 from backend_app.models.address_model import Address
-from backend_app.schemas.address_schema import AddressSchema
+from backend.backend_app.repository.address_repository import AddressSchema
 from marshmallow import ValidationError
 
 def list_addresses():

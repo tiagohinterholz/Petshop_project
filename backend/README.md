@@ -11,7 +11,7 @@ API para gerenciamento de petshop, permitindo cadastro de clientes, pets, usuár
 - **Autenticação**: JWT (JSON Web Token)
 - **Testes**: Pytest, Flask-Testing
 - **Containerização**: Docker (planejado para implementação futura)
-- **Documentação**: Em elaboração
+- **Documentação**: Flassger (Swagger integrado ao Flask)
 
 ---
 
@@ -20,16 +20,18 @@ API para gerenciamento de petshop, permitindo cadastro de clientes, pets, usuár
 ```
 backend/
 │── backend_app/
+│   ├── controller/       # Rotas da API
+│   ├── docs/             # Documentação dos endpoits separados por rotas e métodos
 │   ├── entities/         # Definição dos objetos das entidades
 │   ├── models/           # Definição dos models do SQLAlchemy
-│   ├── schemas/          # Schemas do Marshmallow
+│   ├── repository/       # Validação de ações no banco de dados
+│   ├── schema_dto/       # Validação de ações da API
 │   ├── services/         # Lógica de negócios
-│   ├── views/            # Rotas da API
 │   ├── utils/            # Funções decoradoras de proteção
 │   ├── config.py         # Configurações da aplicação
 │   ├── __init__.py       # Inicialização da aplicação
 │── migrations/           # Migrações do banco de dados
-│── tests/                # Testes unitários
+│── tests/                # Testes unitários e de integração
 │── run.py                # Ponto de entrada da aplicação
 │── requirements.txt      # Dependências do projeto
 │── README.md             # Documentação do projeto
@@ -181,10 +183,7 @@ Isso garantirá que a API continua funcionando corretamente após modificações
 
 ## 🚀 Próximos Passos
 
-- ✅ Testes unitários criados e API testada
-- ✅ Tratar erros corretamente
 - 📌 Dockerizar a aplicação
-- 📌 Documentar a API (Swagger)
 
 ---
 

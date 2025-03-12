@@ -1,6 +1,6 @@
 from backend_app.models.user_model import User
 from flask_jwt_extended import create_access_token, get_jwt_identity
-from backend_app.schemas.login_schema import LoginSchema
+from backend.backend_app.schema_dto.login_schema_dto import LoginSchema
 from passlib.hash import pbkdf2_sha256
 from datetime import timedelta
 from backend_app import db

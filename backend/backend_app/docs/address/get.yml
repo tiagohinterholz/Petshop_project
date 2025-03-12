@@ -1,0 +1,32 @@
+tags:
+  - Address
+summary: Lista todos os endereços cadastrados
+description: Retorna uma lista com todos os endereços cadastrados no sistema.
+responses:
+  200:
+    description: Sucesso - Retorna a lista de endereços
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          client_id:
+            type: integer
+            example: 10
+          street:
+            type: string
+            example: "Rua das Flores"
+          city:
+            type: string
+            example: "São Paulo"
+          neighborhood:
+            type: string
+            example: "Centro"
+          complement:
+            type: string
+            example: "Apto 101"
+  500:
+    description: Erro interno ao buscar endereços

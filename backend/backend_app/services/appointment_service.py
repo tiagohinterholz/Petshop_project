@@ -1,78 +1,60 @@
-from backend_app import db
+from backend_app.repository.appointment_repository import AppointmentRepository
 from backend_app.models.appointment_model import Appointment
-from backend_app.schemas.appointment_schema import AppointmentSchema
 from marshmallow import ValidationError
 
+class AppointmentService:
+    """Classe responsável pelas regras de negócio dos agendamentos."""
 
-def list_appointments():
-    """Lista todos os agendamentos."""
-    try:
-        appointments = Appointment.query.all()
-        return AppointmentSchema(many=True).dump(appointments), 200 
-    except Exception as e:
-        return {"error": f"Erro ao listar agendamentos: {e}"}, 500
-    
-def register_appointment(appointment_data):
-    """Cadastra um novo agendamento."""
- 
-    schema = AppointmentSchema()
-    
-    try:
-        validated_data = schema.load(appointment_data)
-    except ValidationError as err:
-        return {"error": err.messages}, 400
+    @staticmethod
+    def list_appointments():
+        """Retorna todos os agendamentos."""
+        return AppointmentRepository.list_all(), 200
         
-
-    appointment_db = Appointment(
-        pet_id=validated_data.pet_id,
-        desc_appoint=validated_data.desc_appoint,
-        price=validated_data.price,
-        date_appoint=validated_data.date_appoint
-    )
-    try:
-        db.session.add(appointment_db)
-        db.session.commit()
-        return schema.dump(appointment_db), 201
-    except Exception as e:
-        return {"error": f"Erro ao cadastrar agendamento."}, 500
-
-def list_appointment_id(id):
-    """Busca um agendamento pelo ID."""
-    
-    try:
-        appointment = db.session.get(Appointment, id)
+    @staticmethod
+    def list_appointment_by_id(id):
+        """Retorna um agendamento pelo ID."""
+        appointment = AppointmentRepository.get_by_id(id)
         if not appointment:
             return {"error": "Agendamento não encontrado"}, 404
-        return AppointmentSchema().dump(appointment), 200
-    except Exception as e:
-        return {"error": f"Erro ao buscar agendamento: {str(e)}"}, 500  
+        return appointment, 200
 
-def update_appointment(appointment_db, new_appointment_data):
-    """Atualiza um agendamento."""
-    if not appointment_db:
-        return {"error": "Agendamento não encontrado"}, 404
-    
-    try:
-        appointment_db.pet_id = new_appointment_data["pet_id"]
-        appointment_db.desc_appoint = new_appointment_data["desc_appoint"]
-        appointment_db.price = new_appointment_data["price"]
-        appointment_db.date_appoint = new_appointment_data["date_appoint"]
-        
-        db.session.commit()  
-        return AppointmentSchema().dump(appointment_db), 200 
-    except Exception as e:
-        return {"error": f"Erro ao atualizar agendamento: {str(e)}"}, 500 
-        
-def delete_appointment(id):
-    """Exclui um agendamento."""
-    try:
-        appointment = db.session.get(Appointment, id)
+    @staticmethod
+    def register_appointment(validated_data):
+        """Cadastra um novo agendamento."""
+        try:
+            new_appointment = AppointmentRepository.create(validated_data)
+            return new_appointment, 201
+        except Exception:
+            return {"error": "Erro ao cadastrar agendamento."}, 500
+
+    @staticmethod
+    def update_appointment(id, validated_data):
+        """Atualiza um agendamento."""
+        appointment_db = AppointmentRepository.get_by_id(id)
+        if not appointment_db:
+            return {"error": "Agendamento não encontrado"}, 404
+
+        try:
+            updated_appointment = AppointmentRepository.update(appointment_db, validated_data)
+            return {
+                "id": updated_appointment.id,
+                "pet_id": updated_appointment.pet_id,
+                "desc_appoint": updated_appointment.desc_appoint,
+                "price": updated_appointment.price,
+                "date_appoint": str(updated_appointment.date_appoint)
+            }, 200
+        except Exception:
+            return {"error": "Erro ao atualizar agendamento."}, 500
+
+    @staticmethod
+    def delete_appointment(id):
+        """Exclui um agendamento."""
+        appointment = AppointmentRepository.get_by_id(id)
         if not appointment:
-            return {"error": "Agendamento não encontrado"}, 404  
-        db.session.delete(appointment)
-        db.session.commit()
-        return {"message": "Agendamento deletado com sucesso"}, 200
-    except Exception as e:
-        db.session.rollback()
-        return {"error": f"Erro ao excluir agendamento: {str(e)}"}, 500
-
+            return {"error": "Agendamento não encontrado"}, 404
+        
+        try:
+            AppointmentRepository.delete(appointment)
+            return {"message": "Agendamento deletado com sucesso"}, 200
+        except Exception:
+            return {"error": "Erro ao excluir agendamento."}, 500

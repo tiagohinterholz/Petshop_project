@@ -1,6 +1,6 @@
 from backend_app.models.user_model import User
 from backend_app import db
-from backend_app.schemas.reset_password_schema import ResetPasswordSchema
+from backend.backend_app.schema_dto.reset_password_schema_dto import ResetPasswordSchema
 from flask_jwt_extended import decode_token
 from passlib.hash import pbkdf2_sha256
 

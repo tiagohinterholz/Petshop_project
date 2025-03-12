@@ -1,7 +1,7 @@
 from backend_app import db
 from backend_app.models.contact_model import Contact
 from backend_app.models.client_model import Client
-from backend_app.schemas.contact_schema import ContactSchema 
+from backend.backend_app.repository.contact_repository import ContactSchema 
 from marshmallow import ValidationError
 
 def list_contacts():

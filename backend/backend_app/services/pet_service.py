@@ -1,6 +1,6 @@
 from backend_app import db
 from backend_app.models.pet_model import Pet
-from backend_app.schemas.pet_schema import PetSchema 
+from backend.backend_app.repository.pet_repository import PetSchema 
 from marshmallow import ValidationError
 
 def list_pets():

@@ -2,7 +2,7 @@ from backend_app import ma, db
 from backend_app.models.user_model import User, ProfileEnum
 from marshmallow import fields, validates, ValidationError
 
-class UserSchema(ma.SQLAlchemyAutoSchema):
+class UserRepository(ma.SQLAlchemyAutoSchema):
     
     class Meta:
         model = User

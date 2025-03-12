@@ -4,7 +4,7 @@ from backend_app import api
 from backend_app.services.breed_service import (
     list_breeds, list_breed_id, register_breed, update_breed, delete_breed
 )
-from backend_app.schemas.breed_schema import BreedSchema
+from backend.backend_app.repository.breed_repository import BreedSchema
 from flask_jwt_extended import jwt_required
 from ..utils.decorators import role_required
 

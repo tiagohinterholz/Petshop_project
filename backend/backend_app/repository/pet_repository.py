@@ -2,7 +2,7 @@ from backend_app import ma, db
 from backend_app.models.pet_model import Pet, Client, Breed
 from marshmallow import fields, validates, ValidationError
 
-class PetSchema(ma.SQLAlchemyAutoSchema):
+class PetRepository(ma.SQLAlchemyAutoSchema):
     
     class Meta:
         model = Pet

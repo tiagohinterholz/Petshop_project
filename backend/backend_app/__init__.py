@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
 from flask_jwt_extended import JWTManager
+from flasgger import Swagger
+from backend_app.docs.swagger_config import swagger_config
 
 # Inicializa as extensões, mas sem associar a nenhum app ainda
 db = SQLAlchemy()
@@ -30,23 +32,24 @@ def create_app():
     ma.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
-        
-    # Registro de rotas
-    from .views import (
-        address_view, 
-        appointment_view, 
-        breed_view, 
-        client_view, 
-        contact_view, 
-        forgot_password_view, 
-        login_view, 
-        logout_view, 
-        pet_view, 
-        user_view, 
-        refresh_token_view, 
-        reset_password_view
-    )   
+    swagger = Swagger(app, config=swagger_config)
     
+    # Registro de rotas
+    from .controller import (
+        appointment_controller,
+        address_controller,
+        breed_controller,
+        client_controller,
+        contact_controller,
+        forgot_password_controller,
+        login_controller,
+        logout_controller,
+        pet_controller,
+        refresh_token_controller,
+        reset_password_controller,
+        user_controller
+    )
+       
     api.init_app(app)
     
     from .models import (
@@ -58,5 +61,5 @@ def create_app():
         appointment_model, 
         user_model
     )
-    
+        
     return app

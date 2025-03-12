@@ -1,7 +1,7 @@
 from marshmallow import ValidationError
 from backend_app import db
 from backend_app.models.user_model import User
-from backend_app.schemas.user_schema import UserSchema
+from backend.backend_app.repository.user_repository import UserSchema
 
 def list_users():
     """Retorna todos os usuários cadastrados."""

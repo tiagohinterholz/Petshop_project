@@ -1,6 +1,6 @@
 from backend_app import db
 from backend_app.models.breed_model import Breed
-from backend_app.schemas.breed_schema import BreedSchema
+from backend.backend_app.repository.breed_repository import BreedSchema
 from marshmallow import ValidationError
 
 def list_breeds():

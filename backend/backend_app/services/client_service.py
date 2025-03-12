@@ -1,6 +1,6 @@
 from backend_app import db
 from backend_app.models.client_model import Client
-from backend_app.schemas.client_schema import ClientSchema
+from backend.backend_app.repository.client_repository import ClientSchema
 from datetime import datetime, timezone
 from marshmallow import ValidationError
 

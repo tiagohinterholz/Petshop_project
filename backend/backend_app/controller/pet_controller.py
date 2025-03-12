@@ -4,7 +4,7 @@ from backend_app import api
 from backend_app.services.pet_service import (
     list_pets, list_pet_id, register_pet, update_pet, delete_pet
 )
-from backend_app.schemas.pet_schema import PetSchema
+from backend.backend_app.repository.pet_repository import PetSchema
 from ..utils.decorators import role_required, client_owns_data
 from datetime import datetime
 

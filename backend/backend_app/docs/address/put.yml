@@ -1,0 +1,35 @@
+tags:
+  - Address
+summary: Atualiza um endereço existente
+description: Atualiza os dados de um endereço já cadastrado no sistema.
+parameters:
+  - in: path
+    name: id
+    required: true
+    type: integer
+    description: ID do endereço a ser atualizado
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        street:
+          type: string
+          example: "Rua Nova"
+        city:
+          type: string
+          example: "Rio de Janeiro"
+        neighborhood:
+          type: string
+          example: "Copacabana"
+        complement:
+          type: string
+          example: "Bloco A, Apto 101"
+responses:
+  200:
+    description: Endereço atualizado com sucesso
+  404:
+    description: Endereço não encontrado
+  500:
+    description: Erro ao atualizar endereço

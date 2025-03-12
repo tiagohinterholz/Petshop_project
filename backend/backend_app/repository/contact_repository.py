@@ -1,8 +1,8 @@
 from backend_app import ma, db
 from backend_app.models.contact_model import Contact, Client
-from marshmallow import fields, validates, ValidationError, pre_load
+from marshmallow import fields, validates, ValidationError
 
-class ContactSchema(ma.SQLAlchemyAutoSchema):
+class ContactRepository(ma.SQLAlchemyAutoSchema):
     
     class Meta:
         model = Contact

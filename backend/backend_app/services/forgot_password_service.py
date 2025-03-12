@@ -1,7 +1,7 @@
 import secrets
 from backend_app.models.user_model import User
 from backend_app import db
-from backend_app.schemas.forgot_password_schema import ForgotPasswordSchema
+from backend.backend_app.schema_dto.forgot_password_schema_dto import ForgotPasswordSchema
 from flask_jwt_extended import create_access_token
 from datetime import timedelta
 

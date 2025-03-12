@@ -2,7 +2,7 @@ from backend_app import ma, db
 from backend_app.models.address_model import Address, Client
 from marshmallow import fields, validates, ValidationError
 
-class AddressSchema(ma.SQLAlchemyAutoSchema):
+class AddressRepository(ma.SQLAlchemyAutoSchema):
     
     class Meta:
         model = Address

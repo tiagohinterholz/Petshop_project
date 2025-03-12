@@ -1,0 +1,17 @@
+tags:
+  - Address
+summary: Exclui um endereço
+description: Deleta um endereço do sistema com base no ID fornecido.
+parameters:
+  - in: path
+    name: id
+    required: true
+    type: integer
+    description: ID do endereço a ser excluído
+responses:
+  200:
+    description: Endereço deletado com sucesso
+  404:
+    description: Endereço não encontrado
+  500:
+    description: Erro ao excluir endereço

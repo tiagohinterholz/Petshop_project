@@ -2,7 +2,7 @@ from backend_app import ma, db
 from backend_app.models.client_model import Client, User
 from marshmallow import fields, validates, ValidationError
 
-class ClientSchema(ma.SQLAlchemyAutoSchema):
+class ClientRepository(ma.SQLAlchemyAutoSchema):
     
     class Meta:
         model = Client
