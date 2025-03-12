@@ -1,4 +1,4 @@
-from backend_app import ma, db
+from backend_app import db
 from backend_app.models.appointment_model import Appointment
 
 class AppointmentRepository:
@@ -36,9 +36,11 @@ class AppointmentRepository:
         appointment.date_appoint = new_data["date_appoint"]
         """Confirma as alterações no banco de dados."""
         db.session.commit()
+        return appointment
 
     @staticmethod
     def delete(appointment):
         """Exclui um agendamento."""
         db.session.delete(appointment)
         db.session.commit()
+        return True

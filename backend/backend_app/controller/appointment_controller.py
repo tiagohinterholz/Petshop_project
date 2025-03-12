@@ -9,12 +9,11 @@ from backend_app.schema_dto.appointment_schema_dto import AppointmentSchemaDTO
 from marshmallow import ValidationError
 
     
-def get_pet_id(id):
+def get_appointment_id(id):
     appointment = list_appointment_id(id)
     if appointment and isinstance(appointment[0], dict):
-        return appointment[0].get("pet_id")
+        return appointment[0].get("appointment_id")
     return None
-
 
 class AppointmentList(Resource):
     @role_required('admin')
@@ -36,13 +35,13 @@ class AppointmentList(Resource):
 
 class AppointmentDetail(Resource):
     
-    @client_owns_data(get_pet_id)
+    @client_owns_data(get_appointment_id)
     def get(self, id):
         """Buscar atendimento pelo ID"""
         appointment, status = list_appointment_id(id)        
         return make_response(jsonify(appointment), status)
 
-    @client_owns_data(get_pet_id)
+    @client_owns_data(get_appointment_id)
     def put(self, id):
         """Atualizar atendimento por ID"""
         appointment_db, status = list_appointment_id(id)

@@ -6,6 +6,15 @@ from backend_app.services.address_service import (
 )
 from ..utils.decorators import role_required, client_owns_data
 from flasgger import swag_from
+from backend_app.schema_dto.address_schema_dto import AddressSchemaDTO
+from marshmallow import ValidationError
+
+def get_address_id(id):
+    address = list_address_id(id)
+    if address and isinstance(address[0], dict):
+        return address[0].get("address_id")
+    return None
+
 class AddressList(Resource):
     @swag_from("../docs/address/get.yml")
     @role_required('admin')
@@ -18,27 +27,35 @@ class AddressList(Resource):
     @role_required('client')
     def post(self):        
         """Cadastrar novo endereço"""
-        new_address, status = register_address(request.json)  # Garantir que retorna um status válido    
-        return make_response(jsonify(new_address), status)
+        try:
+            schema_dto = AddressSchemaDTO().load(request.json)
+            new_address, status = register_address(schema_dto)
+            return make_response(jsonify(new_address), status)
+        except ValidationError as err:
+            return {"error": err.messages}, 400
 
 class AddressDetail(Resource):
     @swag_from("../docs/address/get_id.yml")
-    @client_owns_data(lambda id: list_address_id(id)[0].get("client_id") if isinstance(list_address_id(id)[0], dict) else None)
+    @client_owns_data(get_address_id)
     def get(self, id):
         """Buscar endereço pelo ID"""
         address, status = list_address_id(id)
         return make_response(jsonify(address), status)
 
     @swag_from("../docs/address/put.yml")
-    @client_owns_data(lambda id: list_address_id(id)[0].get("client_id") if isinstance(list_address_id(id)[0], dict) else None)
+    @client_owns_data(get_address_id)
     def put(self, id):
         """Atualizar endereço por ID"""
         address_db, status = list_address_id(id)
         if status != 200:
             return make_response(jsonify(address_db), status)
         
-        updated_address, status = update_address(address_db, request.json)
-        return make_response(jsonify(updated_address), status)
+        try:
+            schema_dto = AddressSchemaDTO().load(request.json)
+            updated_address, status = update_address(address_db, schema_dto)        
+            return make_response(jsonify(updated_address), status)
+        except ValidationError as err:
+            return {"error": err.messages}, 400  
     
     @swag_from("../docs/address/delete.yml")
     @role_required('admin')

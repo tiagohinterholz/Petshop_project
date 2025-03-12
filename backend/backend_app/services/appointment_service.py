@@ -1,6 +1,5 @@
 from backend_app.repository.appointment_repository import AppointmentRepository
-from backend_app.models.appointment_model import Appointment
-from marshmallow import ValidationError
+from backend_app.repository.pet_repository import PetRepository
 
 class AppointmentService:
     """Classe responsável pelas regras de negócio dos agendamentos."""
@@ -13,6 +12,7 @@ class AppointmentService:
     @staticmethod
     def list_appointment_by_id(id):
         """Retorna um agendamento pelo ID."""
+        
         appointment = AppointmentRepository.get_by_id(id)
         if not appointment:
             return {"error": "Agendamento não encontrado"}, 404
@@ -21,6 +21,11 @@ class AppointmentService:
     @staticmethod
     def register_appointment(validated_data):
         """Cadastra um novo agendamento."""
+        
+        pet = PetRepository.get_by_id(validated_data["pet_id"])
+        if not pet:
+            return {"error": "O pet informado não existe."}, 400
+        
         try:
             new_appointment = AppointmentRepository.create(validated_data)
             return new_appointment, 201
@@ -33,16 +38,14 @@ class AppointmentService:
         appointment_db = AppointmentRepository.get_by_id(id)
         if not appointment_db:
             return {"error": "Agendamento não encontrado"}, 404
+        
+        pet = PetRepository.get_by_id(validated_data["pet_id"])
+        if not pet:
+            return {"error": "O pet informado não existe."}, 400
 
         try:
             updated_appointment = AppointmentRepository.update(appointment_db, validated_data)
-            return {
-                "id": updated_appointment.id,
-                "pet_id": updated_appointment.pet_id,
-                "desc_appoint": updated_appointment.desc_appoint,
-                "price": updated_appointment.price,
-                "date_appoint": str(updated_appointment.date_appoint)
-            }, 200
+            return updated_appointment, 200
         except Exception:
             return {"error": "Erro ao atualizar agendamento."}, 500
 
@@ -54,7 +57,8 @@ class AppointmentService:
             return {"error": "Agendamento não encontrado"}, 404
         
         try:
-            AppointmentRepository.delete(appointment)
-            return {"message": "Agendamento deletado com sucesso"}, 200
+            success = AppointmentRepository.delete(appointment)
+            if success:
+                return {"message": "Agendamento deletado com sucesso"}, 200
         except Exception:
             return {"error": "Erro ao excluir agendamento."}, 500
