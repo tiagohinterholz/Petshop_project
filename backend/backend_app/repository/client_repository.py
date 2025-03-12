@@ -1,24 +1,48 @@
-from backend_app import ma, db
-from backend_app.models.client_model import Client, User
-from marshmallow import fields, validates, ValidationError
+from backend_app import db
+from backend_app.models.client_model import Client
+from datetime import datetime, timezone
 
-class ClientRepository(ma.SQLAlchemyAutoSchema):
+class ClientRepository:
     
-    class Meta:
-        model = Client
-        load_instance = True
-        fields = ("id", "name", "cpf", "register_date")
-    
-    name = fields.String(required=True)
-    cpf = fields.String(required=True, metadata={"unique": True})
-    register_date = fields.Date(required=True)
-    
-    @validates('cpf')
-    def validate_cpf(self, value):
-        existing_client = db.session.query(Client).filter_by(cpf=value).first()
-        if existing_client: # verifica se ja existe CPF cadastrado
-            raise ValidationError("CPF já cadastrado para outro cliente.")
+    @staticmethod
+    def get_client_by_cpf(cpf):
+        return db.session.query(Client).filter_by(cpf=cpf).first()
 
-        existing_user = db.session.query(User).filter_by(cpf=value).first()
-        if not existing_user: # veriffica se existe um CPF livre como USER mas nao como CLIENT para fazer o cadastro
-            raise ValidationError("Não existe um usuário cadastrado com esse CPF.")
+    @staticmethod
+    def list_all():
+        """Lista todos clientes."""
+        return Client.query.all()
+
+    @staticmethod
+    def get_by_id(id):
+        """Busca um cliente pelo ID."""
+        return db.session.get(Client, id)
+
+    @staticmethod
+    def create(validated_data):
+        """Cria um novo cliente."""
+        new_client = Client(
+            name=validated_data["name"],
+            cpf=validated_data["cpf"],
+            register_date = datetime.now(timezone.utc).date()
+            )
+        db.session.add(new_client)
+        db.session.commit()
+        return new_client
+    
+    @staticmethod
+    def update(client, new_data):
+        """Atualiza um cliente no banco de dados."""
+        client.name = new_data["name"],
+        client.cpf = new_data["cpf"],
+        client.register_date = datetime.now(timezone.utc).date()
+        """Confirma as alterações no banco de dados."""
+        db.session.commit()
+        return client
+
+    @staticmethod
+    def delete(client):
+        """Exclui um cliente."""
+        db.session.delete(client)
+        db.session.commit()
+        return True

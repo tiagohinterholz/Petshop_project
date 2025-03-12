@@ -13,7 +13,7 @@ class BreedService:
         
         breed = BreedRepository.get_by_id(id)
         if not breed:
-            return {"error": "Raça não encontrado"}, 404
+            return {"error": "Raça não encontrada"}, 404
         return breed, 200
     
     @staticmethod

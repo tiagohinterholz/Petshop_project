@@ -19,7 +19,7 @@ class AppointmentList(Resource):
     @role_required('admin')
     def get(self):
         """Listar todos os atendimentos"""
-            
+        
         appointments, status = list_appointments()
         return make_response(jsonify(appointments), status)
 
