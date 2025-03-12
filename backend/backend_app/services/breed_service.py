@@ -1,70 +1,60 @@
-from backend_app import db
-from backend_app.models.breed_model import Breed
-from backend.backend_app.repository.breed_repository import BreedSchema
-from marshmallow import ValidationError
+from backend.backend_app.repository.breed_repository import BreedRepository
 
-def list_breeds():
-    """Lista todas as raças."""
-    try:
-        breeds = Breed.query.all()
-        return BreedSchema(many=True).dump(breeds), 200
-    except Exception as e:
-        return {"error": f"Erro ao listar raças: {str(e)}"}, 500
-    
-def register_breed(breed_data):
-    """Cadastra uma nova raça."""
-    
-    schema = BreedSchema()
-    
-    try:
-        validated_data = schema.load(breed_data)
-    except ValidationError as err:
-        return {"error": err.messages}, 400
-    
-    try:         
-        breed_db = Breed(description=validated_data.description)
-        db.session.add(breed_db)
-        db.session.commit()
-        return schema.dump(breed_db), 201
-    except Exception as e:
-        db.session.rollback()  # Evita inconsistências no banco
-        return {"error": f"Erro ao cadastrar raça: {str(e)}"}, 500
+class BreedService:
 
-def list_breed_id(id):
-    """Busca uma raça pelo ID."""
-    try:
-        breed = db.session.query.get(Breed, id)
+    @staticmethod
+    def list_breeds():
+        """Lista todas as raças."""
+        return BreedRepository.list_all(), 200
+    
+    @staticmethod
+    def list_breed_by_id(id):
+        """Busca uma raça pelo ID."""
+        
+        breed = BreedRepository.get_by_id(id)
         if not breed:
-            return {"error": "Raça não encontrada"}, 404 
-        return BreedSchema().dump(breed), 200  
-    except Exception as e:
-        return {"error": f"Erro ao buscar raça: {str(e)}"}, 500
+            return {"error": "Raça não encontrado"}, 404
+        return breed, 200
     
-def update_breed(breed_db, new_breed_data):
-    """Atualiza uma raça."""
-    if not breed_db:
-        return {"error": "Raça não encontrada"}, 404  
+    @staticmethod
+    def register_breed(validated_data):
+        """Cadastra uma nova raça."""
+       
+        existing_breed = BreedRepository.get_by_description(validated_data["description"])
+        if existing_breed:
+            return {"error": "Já existe uma raça cadastrada com essa descrição."}, 400
+        
+        try:         
+            new_breed = BreedRepository.create(validated_data)
+            return new_breed, 201
+        except Exception:
+            return {"error": f"Erro ao cadastrar raça."}, 500
+    
+    @staticmethod
+    def update_breed(id, validated_data):
+        """Atualiza uma raça."""
+        breed_db = BreedRepository.get_by_id(id)
+        if not breed_db:
+            return {"error": "Raça não encontrada"}, 404  
 
-    try:
-        breed_db.description = new_breed_data["description"]
-        db.session.commit()  
-        return BreedSchema().dump(breed_db), 200 
-    except Exception as e:
-        db.session.rollback()
-        return {"error": f"Erro ao atualizar raça: {str(e)}"}, 500
+        try:
+            updated_breed = BreedRepository.update(breed_db, validated_data)
+            return updated_breed, 200
+        except Exception:
+            return {"error": f"Erro ao atualizar raça."}, 500
 
-def delete_breed(id):
-    """Exclui uma raça."""
-    try:
-        breed = db.session.get(Breed, id)
+    @staticmethod
+    def delete_breed(id):
+        """Exclui uma raça."""
+        
+        breed = BreedRepository.get_by_id(id)
         if not breed:
             return {"error": "Raça não encontrada"}, 404
         
-        db.session.delete(breed)
-        db.session.commit()
-        return {"message": "Raça deletado com sucesso"}, 200
-
-    except Exception as e:
-        db.session.rollback()
-        return {"error": f"Erro ao excluir raça: {str(e)}"}, 500
+        try:
+            success = BreedRepository.delete(breed)
+            if success:
+                return {"message": "Raça deletada com sucesso"}, 200
+        except Exception:
+            return {"error": "Erro ao excluir raça."}, 500
 
