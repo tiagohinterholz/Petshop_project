@@ -15,12 +15,16 @@ migrate = Migrate()
 api = Api()
 jwt = JWTManager()
 
-def create_app():
+def create_app(env="development"):
     """Cria e configura o aplicativo Flask"""
     app = Flask(__name__)
 
-    # Carregar configuração correta baseado no ambiente
-    if os.getenv("TESTING") == "True":
+    # Define a variável de ambiente automaticamente
+    os.environ["FLASK_ENV"] = env
+    os.environ["TESTING"] = "True" if env == "testing" else "False"
+
+    # Carrega a configuração correta
+    if env == "testing":
         from backend_app.config_test import TestConfig
         app.config.from_object(TestConfig)
     else:
