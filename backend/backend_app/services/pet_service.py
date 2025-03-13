@@ -3,7 +3,6 @@ from backend_app.models.pet_model import Pet
 from backend.backend_app.repository.pet_repository import PetRepository
 from backend.backend_app.repository.breed_repository import BreedRepository
 from backend.backend_app.repository.client_repository import ClientRepository
-from marshmallow import ValidationError
 
 class PetService:
     

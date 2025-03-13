@@ -1,72 +1,46 @@
-from marshmallow import ValidationError
-from backend_app import db
-from backend_app.models.user_model import User
-from backend.backend_app.repository.user_repository import UserSchema
+from backend.backend_app.repository.user_repository import UserRepository
 
-def list_users():
-    """Retorna todos os usuários cadastrados."""
-    try:
-        users = User.query.all()
-        return UserSchema(many=True).dump(users), 200
-    except Exception as e:
-        return {"error": f"Erro ao listar usuários: {str(e)}"}, 500
+class UserService:
+    def list_users():
+        """Lista todos os pets cadastrados."""
+        return UserRepository.list_all(), 200
 
-def register_user(user_data):
-    """Cadastra um novo usuário."""
-    schema = UserSchema()
-    
-    try:
-        validated_data = schema.load(user_data)
-    except ValidationError as err:
-        return {"error": err.messages}, 400
-    
-    user_db = User(
-        cpf=validated_data.cpf, 
-        name=validated_data.name, 
-        profile=validated_data.profile.value.upper(), 
-        password=validated_data.password
-    )
-    user_db.encrypt_password()
-    
-    try:
-        db.session.add(user_db)
-        db.session.commit()
-        return schema.dump(user_db), 201  # Retorna os dados sem a senha
-    except Exception as e:
-        db.session.rollback()  # Evita inconsistências no banco
-        return {"error": f"Erro ao cadastrar usuário: {str(e)}"}, 500
-
-def list_user_id(cpf):
-    """Busca usuário pelo CPF."""
-    user = db.session.get(User, cpf)  
-    if not user:
-        return {"error": "Usuário não encontrado"}, 404
-    return UserSchema().dump(user), 200  
-
-def update_user(user_db, new_user_data):
-    """Atualiza um usuário."""
-    if not user_db:
-        return {"error": "Usuário não encontrado"}, 404  
-    
-    user_db.name = new_user_data["name"]
-    if "password" in new_user_data:
-        user_db.password = new_user_data["password"]
-        user_db.encrypt_password() # Já deve estar encriptada no schema
-        
-    db.session.commit()
-    return UserSchema().dump(user_db), 200 
-
-def delete_user(cpf):
-    """Exclui um usuário pelo CPF."""
-    try:
-        user = db.session.get(User, cpf)
+    def list_user_id(cpf):
+        """Busca usuário pelo CPF."""
+        user = UserRepository.get_user_by_cpf(cpf)
         if not user:
-            return {"error": "Usuário inexistente."}, 404
+            return {"error": "User não encontrado"}, 404
+        return user, 200 
+
+    def register_user(validated_data):
+        """Cadastra um novo usuário."""
+        try:
+            new_user = UserRepository.create(validated_data)
+            return new_user, 201 
+        except Exception:
+            return {"error": "Erro ao cadastrar Pet"}, 500
+
+    def update_user(cpf, validated_data):
+        """Atualiza um usuário."""
+        user_db = UserRepository.get_user_by_cpf(cpf)
+        if not user_db:
+            return {"error": "Usuário não encontrado"}, 404  
         
-        db.session.delete(user)
-        db.session.commit()
-        
-        return {"message": "Usuário deletado com sucesso"}, 200  # Agora retorna um JSON
-    except Exception as e:
-        db.session.rollback()
-        return {"error": f"Erro ao excluir usuário: {str(e)}"}, 500
+        try:
+            updated_user = UserRepository.update(user_db, validated_data)
+            return updated_user, 200
+        except Exception:
+            return {"error": "Erro ao atualizar User."}
+
+    def delete_user(cpf):
+        """Exclui um usuário pelo CPF."""
+        user = UserRepository.get_user_by_cpf(cpf)
+        if not user:
+            return {"error": "User não encontrado"}, 404  
+
+        try:
+            success = UserRepository.delete(user)
+            if success:
+                return {"message": "User deletado com sucesso"}, 200
+        except Exception:
+            return {"error": "Erro ao excluir user."}, 500
