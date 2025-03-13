@@ -47,7 +47,7 @@ class ClientDetail(Resource):
         
         try:
             schema_dto = ClientSchemaDTO().load(request.json)
-            updated_client, status = updated_client(client_db, schema_dto)
+            updated_client, status = ClientService.updated_client(client_db, schema_dto)
             return make_response(jsonify(updated_client), status)
         except ValidationError as err:
             return {"error": err.messages}, 400

@@ -2,7 +2,7 @@ from flask import request, jsonify, make_response
 from flask_restful import Resource
 from backend_app import api
 from backend_app.services.pet_service import PetService
-from backend.backend_app.schema_dto.pet_schema_dto import PetSchemaDTO
+from backend_app.schema_dto.pet_schema_dto import PetSchemaDTO
 from ..utils.decorators import role_required, client_owns_data
 from marshmallow import ValidationError
 from flasgger import swag_from
@@ -25,7 +25,7 @@ class PetList(Resource):
         """Cadastrar novo pet"""
         try:
             schema_dto = PetSchemaDTO().load(request.json)
-            new_pet, status = PetService.register_pet(schema_dto)
+            new_pet, status = PetService.update(schema_dto)
             return make_response(jsonify(new_pet), status)
         except ValidationError as err:
             return {"error": err.messages}, 400 
@@ -46,7 +46,7 @@ class PetDetail(Resource):
 
         try:
             schema_dto = PetSchemaDTO().load(request.json)
-            updated_pet, status = PetService.register_pet(schema_dto)
+            updated_pet, status = PetService.register(schema_dto)
             return make_response(jsonify(updated_pet), status)
         except ValidationError as err:
             return {"error": err.messages}, 400 
@@ -54,7 +54,7 @@ class PetDetail(Resource):
     @role_required('admin')
     def delete(self, id):
         """Excluir pet por ID"""
-        response, status = PetService.delete_pet(id)
+        response, status = PetService.delete(id)
         return make_response(jsonify(response), status)
 
 api.add_resource(PetList, '/pets')

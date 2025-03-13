@@ -1,4 +1,4 @@
-from backend.backend_app.repository.user_repository import UserRepository
+from backend_app.repository.user_repository import UserRepository
 
 class UserService:
     def list_users():
@@ -12,7 +12,7 @@ class UserService:
             return {"error": "User não encontrado"}, 404
         return user, 200 
 
-    def register_user(validated_data):
+    def register(validated_data):
         """Cadastra um novo usuário."""
         try:
             new_user = UserRepository.create(validated_data)
@@ -20,7 +20,7 @@ class UserService:
         except Exception:
             return {"error": "Erro ao cadastrar Pet"}, 500
 
-    def update_user(cpf, validated_data):
+    def update(cpf, validated_data):
         """Atualiza um usuário."""
         user_db = UserRepository.get_user_by_cpf(cpf)
         if not user_db:
@@ -32,7 +32,7 @@ class UserService:
         except Exception:
             return {"error": "Erro ao atualizar User."}
 
-    def delete_user(cpf):
+    def delete(cpf):
         """Exclui um usuário pelo CPF."""
         user = UserRepository.get_user_by_cpf(cpf)
         if not user:

@@ -9,7 +9,7 @@ API para gerenciamento de petshop, permitindo cadastro de clientes, pets, usuár
 - **Backend**: Flask (Flask-RESTful, Flask-JWT-Extended, Flask-Migrate, Flask-SQLAlchemy, Flask-Marshmallow)
 - **Banco de Dados**: PostgreSQL
 - **Autenticação**: JWT (JSON Web Token)
-- **Testes**: Pytest, Flask-Testing
+- **Testes**: Pytest
 - **Containerização**: Docker (planejado para implementação futura)
 - **Documentação**: Flassger (Swagger integrado ao Flask)
 
@@ -25,8 +25,8 @@ backend/
 │   ├── entities/         # Definição dos objetos das entidades
 │   ├── models/           # Definição dos models do SQLAlchemy
 │   ├── repository/       # Validação de ações no banco de dados
-│   ├── schema_dto/       # Validação de ações da API
-│   ├── services/         # Lógica de negócios
+│   ├── schema_dto/       # Validação do payload da API
+│   ├── services/         # Lógica das Regras de negócios
 │   ├── utils/            # Funções decoradoras de proteção
 │   ├── config.py         # Configurações da aplicação
 │   ├── __init__.py       # Inicialização da aplicação

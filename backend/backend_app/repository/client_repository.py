@@ -33,8 +33,8 @@ class ClientRepository:
     @staticmethod
     def update(client, new_data):
         """Atualiza um cliente no banco de dados."""
-        client.name = new_data["name"],
-        client.cpf = new_data["cpf"],
+        client.name = new_data["name"]
+        client.cpf = new_data["cpf"]
         client.register_date = datetime.now(timezone.utc).date()
         """Confirma as alterações no banco de dados."""
         db.session.commit()

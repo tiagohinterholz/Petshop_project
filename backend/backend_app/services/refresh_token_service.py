@@ -1,5 +1,5 @@
 from flask_jwt_extended import create_refresh_token, get_jwt_identity
-from backend.backend_app.schema_dto.refresh_token_schema_dto import RefreshTokenSchema
+from backend_app.schema_dto.refresh_token_schema_dto import RefreshTokenSchema
 
 def generate_refresh_token(data):
     """Gera um novo refresh token para o usuário autenticado."""

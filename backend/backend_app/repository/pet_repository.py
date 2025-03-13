@@ -7,7 +7,7 @@ class PetRepository:
         """Lista todos pets."""
         return Pet.query.all()
     
-    staticmethod
+    @staticmethod
     def create(validated_data):
         """Cria um novo pet."""
         new_pet = Pet(

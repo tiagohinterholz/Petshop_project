@@ -44,3 +44,12 @@ class UserRepository:
         db.session.delete(user)
         db.session.commit()
         return True
+    
+    @staticmethod
+    def update_password(user, new_password):
+        """Atualiza a senha de um usuário."""
+        user.password = new_password
+        db.session.commit()
+        return user
+    
+    

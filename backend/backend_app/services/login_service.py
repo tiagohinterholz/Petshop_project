@@ -1,13 +1,14 @@
 from backend_app.models.user_model import User
 from flask_jwt_extended import create_access_token, get_jwt_identity
-from backend.backend_app.schema_dto.login_schema_dto import LoginSchema
+from backend_app.schema_dto.login_schema_dto import LoginSchemaDTO
+from backend_app.repository.user_repository import UserRepository
 from passlib.hash import pbkdf2_sha256
 from datetime import timedelta
 from backend_app import db
 
 def authenticate_user(data):
     """Autentica o user verificando cpf e senha"""
-    validation_errors = LoginSchema.validate_login(data)
+    validation_errors = LoginSchemaDTO.validate_login(data)
     if validation_errors:
         return validation_errors
     
@@ -15,7 +16,7 @@ def authenticate_user(data):
     password = data.get("password")
     
     # Buscar usuário no banco de dados
-    user = db.session.query(User).filter_by(cpf=cpf).first()
+    user = UserRepository.get_user_by_cpf(cpf)
     
     if not user or not pbkdf2_sha256.verify(password, user.password):
         return {"error": "CPF ou senha inválidos"}, 401
