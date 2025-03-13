@@ -1,7 +1,5 @@
-from backend_app.models.client_model import Client
-from backend.backend_app.repository.client_repository import ClientRepository
-from backend.backend_app.repository.user_repository import UserRepository
-from datetime import datetime, timezone
+from backend_app.repository.client_repository import ClientRepository
+from backend_app.repository.user_repository import UserRepository
 
 class ClientService:
     
@@ -11,7 +9,7 @@ class ClientService:
         return ClientRepository.list_all(), 200  
     
     @staticmethod
-    def list_client_by_id(id):
+    def list_client_id(id):
         """Buscar um cliente pelo ID."""
         
         client = ClientRepository.get_by_id(id)
@@ -35,7 +33,7 @@ class ClientService:
             new_client = ClientRepository.create(validated_data)
             return new_client, 201 
         except Exception:
-            return {"error": f"Erro ao cadastrar cliente."}, 500
+            return {"error": "Erro ao cadastrar cliente."}, 500
             
     def update_client(id, validated_data):
         """Atualizar um cliente."""
@@ -55,7 +53,7 @@ class ClientService:
             updated_client = ClientRepository.update_client(client_db, validated_data)
             return updated_client, 200
         except Exception:
-            return {"error": f"Erro ao atualizar cliente."}, 500
+            return {"error": "Erro ao atualizar cliente."}, 500
             
     def delete_client(id):
         """Excluir um cliente."""

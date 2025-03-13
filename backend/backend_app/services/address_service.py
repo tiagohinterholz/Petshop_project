@@ -1,5 +1,5 @@
-from backend.backend_app.repository.address_repository import AddressRepository
-from backend.backend_app.repository.client_repository import ClientRepository
+from backend_app.repository.address_repository import AddressRepository
+from backend_app.repository.client_repository import ClientRepository
 class AddressService:
 
     @staticmethod
@@ -8,7 +8,7 @@ class AddressService:
         return AddressRepository.list_all(), 200
     
     @staticmethod
-    def list_address_by_id(id):
+    def list_address_id(id):
         """Retorna um endereço pelo ID."""
         address = AddressRepository.get_by_id(id)
         if not address:
@@ -20,7 +20,7 @@ class AddressService:
         """Cadastra um novo endereço para um cliente."""
         client = ClientRepository.get_by_id(validated_data["client_id"])
         if not client:
-            return {"error": "O cliente informado não existe."}, 400
+            return {"error": "Cliente informado não existe."}, 400
                
         try:
             new_address = AddressRepository.create(validated_data)

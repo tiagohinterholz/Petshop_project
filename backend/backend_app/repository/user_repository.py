@@ -5,10 +5,9 @@ class UserRepository:
     
    
     
-    @validates('profile')
     def validate_profile(self, value):
         if value == ProfileEnum.ADMIN:
-            raise ValidationError("Não é permitido criar um usuário ADMIN")
+            raise Exception ("Não é permitido criar um usuário ADMIN")
     
     def get_user_by_cpf(cpf):
         return db.session.query(User).filter_by(cpf=cpf).first()

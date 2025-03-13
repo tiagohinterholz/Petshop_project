@@ -10,7 +10,7 @@ class AppointmentService:
         return AppointmentRepository.list_all(), 200
         
     @staticmethod
-    def list_appointment_by_id(id):
+    def list_appointment_id(id):
         """Retorna um agendamento pelo ID."""
         
         appointment = AppointmentRepository.get_by_id(id)

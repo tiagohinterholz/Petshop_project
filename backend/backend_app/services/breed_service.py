@@ -1,4 +1,4 @@
-from backend.backend_app.repository.breed_repository import BreedRepository
+from backend_app.repository.breed_repository import BreedRepository
 
 class BreedService:
 
@@ -8,7 +8,7 @@ class BreedService:
         return BreedRepository.list_all(), 200
     
     @staticmethod
-    def list_breed_by_id(id):
+    def list_breed_id(id):
         """Busca uma raça pelo ID."""
         
         breed = BreedRepository.get_by_id(id)
@@ -28,7 +28,7 @@ class BreedService:
             new_breed = BreedRepository.create(validated_data)
             return new_breed, 201
         except Exception:
-            return {"error": f"Erro ao cadastrar raça."}, 500
+            return {"error": "Erro ao cadastrar raça."}, 500
     
     @staticmethod
     def update_breed(id, validated_data):

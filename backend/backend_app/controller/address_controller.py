@@ -1,16 +1,14 @@
 from flask import request, jsonify, make_response
 from flask_restful import Resource
 from backend_app import api
-from backend_app.services.address_service import (
-    list_addresses, list_address_id, register_address, update_address, delete_address
-)
+from backend_app.services.address_service import AddressService
 from ..utils.decorators import role_required, client_owns_data
 from flasgger import swag_from
 from backend_app.schema_dto.address_schema_dto import AddressSchemaDTO
 from marshmallow import ValidationError
 
 def get_address_id(id):
-    address = list_address_id(id)
+    address = AddressService.list_address_id(id)
     if address and isinstance(address[0], dict):
         return address[0].get("address_id")
     return None
@@ -20,7 +18,7 @@ class AddressList(Resource):
     @role_required('admin')
     def get(self):
         """Listar todos os endereços"""
-        addresses, status = list_addresses()
+        addresses, status = AddressService.list_addresses()
         return make_response(jsonify(addresses), status)
 
     @swag_from("../docs/address/post.yml")
@@ -29,7 +27,7 @@ class AddressList(Resource):
         """Cadastrar novo endereço"""
         try:
             schema_dto = AddressSchemaDTO().load(request.json)
-            new_address, status = register_address(schema_dto)
+            new_address, status = AddressService.register_address(schema_dto)
             return make_response(jsonify(new_address), status)
         except ValidationError as err:
             return {"error": err.messages}, 400
@@ -39,20 +37,20 @@ class AddressDetail(Resource):
     @client_owns_data(get_address_id)
     def get(self, id):
         """Buscar endereço pelo ID"""
-        address, status = list_address_id(id)
+        address, status = AddressService.list_address_id(id)
         return make_response(jsonify(address), status)
 
     @swag_from("../docs/address/put.yml")
     @client_owns_data(get_address_id)
     def put(self, id):
         """Atualizar endereço por ID"""
-        address_db, status = list_address_id(id)
+        address_db, status = AddressService.list_address_id(id)
         if status != 200:
             return make_response(jsonify(address_db), status)
         
         try:
             schema_dto = AddressSchemaDTO().load(request.json)
-            updated_address, status = update_address(address_db, schema_dto)        
+            updated_address, status = AddressService.update_address(address_db, schema_dto)        
             return make_response(jsonify(updated_address), status)
         except ValidationError as err:
             return {"error": err.messages}, 400  
@@ -61,7 +59,7 @@ class AddressDetail(Resource):
     @role_required('admin')
     def delete(self, id):
         """Excluir endereço por ID"""
-        response, status = delete_address(id)
+        response, status = AddressService.delete_address(id)
         return make_response(jsonify(response), status)
 
 api.add_resource(AddressList, '/addresses')

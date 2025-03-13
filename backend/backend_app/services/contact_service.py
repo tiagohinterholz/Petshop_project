@@ -1,76 +1,57 @@
-from backend_app import db
-from backend_app.models.contact_model import Contact
-from backend_app.models.client_model import Client
-from backend.backend_app.repository.contact_repository import ContactSchema 
-from marshmallow import ValidationError
+from backend_app.repository.contact_repository import ContactRepository
+from backend_app.repository.client_repository import ClientRepository
+class ContactService:
 
-def list_contacts():
-    """Lista todos os contatos."""
-    try:
-        contacts = Contact.query.all()
-        return ContactSchema(many=True).dump(contacts), 200
-    except Exception as e:
-        return {'error': f'Erro ao listar contatos: {e}'}, 500
-        
-def register_contact(contact_data):
-    """Cadastra um novo contato."""
+    @staticmethod
+    def list_contacts():
+        """Lista todos os contatos."""
+        return ContactRepository.list_all(), 200
     
-    schema = ContactSchema()
-    
-    try:
-        validated_data = schema.load(contact_data)
-    except ValidationError as err:
-        return {"error": err.messages}, 400
-    
-    
-    try: 
-        contact_db = Contact(
-            client_id=validated_data.client_id,
-            type_contact=validated_data.type_contact,
-            value_contact=validated_data.value_contact
-        )
-        db.session.add(contact_db)
-        print("[DEBUG] Salvando contato no banco:", contact_db)
-        db.session.commit()  
-        return ContactSchema().dump(contact_db), 201 
-    except Exception as e:
-        db.session.rollback()  # Evita inconsistências no banco
-        return {"error": f"Erro ao cadastrar contato: {str(e)}"}, 500
-        
-def list_contact_id(id):
-    """Busca um contato pelo ID."""
-    try:
-        contact = db.session.get(Contact, id)
+    def list_contact_id(id):
+        """Busca um contato pelo ID."""
+        contact = ContactRepository.get_by_id(id)
         if not contact:
             return {"error": "Contato não encontrado"}, 404
-        return ContactSchema().dump(contact), 200  
-    except Exception as e:
-        return {"error": f"Erro ao buscar contato: {str(e)}"}, 500
+        return contact, 200
+            
+    def register_contact(validated_data):
+        """Cadastra um novo contato."""
         
-def update_contact(contact_db, new_contact_data):
-    """Atualiza um contato."""
-    if not contact_db:
-        return {"error": "Contato não encontrado"}, 404  
+        existing_client = ClientRepository.get_by_id(validated_data["id"])
+        if not existing_client: # verifica se ja existe CPF cadastrado
+            return {"error":"Cliente informado não cadastrado."}, 400        
+        
+        try: 
+            new_contact = ContactRepository.create(validated_data)
+            return new_contact, 201
+        except Exception:
+            return {"error": "Erro ao cadastrar contato."}, 500
+            
+    def update_contact(id, validated_data):
+        """Atualiza um contato."""
+        contact_db = ContactRepository.get_by_id(id)
+        if not contact_db:
+            return {"error": "Contato não encontrado"}, 404
+        
+        existing_client = ClientRepository.get_by_id(validated_data["id"])
+        if not existing_client: # verifica se ja existe CPF cadastrado
+            return {"error":"Cliente informado não cadastrado."}, 400  
 
-    try:
-        contact_db.type_contact = new_contact_data["type_contact"]
-        contact_db.value_contact = new_contact_data["value_contact"]
-        db.session.commit()  
-        return ContactSchema().dump(contact_db), 200
-    except Exception as e:
-        db.session.rollback()
-        return {"error": f"Erro ao atualizar contato: {e}"}
+        try:
+            updated_contact = ContactRepository.update_contact(contact_db, validated_data)
+            return updated_contact, 200
+        except Exception:
+            return {"error": "Erro ao atualizar contato."}, 500
 
-def delete_contact(id):
-    """Exclui um contato."""
-    try:
-        contact = db.session.get(Contact, id)
+    def delete_contact(id):
+        """Exclui um contato."""
+        contact = ContactRepository.get_by_id(id)
         if not contact:
             return {"error": "Contato não encontrado"}, 404  
 
-        db.session.delete(contact)
-        db.session.commit()
-        return {"message": "Contato deletado com sucesso"}, 200
-    except Exception as e: 
-        db.session.rollback()
-        return {"error": f"Erro ao deletar contato: {e}"}, 500 
+        try:
+            success = ContactRepository.delete(contact)
+            if success:
+                return {"message": "Contato deletado com sucesso"}, 200
+        except Exception:
+            return {"error": "Erro ao excluir contato."}, 500
