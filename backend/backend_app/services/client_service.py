@@ -50,7 +50,7 @@ class ClientService:
             return {"error": "Não existe um usuário cadastrado com esse CPF."}, 400
         
         try:
-            updated_client = ClientRepository.update_client(client_db, validated_data)
+            updated_client = ClientRepository.update(client_db, validated_data)
             return updated_client, 200
         except Exception:
             return {"error": "Erro ao atualizar cliente."}, 500

@@ -5,7 +5,7 @@ from backend_app.services.appointment_service import AppointmentService
 from ..utils.decorators import role_required, client_owns_data
 from backend_app.schema_dto.appointment_schema_dto import AppointmentSchemaDTO
 from marshmallow import ValidationError
-
+from flasgger import swag_from
     
 def get_appointment_id(id):
     appointment = AppointmentService.list_appointment_id(id)

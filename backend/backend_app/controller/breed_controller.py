@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required
 from ..utils.decorators import role_required
 from backend_app.schema_dto.breed_schema_dto import BreedSchemaDTO
 from marshmallow import ValidationError
-
+from flasgger import swag_from
 class BreedList(Resource):
     @jwt_required()
     def get(self):

@@ -6,6 +6,7 @@ from marshmallow import ValidationError
 from flask_jwt_extended import jwt_required
 from ..utils.decorators import role_required, client_owns_data
 from backend_app.schema_dto.client_schema_dto import ClientSchemaDTO
+from flasgger import swag_from
 
 def get_client_id(id):
     client = ClientService.list_client_id(id)

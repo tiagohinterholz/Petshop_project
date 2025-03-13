@@ -1,26 +1,40 @@
-from backend_app import ma, db 
-from backend_app.models.pet_model import Pet, Client, Breed
-from marshmallow import fields, validates, ValidationError
+from backend_app import db 
+from backend_app.models.pet_model import Pet
 
-class PetRepository(ma.SQLAlchemyAutoSchema):
+
+class PetRepository:
+    @staticmethod
+    def list_all():
+        """Lista todos pets."""
+        return Pet.query.all()
     
-    class Meta:
-        model = Pet
-        load_instance = True
-        fields = ("id", "client_id", "breed_id", "birth_date", "name")
+    staticmethod
+    def create(validated_data):
+        """Cria um novo pet."""
+        new_pet = Pet(
+        client_id=validated_data.client_id,
+        breed_id=validated_data.breed_id,
+        birth_date=validated_data.birth_date,
+        name=validated_data.name
+        )
+        db.session.add(new_pet)
+        db.session.commit()
+        return new_pet
+    
+    @staticmethod
+    def update(pet, new_data):
+        """Atualiza um contato no banco de dados."""
+        pet.client_id = new_data["client_id"]
+        pet.breed_id = new_data["breed_id"] 
+        pet.birth_date = new_data["birth_date"]
+        pet.name = new_data["name"]
+        """Confirma as alterações no banco de dados."""
+        db.session.commit()
+        return pet
 
-    client_id = fields.Integer(required=True)
-    breed_id = fields.Integer(required=True)
-    birth_date = fields.Date(required=True)
-    name = fields.String(required=True)
-
-    @validates('client_id')
-    def validate_client_id(self, value):
-        existing_id = db.session.get(Client, value)
-        if not existing_id:
-            raise ValidationError("Cliente informado não cadastrado")
-    @validates('breed_id')
-    def validate_breed_id(self, value):
-        existing_id = db.session.get(Breed, value)
-        if not existing_id:
-            raise ValidationError("Raça informada não cadastrada")
+    @staticmethod
+    def delete(pet):
+        """Exclui um contato."""
+        db.session.delete(pet)
+        db.session.commit()
+        return True

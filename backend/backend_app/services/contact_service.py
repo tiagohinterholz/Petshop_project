@@ -38,7 +38,7 @@ class ContactService:
             return {"error":"Cliente informado não cadastrado."}, 400  
 
         try:
-            updated_contact = ContactRepository.update_contact(contact_db, validated_data)
+            updated_contact = ContactRepository.update(contact_db, validated_data)
             return updated_contact, 200
         except Exception:
             return {"error": "Erro ao atualizar contato."}, 500
