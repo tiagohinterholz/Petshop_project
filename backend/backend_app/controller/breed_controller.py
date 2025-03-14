@@ -20,7 +20,7 @@ class BreedList(Resource):
         """Cadastrar nova raça"""
         try:
             schema_dto = BreedSchemaDTO().load(request.json)
-            new_breed, status = BreedService.register_breed(schema_dto)
+            new_breed, status = BreedService.register(schema_dto)
             return make_response(jsonify(new_breed), status)
         except ValidationError as err:
             return {"error": err.messages}, 400
@@ -39,7 +39,7 @@ class BreedDetail(Resource):
             return make_response(jsonify(breed_db), status)
         try:
             schema_dto = BreedSchemaDTO().load(request.json)
-            updated_breed, status = BreedService.update_breed(breed_db, schema_dto)
+            updated_breed, status = BreedService.update(id, schema_dto)
             return make_response(jsonify(updated_breed), status)
         except ValidationError as err:
             return {"error": err.messages}, 400
@@ -47,7 +47,7 @@ class BreedDetail(Resource):
     @role_required('admin')
     def delete(self, id):
         """Excluir raça por ID"""
-        response, status = BreedService.delete_breed(id)
+        response, status = BreedService.delete(id)
         return make_response(jsonify(response), status)
 
 api.add_resource(BreedList, '/breeds')

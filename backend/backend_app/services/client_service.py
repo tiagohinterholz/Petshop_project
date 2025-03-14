@@ -1,12 +1,14 @@
 from backend_app.repository.client_repository import ClientRepository
 from backend_app.repository.user_repository import UserRepository
+from backend_app.schema_dto.client_schema_dto import ClientSchemaDTO
 
 class ClientService:
     
     @staticmethod
     def list_clients():
         """Listar todos os clientes."""
-        return ClientRepository.list_all(), 200  
+        clients = ClientRepository.list_all()
+        return ClientSchemaDTO(many=True).dump(clients), 200  
     
     @staticmethod
     def list_client_id(id):
@@ -15,10 +17,10 @@ class ClientService:
         client = ClientRepository.get_by_id(id)
         if not client:
             return {"error": "Cliente não encontrado"}, 404
-        return client, 200
+        return ClientSchemaDTO().dump(client), 200
     
     @staticmethod
-    def register_client(validated_data):
+    def register(validated_data):
         """Cadastrar um novo cliente."""
      
         existing_client = ClientRepository.get_client_by_cpf(validated_data["cpf"])
@@ -31,11 +33,11 @@ class ClientService:
                 
         try:
             new_client = ClientRepository.create(validated_data)
-            return new_client, 201 
+            return ClientSchemaDTO().dump(new_client), 201 
         except Exception:
             return {"error": "Erro ao cadastrar cliente."}, 500
             
-    def update_client(id, validated_data):
+    def update(id, validated_data):
         """Atualizar um cliente."""
         client_db = ClientRepository.get_by_id(id)
         if not client_db:
@@ -51,11 +53,11 @@ class ClientService:
         
         try:
             updated_client = ClientRepository.update(client_db, validated_data)
-            return updated_client, 200
+            return ClientSchemaDTO().dump(updated_client), 200
         except Exception:
             return {"error": "Erro ao atualizar cliente."}, 500
             
-    def delete_client(id):
+    def delete(id):
         """Excluir um cliente."""
         client = ClientRepository.get_by_id(id)
         if not client:

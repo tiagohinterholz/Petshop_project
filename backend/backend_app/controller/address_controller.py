@@ -27,7 +27,7 @@ class AddressList(Resource):
         """Cadastrar novo endereço"""
         try:
             schema_dto = AddressSchemaDTO().load(request.json)
-            new_address, status = AddressService.register_address(schema_dto)
+            new_address, status = AddressService.register(schema_dto)
             return make_response(jsonify(new_address), status)
         except ValidationError as err:
             return {"error": err.messages}, 400
@@ -50,7 +50,7 @@ class AddressDetail(Resource):
         
         try:
             schema_dto = AddressSchemaDTO().load(request.json)
-            updated_address, status = AddressService.update_address(address_db, schema_dto)        
+            updated_address, status = AddressService.update(id, schema_dto)        
             return make_response(jsonify(updated_address), status)
         except ValidationError as err:
             return {"error": err.messages}, 400  
@@ -59,7 +59,7 @@ class AddressDetail(Resource):
     @role_required('admin')
     def delete(self, id):
         """Excluir endereço por ID"""
-        response, status = AddressService.delete_address(id)
+        response, status = AddressService.delete(id)
         return make_response(jsonify(response), status)
 
 api.add_resource(AddressList, '/addresses')

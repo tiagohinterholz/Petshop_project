@@ -28,6 +28,8 @@ class ClientRepository:
             )
         db.session.add(new_client)
         db.session.commit()
+        db.session.refresh(new_client)
+        
         return new_client
     
     @staticmethod

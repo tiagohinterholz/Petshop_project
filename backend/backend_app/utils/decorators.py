@@ -41,7 +41,7 @@ def client_owns_data(get_user_id_func):
             user_cpf = get_jwt_identity()
             
             # Obtém o CPF do usuário referente à requisição
-            requested_user_cpf = get_user_id_func(*args, **kwargs)
+            requested_user_cpf = get_user_id_func(**kwargs)
             
             if not requested_user_cpf:
                 return {"message": "Usuário não encontrado ou não autorizado."}, 404

@@ -1,23 +1,23 @@
 from backend_app.repository.breed_repository import BreedRepository
-
+from backend_app.schema_dto.breed_schema_dto import BreedSchemaDTO
 class BreedService:
 
     @staticmethod
     def list_breeds():
         """Lista todas as raças."""
-        return BreedRepository.list_all(), 200
+        breeds = BreedRepository.list_all()
+        return BreedSchemaDTO(many=True).dump(breeds), 200
     
     @staticmethod
     def list_breed_id(id):
         """Busca uma raça pelo ID."""
-        
         breed = BreedRepository.get_by_id(id)
         if not breed:
             return {"error": "Raça não encontrada"}, 404
-        return breed, 200
+        return BreedSchemaDTO().dump(breed), 200
     
     @staticmethod
-    def register_breed(validated_data):
+    def register(validated_data):
         """Cadastra uma nova raça."""
        
         existing_breed = BreedRepository.get_by_description(validated_data["description"])
@@ -26,12 +26,12 @@ class BreedService:
         
         try:         
             new_breed = BreedRepository.create(validated_data)
-            return new_breed, 201
+            return BreedSchemaDTO().dump(new_breed), 201
         except Exception:
             return {"error": "Erro ao cadastrar raça."}, 500
     
     @staticmethod
-    def update_breed(id, validated_data):
+    def update(id, validated_data):
         """Atualiza uma raça."""
         breed_db = BreedRepository.get_by_id(id)
         if not breed_db:
@@ -39,18 +39,16 @@ class BreedService:
 
         try:
             updated_breed = BreedRepository.update(breed_db, validated_data)
-            return updated_breed, 200
+            return BreedSchemaDTO().dump(updated_breed), 200
         except Exception:
             return {"error": f"Erro ao atualizar raça."}, 500
 
     @staticmethod
-    def delete_breed(id):
+    def delete(id):
         """Exclui uma raça."""
-        
         breed = BreedRepository.get_by_id(id)
         if not breed:
             return {"error": "Raça não encontrada"}, 404
-        
         try:
             success = BreedRepository.delete(breed)
             if success:

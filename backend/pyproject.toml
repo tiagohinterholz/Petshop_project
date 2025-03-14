@@ -40,3 +40,6 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.scripts]
 dev = "run:dev"
 test = "run:test"
+
+[pytest]
+timeout = 10

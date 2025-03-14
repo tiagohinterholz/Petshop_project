@@ -16,12 +16,13 @@ class ContactRepository:
     def create(validated_data):
         """Cria um novo contato."""
         new_contact = Contact(
-            contact_id=validated_data["contact_id"],
+            client_id=validated_data["client_id"],
             type_contact=validated_data["type_contact"],
             value_contact=validated_data["value_contact"]
             )
         db.session.add(new_contact)
         db.session.commit()
+        db.session.refresh(new_contact)
         return new_contact
     
     @staticmethod

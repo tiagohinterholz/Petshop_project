@@ -27,6 +27,7 @@ class BreedRepository:
             )
         db.session.add(new_breed)
         db.session.commit()
+        db.session.refresh(new_breed)
         return new_breed   
     
     @staticmethod

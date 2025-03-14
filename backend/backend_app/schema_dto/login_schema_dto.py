@@ -5,11 +5,11 @@ class LoginSchemaDTO(Schema):
     cpf = fields.String(required=True)
     password = fields.String(required=True)
     
-    @validates('cpf')
+    @validates("cpf")
     def validate_cpf(self, value):
-        """Valida se o CPF tem exatamente 11 dígitos numéricos."""
-        if not re.fullmatch(r"\d{11}", value):
-            raise ValidationError("CPF deve conter exatamente 11 dígitos numéricos.")
+        """Valida se o CPF está no formato 000.000.000-00"""
+        if not re.fullmatch(r"\d{3}\.\d{3}\.\d{3}-\d{2}", value):
+            raise ValidationError("CPF deve estar no formato 000.000.000-00.")
     
     @validates('password')
     def validate_password(self, value):

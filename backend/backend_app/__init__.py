@@ -19,8 +19,7 @@ def create_app(env="development"):
     """Cria e configura o aplicativo Flask"""
     app = Flask(__name__)
 
-    # Define a variável de ambiente automaticamente
-    os.environ["FLASK_ENV"] = env
+    env = os.getenv("FLASK_ENV", "development")
     os.environ["TESTING"] = "True" if env == "testing" else "False"
 
     # Carrega a configuração correta

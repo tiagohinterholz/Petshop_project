@@ -25,7 +25,7 @@ class PetList(Resource):
         """Cadastrar novo pet"""
         try:
             schema_dto = PetSchemaDTO().load(request.json)
-            new_pet, status = PetService.update(schema_dto)
+            new_pet, status = PetService.register(schema_dto)
             return make_response(jsonify(new_pet), status)
         except ValidationError as err:
             return {"error": err.messages}, 400 
@@ -46,7 +46,7 @@ class PetDetail(Resource):
 
         try:
             schema_dto = PetSchemaDTO().load(request.json)
-            updated_pet, status = PetService.register(schema_dto)
+            updated_pet, status = PetService.update(id, schema_dto)
             return make_response(jsonify(updated_pet), status)
         except ValidationError as err:
             return {"error": err.messages}, 400 

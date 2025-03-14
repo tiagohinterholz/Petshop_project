@@ -2,6 +2,7 @@ from marshmallow import Schema, fields, ValidationError, validates
 
 class BreedSchemaDTO(Schema):
     
+    id = fields.Int(dump_only=True)
     description = fields.String(required=True)
     
     @validates('description')

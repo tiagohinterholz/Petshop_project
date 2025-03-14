@@ -2,7 +2,8 @@ from marshmallow import Schema, fields, ValidationError, validates
 from datetime import date
 
 class AppointmentSchemaDTO(Schema):
-        
+    
+    id = fields.Int(dump_only=True)
     pet_id = fields.Integer(required=True)
     desc_appoint = fields.String(required=True)
     price = fields.Float(required=True)

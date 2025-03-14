@@ -25,7 +25,7 @@ class ContactList(Resource):
         """Cadastrar novo contato"""
         try:
             schema_dto = ContactSchemaDTO().load(request.json) 
-            new_contact, status = ContactService.register_contact(schema_dto)
+            new_contact, status = ContactService.register(schema_dto)
             return make_response(jsonify(new_contact), status)
         except ValidationError as err:
             return {"error": err.messages}, 400
@@ -46,7 +46,7 @@ class ContactDetail(Resource):
 
         try:
             schema_dto = ContactSchemaDTO().load(request.json)
-            updated_contact, status = ContactService.update_contact(contact_db, schema_dto)
+            updated_contact, status = ContactService.update(id, schema_dto)
             return make_response(jsonify(updated_contact), status)
         except ValidationError as err:
             return {"error": err.messages}, 400
@@ -54,7 +54,7 @@ class ContactDetail(Resource):
     @role_required('admin')
     def delete(self, id):
         """Excluir contato por ID"""
-        response, status = ContactService.delete_contact(id)
+        response, status = ContactService.delete(id)
         return make_response(jsonify(response), status)
 
 api.add_resource(ContactList, '/contacts')

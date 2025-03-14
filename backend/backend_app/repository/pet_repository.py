@@ -8,16 +8,22 @@ class PetRepository:
         return Pet.query.all()
     
     @staticmethod
+    def get_by_id(id):
+        """Busca um contato pelo ID."""
+        return db.session.get(Pet, id)
+    
+    @staticmethod
     def create(validated_data):
         """Cria um novo pet."""
         new_pet = Pet(
-        client_id=validated_data.client_id,
-        breed_id=validated_data.breed_id,
-        birth_date=validated_data.birth_date,
-        name=validated_data.name
+        client_id=validated_data["client_id"],
+        breed_id=validated_data["breed_id"],
+        birth_date=validated_data["birth_date"],
+        name=validated_data["name"]
         )
         db.session.add(new_pet)
         db.session.commit()
+        db.session.refresh(new_pet)
         return new_pet
     
     @staticmethod

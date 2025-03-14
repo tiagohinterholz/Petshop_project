@@ -26,7 +26,7 @@ class AppointmentList(Resource):
         """Cadastrar novo atendimento"""
         try:
             schema_dto = AppointmentSchemaDTO().load(request.json)
-            new_appointment, status = AppointmentService.register_appointment(schema_dto)
+            new_appointment, status = AppointmentService.register(schema_dto)
             return make_response(jsonify(new_appointment), status)
         except ValidationError as err:
             return {"error": err.messages}, 400    
@@ -48,7 +48,7 @@ class AppointmentDetail(Resource):
         
         try:
             schema_dto = AppointmentSchemaDTO().load(request.json)
-            updated_appointment, status = AppointmentService.update_appointment(appointment_db, schema_dto)        
+            updated_appointment, status = AppointmentService.update(id, schema_dto)        
             return make_response(jsonify(updated_appointment), status)
         except ValidationError as err:
             return {"error": err.messages}, 400  
@@ -56,7 +56,7 @@ class AppointmentDetail(Resource):
     @role_required('admin')
     def delete(self, id):
         """Excluir atendimento por ID""" 
-        response, status = AppointmentService.delete_appointment(id)
+        response, status = AppointmentService.delete(id)
         return make_response(jsonify(response), status)
 
 api.add_resource(AppointmentList, '/appointments')

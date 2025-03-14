@@ -23,17 +23,26 @@ class UserList(Resource):
             return make_response(jsonify(new_user), status)
         except ValidationError as err:
             return {"error": err.messages}, 400
+        except Exception as e:
+            return {"error": "Erro inesperado ao cadastrar usuário", "details": str(e)}, 500 
 class UserDetail(Resource):
+    
+    @role_required('admin')
+    def get(self, cpf):
+        """Buscar usuário pelo CPF"""
+        user, status = UserService.list_user_id(cpf)
+        return make_response(jsonify(user), status)
+    
     @role_required('admin')
     def put(self, cpf):
         """Atualizar dados de usuário apenas por ADMIN"""
-        user_db, status = UserService.get_user_by_cpf(cpf)
+        user_db, status = UserService.list_user_id(cpf)
         if status != 200:
             return make_response(jsonify(user_db), status)
 
         try:
             schema_dto = UserSchemaDTO().load(request.json)
-            updated_user, status = UserService.register(schema_dto)
+            updated_user, status = UserService.update(cpf, schema_dto)
             return make_response(jsonify(updated_user), status)
         except ValidationError as err:
             return {"error": err.messages}, 400

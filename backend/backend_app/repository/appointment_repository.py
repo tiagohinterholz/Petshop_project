@@ -25,6 +25,7 @@ class AppointmentRepository:
             )
         db.session.add(new_appointment)
         db.session.commit()
+        db.session.refresh(new_appointment)
         return new_appointment
 
     @staticmethod

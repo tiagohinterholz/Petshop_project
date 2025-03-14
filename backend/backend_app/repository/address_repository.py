@@ -24,6 +24,7 @@ class AddressRepository:
             )
         db.session.add(new_address)
         db.session.commit()
+        db.session.refresh(new_address)
         return new_address
 
     @staticmethod

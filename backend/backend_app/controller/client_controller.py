@@ -8,10 +8,10 @@ from ..utils.decorators import role_required, client_owns_data
 from backend_app.schema_dto.client_schema_dto import ClientSchemaDTO
 from flasgger import swag_from
 
-def get_client_id(id):
+def get_client_cpf(id, **kwargs):
     client = ClientService.list_client_id(id)
     if client and isinstance(client[0], dict):
-        return client[0].get("client_id")
+        return client[0].get("cpf")
     return None
 class ClientList(Resource):
 
@@ -26,7 +26,7 @@ class ClientList(Resource):
         """Cadastrar novo cliente"""       
         try:
             schema_dto = ClientSchemaDTO().load(request.json)
-            new_client, status = ClientService.register_client(schema_dto)
+            new_client, status = ClientService.register(schema_dto)
             return make_response(jsonify(new_client), status)
         except ValidationError as err:
             return {"error": err.messages}, 400    
@@ -37,8 +37,8 @@ class ClientDetail(Resource):
         """Buscar cliente pelo ID"""
         client, status = ClientService.list_client_id(id)
         return make_response(jsonify(client), status)
-
-    @client_owns_data(get_client_id)
+    
+    @client_owns_data(get_client_cpf)
     def put(self, id):
         """Atualizar cliente por ID"""
         client_db, status = ClientService.list_client_id(id)
@@ -47,7 +47,7 @@ class ClientDetail(Resource):
         
         try:
             schema_dto = ClientSchemaDTO().load(request.json)
-            updated_client, status = ClientService.updated_client(client_db, schema_dto)
+            updated_client, status = ClientService.update(id, schema_dto)
             return make_response(jsonify(updated_client), status)
         except ValidationError as err:
             return {"error": err.messages}, 400
@@ -56,7 +56,7 @@ class ClientDetail(Resource):
     def delete(self, id):
         """Excluir cliente por ID"""
 
-        response, status = ClientService.delete_client(id)
+        response, status = ClientService.delete(id)
         return make_response(jsonify(response), status)
 
 api.add_resource(ClientList, '/clients')
