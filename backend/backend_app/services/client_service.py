@@ -30,6 +30,8 @@ class ClientService:
         existing_user = UserRepository.get_user_by_cpf(validated_data["cpf"])
         if not existing_user: # verifica se não existe cpf em USER pq dai nao da pra cadastrar client
             return {"error": "Não existe um usuário cadastrado com esse CPF."}, 400
+        
+        validated_data["name"] = existing_user.name
                 
         try:
             new_client = ClientRepository.create(validated_data)

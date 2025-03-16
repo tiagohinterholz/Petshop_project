@@ -10,7 +10,7 @@ from flasgger import swag_from
 def get_contact_id(id):
     contact = ContactService.list_contact_id(id)
     if contact and isinstance(contact[0], dict):
-        return contact[0].get("contact_id")
+        return contact[0].get("client_id")
     return None 
 class ContactList(Resource):
     

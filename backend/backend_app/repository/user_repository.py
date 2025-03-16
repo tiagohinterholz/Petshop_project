@@ -2,6 +2,12 @@ from backend_app import db
 from backend_app.models.user_model import User, ProfileEnum
 
 class UserRepository:
+    
+    @staticmethod
+    def get_by_email(email):
+        """Busca um usuário pelo e-mail"""
+        return db.session.query(User).filter_by(email=email).first()
+    
     @staticmethod
     def get_user_by_cpf(cpf):
         return db.session.query(User).filter_by(cpf=cpf).first()
@@ -21,7 +27,8 @@ class UserRepository:
             cpf=validated_data["cpf"], 
             name=validated_data["name"], 
             profile=validated_data["profile"],
-            password=validated_data["password"]
+            password=validated_data["password"],
+            email=validated_data["email"]
         )
         new_user.encrypt_password()
         db.session.add(new_user)

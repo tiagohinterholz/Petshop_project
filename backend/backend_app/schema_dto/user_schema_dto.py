@@ -4,10 +4,11 @@ import re
 
 class UserSchemaDTO(Schema):
     
-    cpf = fields.String(required=True, metadata={"unique": True})
+    cpf = fields.String(required=True)
     name = fields.String(required=True)
     profile = fields.Enum(ProfileEnum, by_value=True, required=True)
     password = fields.String(required=True, load_only=True)
+    email = fields.Email(required=True)
     
     @validates('cpf')
     def validate_cpf(self, value):

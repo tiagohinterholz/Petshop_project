@@ -12,6 +12,7 @@ class User(db.Model):
     name = db.Column(db.String(100), nullable=False)
     profile = db.Column(db.Enum(ProfileEnum, name='profile_enum'), nullable=False)
     password = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
     
     
     def encrypt_password(self):

@@ -15,6 +15,13 @@ migrate = Migrate()
 api = Api()
 jwt = JWTManager()
 
+TOKEN_BLACKLIST = set()  # Define a blacklist global
+
+@jwt.token_in_blocklist_loader
+def check_if_token_is_blacklisted(jwt_header, jwt_data):
+    """Verifica se um token está na blacklist antes de validar a requisição."""
+    return jwt_data["jti"] in TOKEN_BLACKLIST
+
 def create_app(env="development"):
     """Cria e configura o aplicativo Flask"""
     app = Flask(__name__)

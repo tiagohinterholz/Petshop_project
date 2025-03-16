@@ -10,7 +10,7 @@ from flasgger import swag_from
 def get_pet_id(id):
     pet = PetService.list_pet_id(id)
     if pet and isinstance(pet[0], dict):
-        return pet[0].get("pet_id")
+        return pet[0].get("client_id")
     return None
 class PetList(Resource):
     
@@ -51,7 +51,7 @@ class PetDetail(Resource):
         except ValidationError as err:
             return {"error": err.messages}, 400 
     
-    @role_required('admin')
+    @client_owns_data(get_pet_id)
     def delete(self, id):
         """Excluir pet por ID"""
         response, status = PetService.delete(id)

@@ -137,8 +137,7 @@ class UserTestCase(unittest.TestCase):
         print(f"📌 Resposta ao tentar atualizar como CLIENT: {response.status_code}, {response.get_json()}")
 
         # Deve falhar com 403 Forbidden
-        self.assertEqual(response.status_code, 403, "Client conseguiu alterar outro usuário!")
-            
+        self.assertEqual(response.status_code, 403, "Client conseguiu alterar outro usuário!")     
     
 if __name__ == "__main__":
     unittest.main()

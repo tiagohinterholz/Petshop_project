@@ -3,7 +3,7 @@ from backend_app.models.user_model import User, ProfileEnum
 from backend_app import create_app, db
 from sqlalchemy import text
 
-class UserTestCase(unittest.TestCase):
+class CreateCompleteUser(unittest.TestCase):
     
     def setUp(self):
         """configuração inicial antes dos testes"""
@@ -11,6 +11,7 @@ class UserTestCase(unittest.TestCase):
         self.client = self.app.test_client()
         self.admin_cpf = "000.000.000-00"
         self.admin_password = "admin123"
+        self.admin_email = "fh.tiago@gmail.com"
        
         # Criar um ADMIN fixo direto no banco
         with self.app.app_context():
@@ -20,7 +21,8 @@ class UserTestCase(unittest.TestCase):
                     cpf=self.admin_cpf,
                     name="Admin Teste",
                     profile=ProfileEnum.ADMIN,
-                    password=self.admin_password
+                    password=self.admin_password,
+                    email=self.admin_email
                 )
                 new_admin.encrypt_password()  # Criptografa a senha antes de salvar
                 db.session.add(new_admin)
@@ -44,23 +46,24 @@ class UserTestCase(unittest.TestCase):
     def test_create_complete_client(self):
         #criar um usuário client para testar se ele completa todo o cadastro
         user = {
-            "cpf": "111.222.333-44", 
+            "cpf": "222.222.333-44", 
             "name": "Usuário Um", 
             "profile": "client", 
-            "password": "senha123"
+            "password": "senha123",
+            "email": "xx.tiago@gmail.com"
             }
         
-        response = self.client.post('/users', json=user, headers={
-            "Authorization": f"Bearer {self.admin_token}"
-        })
-        
+        response = self.client.post("/users", json=user, headers={
+            "Authorization": f"Bearer {self.admin_token}"})
+     
         data = response.get_json()
+        print("🔍 Resposta completa da API:", data)
         self.assertEqual(response.status_code, 201, f"Erro ao criar usuário: {data}")
         print(f"📌 Usuário criado: {data}")
         
         # agora vou logar com o user client e pegar o token pra começar o cadastro
         response = self.client.post('/login', json={
-            "cpf": "111.222.333-44",
+            "cpf": "222.222.333-44",
             "password": "senha123"
         })
         
@@ -70,7 +73,6 @@ class UserTestCase(unittest.TestCase):
         self.client_token = data["access_token"]
         
         client = {
-            "name": "Tiago Hinterholz",
             "cpf": user['cpf'],
             "register_date": "2025-03-14"
         }
@@ -99,8 +101,8 @@ class UserTestCase(unittest.TestCase):
         
         contact = {
             "client_id": client_id,
-            "type_contact": "telefone",
-            "value_contact": "(55) 99993-0333"
+            "type_contact": "email",
+            "value_contact": "fh.tiago@gmail.com"
         }
         response = self.client.post('/contacts', json=contact, headers={
             "Authorization": f"Bearer {self.client_token}"
@@ -136,7 +138,7 @@ class UserTestCase(unittest.TestCase):
             "pet_id": pet_id,
             "desc_appoint": "Banho e tosa na molenga",
             "price": "500",
-            "date_appoint": "2025-03-15"
+            "date_appoint": "2025-03-20"
         }        
         response = self.client.post('/appointments', json=appointment, headers={
             "Authorization": f"Bearer {self.client_token}"
@@ -144,9 +146,22 @@ class UserTestCase(unittest.TestCase):
         data = response.get_json()
         self.assertEqual(response.status_code, 201, f"Erro ao criar agendamento: {data}")
         print(f"Agendamento cadastrado: {data}")
+        
+        response = self.client.post('/forgot-password', json={"email": "fh.tiago@gmail.com"})
+        data = response.get_json()
+        self.assertEqual(response.status_code, 200, "Erro ao gerar token de reset de password")
 
+        reset_token = data.get("reset_token")
+        self.assertIsNotNone(reset_token, "Token de reset não retornado.")
+        
+        response = self.client.post('/reset-password', json={"token": "reset_token", "new_password": "novaSenha123"})
+        data = response.get_json()
+        print(f"🔍 Resposta do reset-password: {data}")  # Adiciona um print para depuração
+        self.assertEqual(response.status_code, 200, "Erro ao redefinir senha.")
+        
     def tearDown(self):
         with self.app.app_context():
+            from backend_app.models.password_reset_model import PasswordReset
             from backend_app.models.breed_model import Breed
             from backend_app.models.appointment_model import Appointment
             from backend_app.models.pet_model import Pet
@@ -157,6 +172,7 @@ class UserTestCase(unittest.TestCase):
             from backend_app import db  # Importando a conexão com o banco
             
             # Deletando todos os dados de teste
+            db.session.query(PasswordReset).delete()
             db.session.query(Appointment).delete()
             db.session.query(Pet).delete()                       
             db.session.query(Address).delete()                     
@@ -179,3 +195,5 @@ class UserTestCase(unittest.TestCase):
             reset_sequence("breed_id_seq")
             db.session.commit()
      
+if __name__ == "__main__":
+    unittest.main()

@@ -1,16 +1,9 @@
-from flask_jwt_extended import create_refresh_token, get_jwt_identity
-from backend_app.schema_dto.refresh_token_schema_dto import RefreshTokenSchema
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 
-def generate_refresh_token(data):
-    """Gera um novo refresh token para o usuário autenticado."""
-    # Validar os dados usando o RefreshTokenSchema
-    validation_errors = RefreshTokenSchema().validate(data)
-    if validation_errors:
-        return {"error": validation_errors}, 400
-    
-    identity = get_jwt_identity()
-    if not identity:
-        return {"error": "Usuário não autenticado."}, 401
-    
-    refresh_token = create_refresh_token(identity=identity)
-    return {"refresh_token": refresh_token}, 200
+@jwt_required(refresh=True)  # Exige um refresh token válido no header
+def generate_refresh_token():
+    """Gera um novo access token usando um refresh token válido."""
+    identity = get_jwt_identity()  # Obtém o usuário autenticado
+    new_access_token = create_access_token(identity=identity)  # Gera um novo access token
+
+    return {"access_token": new_access_token}, 200

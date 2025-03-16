@@ -19,10 +19,11 @@ class UserService:
     def register(validated_data):
         """Cadastra um novo usuário."""
         try:
+            print(f"🔍 Tentando cadastrar usuário: {validated_data}")  # <-- DEBUG
             new_user, status = UserRepository.create(validated_data)
             return UserSchemaDTO().dump(new_user), status
         except IntegrityError:
-            return {"error": "CPF já cadastrado."}, 400  # Melhor mensagem de erro
+            return {"error": "Problema nos dados de cadastro"}, 400  # Melhor mensagem de erro
         except Exception:
             return {"error": "Erro inesperado ao cadastrar user"}, 500
 

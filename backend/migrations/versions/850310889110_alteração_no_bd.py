@@ -1,8 +1,8 @@
-"""Initial migration
+"""Alteração no BD
 
-Revision ID: 604a070507c6
+Revision ID: 850310889110
 Revises: 
-Create Date: 2025-03-13 20:56:29.340991
+Create Date: 2025-03-15 23:30:04.992879
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '604a070507c6'
+revision = '850310889110'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -40,6 +40,16 @@ def upgrade():
     sa.ForeignKeyConstraint(['cpf'], ['users.cpf'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('cpf')
+    )
+    op.create_table('password_reset',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_cpf', sa.String(), nullable=False),
+    sa.Column('token', sa.String(length=255), nullable=False),
+    sa.Column('expires_at', sa.DateTime(), nullable=False),
+    sa.Column('used', sa.Boolean(), nullable=True),
+    sa.ForeignKeyConstraint(['user_cpf'], ['users.cpf'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('token')
     )
     op.create_table('address',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
@@ -87,6 +97,7 @@ def downgrade():
     op.drop_table('pet')
     op.drop_table('contact')
     op.drop_table('address')
+    op.drop_table('password_reset')
     op.drop_table('client')
     op.drop_table('users')
     op.drop_table('breed')

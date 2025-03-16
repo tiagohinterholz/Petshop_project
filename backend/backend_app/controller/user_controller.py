@@ -3,9 +3,16 @@ from flask_restful import Resource
 from backend_app import api
 from backend_app.services.user_service import UserService
 from backend_app.schema_dto.user_schema_dto import UserSchemaDTO
-from ..utils.decorators import role_required
+from ..utils.decorators import role_required, client_owns_data
 from marshmallow import ValidationError
 from flasgger import swag_from
+
+def get_user_cpf(cpf):
+    """Retorna o CPF do usuário solicitado"""
+    user = UserService.list_user_id(cpf)
+    if user and isinstance(user[0], dict):
+        return user[0].get("cpf")
+    return None
 
 class UserList(Resource):
     @role_required('admin')
@@ -27,13 +34,13 @@ class UserList(Resource):
             return {"error": "Erro inesperado ao cadastrar usuário", "details": str(e)}, 500 
 class UserDetail(Resource):
     
-    @role_required('admin')
+    @client_owns_data(get_user_cpf)
     def get(self, cpf):
         """Buscar usuário pelo CPF"""
         user, status = UserService.list_user_id(cpf)
         return make_response(jsonify(user), status)
     
-    @role_required('admin')
+    @client_owns_data(get_user_cpf)
     def put(self, cpf):
         """Atualizar dados de usuário apenas por ADMIN"""
         user_db, status = UserService.list_user_id(cpf)

@@ -32,7 +32,7 @@ class ClientList(Resource):
             return {"error": err.messages}, 400    
 class ClientDetail(Resource):
 
-    @role_required('admin')
+    @client_owns_data(get_client_cpf)
     def get(self, id):
         """Buscar cliente pelo ID"""
         client, status = ClientService.list_client_id(id)

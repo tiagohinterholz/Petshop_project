@@ -7,11 +7,11 @@ from ..utils.decorators import role_required
 from backend_app.schema_dto.breed_schema_dto import BreedSchemaDTO
 from marshmallow import ValidationError
 from flasgger import swag_from
+
 class BreedList(Resource):
-    @jwt_required()
+    role_required('client')
     def get(self):
         """Listar todas as raças"""
-        
         breeds, status = BreedService.list_breeds()
         return make_response(jsonify(breeds), status)
 
@@ -25,7 +25,8 @@ class BreedList(Resource):
         except ValidationError as err:
             return {"error": err.messages}, 400
 class BreedDetail(Resource):
-    @jwt_required()
+    
+    role_required('client')
     def get(self, id):
         """Buscar raça pelo ID"""
         breed, status = BreedService.list_breed_id(id)

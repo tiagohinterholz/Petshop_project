@@ -10,7 +10,7 @@ from marshmallow import ValidationError
 def get_address_id(id):
     address = AddressService.list_address_id(id)
     if address and isinstance(address[0], dict):
-        return address[0].get("address_id")
+        return address[0].get("client_id")
     return None
 
 class AddressList(Resource):
