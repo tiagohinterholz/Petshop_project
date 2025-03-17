@@ -56,7 +56,7 @@ class UserTestCase(unittest.TestCase):
                 "Authorization": f"Bearer {self.admin_token}"
             })
             data = response.get_json()
-            print(f"📌 Criando usuário {user['cpf']} - Status: {response.status_code}, Resposta: {data}")  
+            print(f"Criando usuário {user['cpf']} - Status: {response.status_code}, Resposta: {data}")  
                    
             self.assertEqual(response.status_code, 201, f"Erro ao criar usuário {user['cpf']}: {data}")
         
@@ -168,7 +168,7 @@ class UserTestCase(unittest.TestCase):
         breed_id = breed_data.get("id")
         print(breed_data)
         self.assertEqual(response.status_code, 201, f"Erro ao criar raça: {breed_data}")
-        print(f"🐾 Raça cadastrada: {breed_data}")
+        print(f"Raça cadastrada: {breed_data}")
         
         pet = {"client_id": client_id,
                "breed_id": breed_id,
@@ -187,7 +187,7 @@ class UserTestCase(unittest.TestCase):
             "pet_id": pet_id,
             "desc_appoint": "Banho e tosa na molenga",
             "price": "500",
-            "date_appoint": "2025-03-16"
+            "date_appoint": "2025-03-29"
         }        
         response = self.client.post('/appointments', json=appointment, headers={
             "Authorization": f"Bearer {self.client1_token}"
@@ -197,11 +197,12 @@ class UserTestCase(unittest.TestCase):
         print(f"Agendamento cadastrado: {data}")
         
         #tentando acessar através do client id = 2 informações do client id = 1
-        response = self.client.get('/clients/1', json=client, headers={
+        response = self.client.get('/pets/1', headers={
             "Authorization": f"Bearer {self.client2_token}"
         })
         client_data = response.get_json()
         self.assertEqual(response.status_code, 403, f"Não é permitido consultar dados de outros clientes.")
-    
+        print(f"Erro retornado: {client_data}")
+        
 if __name__ == "__main__":
     unittest.main()

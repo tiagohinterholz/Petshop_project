@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 class PasswordReset(db.Model):
     __tablename__ = "password_reset"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     user_cpf = db.Column(db.String, db.ForeignKey("users.cpf"), nullable=False)
     token = db.Column(db.Text, unique=True, nullable=False)
     expires_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.utcnow() + timedelta(minutes=15))

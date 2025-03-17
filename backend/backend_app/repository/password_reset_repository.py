@@ -5,6 +5,11 @@ import datetime
 class PasswordResetRepository:
     
     @staticmethod
+    def get_all():
+        """Retorna todos os tokens do banco"""
+        return PasswordReset.query.all()
+    
+    @staticmethod
     def create(user_cpf, token):
         """Cria um novo registro de reset de senha"""
         reset_entry = PasswordReset(user_cpf=user_cpf, token=token)
@@ -15,8 +20,15 @@ class PasswordResetRepository:
     @staticmethod
     def get_by_token(token):
         """Busca um reset de senha pelo token"""
-        return PasswordReset.query.filter_by(token=token).first()
-
+        result = PasswordReset.query.filter_by(token=token).first()
+        
+        if result:
+            print(f"Token encontrado no banco! {result.token}")
+        else:
+            print(f"Token não encontrado no banco!")
+        
+        return result
+    
     @staticmethod
     def mark_as_used(token):
         """Marca o token como utilizado"""

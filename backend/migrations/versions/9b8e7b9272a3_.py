@@ -1,8 +1,8 @@
-"""Alteração no BD
+"""empty message
 
-Revision ID: 850310889110
+Revision ID: 9b8e7b9272a3
 Revises: 
-Create Date: 2025-03-15 23:30:04.992879
+Create Date: 2025-03-16 15:18:58.047319
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '850310889110'
+revision = '9b8e7b9272a3'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -29,8 +29,10 @@ def upgrade():
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.Column('profile', sa.Enum('CLIENT', 'ADMIN', name='profile_enum'), nullable=False),
     sa.Column('password', sa.String(length=255), nullable=False),
+    sa.Column('email', sa.String(length=120), nullable=False),
     sa.PrimaryKeyConstraint('cpf'),
-    sa.UniqueConstraint('cpf')
+    sa.UniqueConstraint('cpf'),
+    sa.UniqueConstraint('email')
     )
     op.create_table('client',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
@@ -42,9 +44,9 @@ def upgrade():
     sa.UniqueConstraint('cpf')
     )
     op.create_table('password_reset',
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('user_cpf', sa.String(), nullable=False),
-    sa.Column('token', sa.String(length=255), nullable=False),
+    sa.Column('token', sa.Text(), nullable=False),
     sa.Column('expires_at', sa.DateTime(), nullable=False),
     sa.Column('used', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['user_cpf'], ['users.cpf'], ),

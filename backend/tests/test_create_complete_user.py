@@ -2,7 +2,6 @@ import unittest
 from backend_app.models.user_model import User, ProfileEnum
 from backend_app import create_app, db
 from sqlalchemy import text
-
 class CreateCompleteUser(unittest.TestCase):
     
     def setUp(self):
@@ -57,9 +56,7 @@ class CreateCompleteUser(unittest.TestCase):
             "Authorization": f"Bearer {self.admin_token}"})
      
         data = response.get_json()
-        print("🔍 Resposta completa da API:", data)
         self.assertEqual(response.status_code, 201, f"Erro ao criar usuário: {data}")
-        print(f"📌 Usuário criado: {data}")
         
         # agora vou logar com o user client e pegar o token pra começar o cadastro
         response = self.client.post('/login', json={
@@ -82,7 +79,7 @@ class CreateCompleteUser(unittest.TestCase):
         })
         client_data = response.get_json()
         self.assertEqual(response.status_code, 201, f"Erro ao criar cliente: {client_data}")
-        print(client_data)
+        #print(client_data)
         client_id = client_data.get("id")
         
         address = {
@@ -97,7 +94,7 @@ class CreateCompleteUser(unittest.TestCase):
         })
         data = response.get_json()
         self.assertEqual(response.status_code, 201, f"Erro ao criar endereço: {data}")
-        print(f"Endereço cadastrado: {data}")
+        #print(f"Endereço cadastrado: {data}")
         
         contact = {
             "client_id": client_id,
@@ -109,7 +106,7 @@ class CreateCompleteUser(unittest.TestCase):
         })
         data = response.get_json()
         self.assertEqual(response.status_code, 201, f"Erro ao criar contato: {data}")
-        print(f"Contato cadastrado: {data}")
+        #print(f"Contato cadastrado: {data}")
         
         breed = {"description": "Gato Siamês"}
         response = self.client.post('/breeds', json=breed, headers={
@@ -119,7 +116,7 @@ class CreateCompleteUser(unittest.TestCase):
         breed_id = breed_data.get("id")
         print(breed_data)
         self.assertEqual(response.status_code, 201, f"Erro ao criar raça: {breed_data}")
-        print(f"🐾 Raça cadastrada: {breed_data}")
+        #print(f"Raça cadastrada: {breed_data}")
         
         pet = {"client_id": client_id,
                "breed_id": breed_id,
@@ -132,7 +129,7 @@ class CreateCompleteUser(unittest.TestCase):
         pet_data = response.get_json()
         pet_id = pet_data.get("id")
         self.assertEqual(response.status_code, 201, f"Erro ao criar pet: {pet_data}")
-        print(f"Pet cadastrado: {data}")
+        #print(f"Pet cadastrado: {pet_data}")
         
         appointment = {
             "pet_id": pet_id,
@@ -145,7 +142,7 @@ class CreateCompleteUser(unittest.TestCase):
         })
         data = response.get_json()
         self.assertEqual(response.status_code, 201, f"Erro ao criar agendamento: {data}")
-        print(f"Agendamento cadastrado: {data}")
+        #print(f"Agendamento cadastrado: {data}")
         
         response = self.client.post('/forgot-password', json={"email": "fh.tiago@gmail.com"})
         data = response.get_json()
@@ -153,8 +150,8 @@ class CreateCompleteUser(unittest.TestCase):
 
         reset_token = data.get("reset_token")
         self.assertIsNotNone(reset_token, "Token de reset não retornado.")
-        
-        response = self.client.post('/reset-password', json={"token": "reset_token", "new_password": "novaSenha123"})
+
+        response = self.client.post('/reset-password', json={"token": reset_token, "new_password": "novaSenha123"})
         data = response.get_json()
         print(f"🔍 Resposta do reset-password: {data}")  # Adiciona um print para depuração
         self.assertEqual(response.status_code, 200, "Erro ao redefinir senha.")
@@ -187,6 +184,7 @@ class CreateCompleteUser(unittest.TestCase):
             def reset_sequence(seq_name):
                 db.session.execute(text(f"ALTER SEQUENCE {seq_name} RESTART WITH 1"))
             
+            #reset_sequence("passwordreset_id_seq")
             reset_sequence("appointment_id_seq")
             reset_sequence("pet_id_seq")
             reset_sequence("address_id_seq")
