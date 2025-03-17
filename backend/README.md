@@ -1,6 +1,6 @@
 # 🐾 Petshop API
 
-API para gerenciamento de petshop, permitindo cadastro de clientes, pets, usuários e agendamentos. Desenvolvida com Flask e PostgreSQL.
+API para gerenciamento de petshop, permitindo cadastro de usuários (com perfil ADMIN e CLIENT), clientes (contato e endereço), pets, e agendamentos. Desenvolvida com Flask e PostgreSQL.
 
 ---
 
@@ -9,10 +9,10 @@ API para gerenciamento de petshop, permitindo cadastro de clientes, pets, usuár
 - **Backend**: Flask (Flask-RESTful, Flask-JWT-Extended, Flask-Migrate, Flask-SQLAlchemy, Flask-Marshmallow)
 - **Banco de Dados**: PostgreSQL
 - **Autenticação**: JWT (JSON Web Token)
-- **Testes**: Pytest
+- **Testes**: Unittest
 - **Containerização**: Docker (planejado para implementação futura)
 - **Documentação**: Flassger (Swagger integrado ao Flask)
-
+- **
 ---
 
 ## 📂 Estrutura do Projeto
@@ -53,13 +53,12 @@ backend/
    ```bash
    git clone https://github.com/seu-usuario/petshop-api.git
    cd petshop-api/backend
+   
    ```
 
-2. **Crie um ambiente virtual e ative-o**:
+2. **Instalar as dependências com Poetry**:
    ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate  # Linux/Mac
-   .venv\Scripts\activate    # Windows
+   poetry install
    ```
 
 3. **Instale as dependências**:
@@ -67,19 +66,24 @@ backend/
    pip install -r requirements.txt
    ```
 
-4. **Configure o banco de dados** no `.env` (se aplicável) ou altere `backend_app/config.py`:
+4. **Configure o banco de dados de desenvolvimento** no `.env` (se aplicável) ou altere `backend_app/config.py`:
    ```python
    SQLALCHEMY_DATABASE_URI = 'postgresql://usuario:senha@localhost/petshop_db'
+   ```
+  **Configure o banco de dados de testes** no `.env` (se aplicável) ou altere `backend_app/config_test.py`:
+   ```python
+   SQLALCHEMY_DATABASE_URI = 'postgresql://usuario:senha@localhost/petshop_test'
    ```
 
 5. **Execute as migrações do banco**:
    ```bash
-   flask db upgrade
+   poetry run flask db upgrade
    ```
 
 6. **Inicie a aplicação**:
    ```bash
-   flask run
+   poetry run test
+   poetry run dev
    ```
 
 ---
@@ -137,12 +141,10 @@ Authorization: Bearer seu_token_aqui
 - `GET /clients/{id}` → Busca um cliente específico (restrito)
 
 ### **Contatos**
-
 - `POST /contacts` → Criar contato (restrito)
 - `GET /contacts` → Listar contatos (restrito)
 
 ### **Endereços**
-
 - `POST /addresses` → Criar endereço (restrito)
 - `GET /addresses` → Listar endereços (restrito)
 
@@ -174,7 +176,7 @@ Authorization: Bearer seu_token_aqui
 
 Para rodar os testes unitários, use:
 ```bash
-pytest --disable-warnings
+python -m unittest tests/seu_arquivo.py
 ```
 
 Isso garantirá que a API continua funcionando corretamente após modificações.
@@ -192,4 +194,4 @@ Isso garantirá que a API continua funcionando corretamente após modificações
 Este projeto está sob a licença MIT. Sinta-se à vontade para contribuir! 🐶🐱
 
 
-✍️ **Autor:** Tiago Hinterholz
+✍️ **Autor:** Tiago F. Hinterholz
