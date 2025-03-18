@@ -5,8 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
 from flask_jwt_extended import JWTManager
-from flasgger import Swagger
-from backend_app.docs.swagger_config import swagger_config
+from flask_swagger_ui import get_swaggerui_blueprint
 
 # Inicializa as extensões, mas sem associar a nenhum app ainda
 db = SQLAlchemy()
@@ -24,7 +23,7 @@ def check_if_token_is_blacklisted(jwt_header, jwt_data):
 
 def create_app(env="development"):
     """Cria e configura o aplicativo Flask"""
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='static')
 
     env = os.getenv("FLASK_ENV", "development")
     os.environ["TESTING"] = "True" if env == "testing" else "False"
@@ -41,9 +40,7 @@ def create_app(env="development"):
     db.init_app(app)
     ma.init_app(app)
     migrate.init_app(app, db)
-    jwt.init_app(app)
-    swagger = Swagger(app, config=swagger_config)
-    
+        
     # Registro de rotas
     from .controller import (
         appointment_controller,
@@ -59,9 +56,23 @@ def create_app(env="development"):
         reset_password_controller,
         user_controller
     )
-       
+    
     api.init_app(app)
     
+    # Configuração Swagger
+    SWAGGER_URL = '/apidocs'
+    API_URL = '/static/openapi.yaml'
+
+    swagger_ui = get_swaggerui_blueprint(
+        SWAGGER_URL,
+        API_URL,
+        config={
+            'app_name': "Petshop API"
+        }
+    )
+
+    app.register_blueprint(swagger_ui, url_prefix=SWAGGER_URL)
+             
     from .models import (
         breed_model, 
         client_model, 

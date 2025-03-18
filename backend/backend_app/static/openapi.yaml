@@ -1,0 +1,827 @@
+openapi: "3.0.3"
+info:
+  title: API do Petshop
+  description: API responsável pelo gerenciamento de usuários, pets e serviços
+  version: 1.0.0
+  contact: 
+    name: Tiago F. Hinterholz
+    url: https://github.com/tiagohinterholz/Petshop_API
+    email: fh.tiago@gmail.com
+servers:
+  - url: http://localhost:5000
+tags:
+  - name: "Auth"
+    description: "Endpoint relacionado à autenticação"
+  - name: "Addresses"
+    description: "Endpoint relacionado à endereços"
+  - name: "Appointments"
+    description: "Endpoint relacionado à agendamentos"
+  - name: "Breeds"
+    description: "Endpoint relacionado à raças"
+  - name: "Clients"
+    description: "Endpoint relacionado à clientes"
+  - name: "Contacts"
+    description: "Endpoint relacionado à contatos"
+  - name: "Pets"
+    description: "Endpoint relacionado à pets"
+  - name: "Users"
+    description: "Endpoint relacionado à usuários"
+
+paths:
+  /users:
+    post:
+      tags:
+        - 'Users'
+      operationId: cadastrarUser
+      description: Cadastro de User
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/UsersRequest'
+      responses:
+        '201':
+         description: "User cadastrado com sucesso"
+         content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/UsersResponse'
+        '400':
+          description: "Problema nos dados de cadastro"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuário não autenticado para esta operação"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+        '500':
+          description: "Erro inesperado ao cadastrar user"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - 'Users'
+      operationId: listarUsers
+      description: Lista de Users
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Listagem de usuários realizada com sucesso"
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UsersResponse'
+        '401':
+          description: 'Usuário não autorizado'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'        
+  /users/{usercpf}:
+    get:
+      tags:
+        - 'Users'
+      operationId: detalharUser
+      description: "Detalhar User por CPF"
+      parameters:
+        - name: usercpf
+          in: path
+          description: "cpf do User a ser detalhado"
+          required: true
+          schema:
+            type: string
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "User detalhado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersResponse"
+        '400':
+          description: "Dados inseridos inválidos"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuario não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Usuário não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'   
+    put:
+      tags:
+        - 'Users'
+      description: "Atualizar cadastro de Users"
+      operationId: atualizarUser
+      parameters:
+        - name: usercpf
+          in: path
+          description: "cpf do User a ser atualziado"
+          required: true
+          schema:
+            type: string
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/UsersRequest"
+      responses:
+        '200':
+          description: "User atualizado com sucesso"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UsersResponse'
+        '400':
+          description: "Dados inseridos inválidos"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuario não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Usuario não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+    delete:
+      tags:
+        - 'Users'
+      operationId: deletarUser
+      description: "Deletar User"
+      parameters:
+        - name: usercpf
+          in: path
+          description: "Cpf do user a ser deletado"
+          required: true
+          schema:
+            type: string
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "User deletado com sucesso"
+        '401':
+          description: "User não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "User não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: "Erro ao excluir usuário"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+                
+  /client:
+    post:
+      tags:
+        - 'Clients'
+      operationId: cadastrarClient
+      description: Cadastro de Client
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/ClientsRequest'
+      responses:
+        '201':
+         description: "Client cadastrado com sucesso"
+         content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/ClientsResponse'
+        '400':
+          description: "Problema nos dados de cadastro"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuário não autenticado para esta operação"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+        '500':
+          description: "Erro inesperado ao cadastrar client"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - 'Clients'
+      operationId: listarClients
+      description: Lista de Clients
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Listagem de clientes realizada com sucesso"
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientsResponse'
+        '401':
+          description: 'Usuário não autorizado'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'    
+  /client/{client_id}:
+    get:
+      tags:
+        - 'Clients'
+      operationId: detalharClient
+      description: "Detalhar cliente por Id Cliente"
+      parameters:
+        - name: client_id
+          in: path
+          description: "ID do cliente a ser detalhado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Cliente detalhado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientsResponse"
+        '400':
+          description: "Dados inseridos inválidos"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuario não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Usuário não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'   
+    put:
+      tags:
+        - 'Clients'
+      description: "Atualizar cadastro de Clients"
+      operationId: atualizarClient
+      parameters:
+        - name: client_id
+          in: path
+          description: "ID do cliente a ser atualziado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/ClientsRequest"
+      responses:
+        '200':
+          description: "Client atualizado com sucesso"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ClientsResponse'
+        '400':
+          description: "Dados inseridos inválidos"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuario não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Usuario não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+    delete:
+      tags:
+        - 'Clients'
+      operationId: deletarClient
+      description: "Deletar Client"
+      parameters:
+        - name: client_id
+          in: path
+          description: "ID do cliente a ser deletado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Client deletado com sucesso"
+        '401':
+          description: "User não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Client não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: "Erro ao excluir cliente"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+  
+  /forgot-password:
+    post:
+      tags: 
+        - "Auth"
+      operationId: forgotPassword
+      description: Envio do Token para reset de password
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+              
+      responses:
+        '200': 
+          description: 'Instruções de redefinição de senha enviadas para seu e-mail'
+                         
+        '400':
+          description: 'Houve erros de validação'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+        '401':
+          description: 'Credenciais inválidas'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        
+        '500':
+          description: 'Erro ao gerar token'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /login:
+    post:
+      tags: 
+        - "Auth"
+      operationId: login
+      description: Realizar login do usuário com as credenciais
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+              
+      responses:
+        '200': 
+          description: 'Login realizado com sucesso'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+                
+        '400':
+          description: 'Houve erros de validação'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+        '401':
+          description: 'Credenciais inválidas'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        
+        '500':
+          description: 'Erro ao gerar token'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags: 
+        - "Auth"
+      
+  /logout:
+    post:
+      tags: 
+        - "Auth"
+      operationId: logout
+      description: Invalidar token utilizado
+  /refresh-token:                
+    post:
+      tags:
+        - "Auth"
+      operationId: refresh
+      description: Autenticar o usuário através do refresh token
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+      responses:
+        '200':
+          description: Autenticação realizada com sucesso
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TokenResponse' 
+  /resert-password:
+    post:
+      tags: 
+        - "Auth"
+      operationId: resetPassword
+      description: Redefinição de password atraves de email e token
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+              
+      responses:
+        '200': 
+          description: 'Senha redefinida com sucesso'
+                         
+        '400':
+          description: 'Houve erros de validação'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+        '401':
+          description: 'Credenciais inválidas'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        
+        '500':
+          description: 'Erro ao gerar token'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+    LoginRequest:
+      type: object
+      required:
+        - cpf
+        - password
+      properties: 
+        cpf: 
+          type: string
+        senha:
+          type: string
+          format: password
+    TokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string 
+    RefreshRequest:
+      type: object
+      required:
+        - refresh_token
+      properties:
+        refresh_token:
+          type: string
+    ForgotPasswordRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          example: "email@example.com"
+    ForgotPasswordResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Instruções de redefinição de senha enviadas para seu e-mail."
+        reset_token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    ResetPasswordRequest:
+      type: object
+      required:
+        - token
+        - new_password
+      properties:
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          description: "Token de recuperação de senha enviado por e-mail."
+        new_password:
+          type: string
+          format: password
+          minLength: 6
+          example: "NovaSenha123"
+          description: "Nova senha do usuário (mínimo 6 caracteres)."
+    ResetPasswordResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Senha redefinida com sucesso."
+     
+    AddressesRequest:
+      type: object
+      required:
+        - client_id
+        - street
+        - city
+        - neighborhood
+      properties:
+        client_id:
+          type: integer
+        street:
+          type: string
+          maxLength: 50
+        city:
+          type: string
+          maxLength: 50
+        neighborhood:
+          type: string
+          maxLength: 50
+        complement:
+          type: string
+          maxLength: 50
+    AddressesResponse:
+      type: object
+      properties:
+        id:
+         type: integer
+        client_id:
+          type: integer
+        street:
+          type: string
+        city:
+          type: string
+        neighborhood:
+          type: string
+        complement:
+          type: string
+     
+    AppointmentsRequest:
+      type: object
+      required:
+        - pet_id
+        - desc_appoint
+        - price
+        - date_appoint
+      properties:
+        pet_id:
+          type: integer
+        desc_appoint:
+          type: string
+          maxLength: 50
+        price:
+          type: number
+          format: float
+        date_appoint:
+          type: string
+          format: date
+    AppointmentsResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        pet_id:
+          type: integer
+        desc_appoint:
+          type: string
+        price:
+          type: number
+        date_appoint:
+          type: string        
+     
+    BreedsRequest:
+      type: object
+      required:
+        - description
+      properties:
+        description:
+          type: string
+          maxLength: 50 
+    BreedsResponse:
+      type: object
+      properties:
+        id:
+         type: integer
+        description:
+          type: string
+          maxLength: 50
+           
+    ClientsRequest:
+      type: object
+      required:
+        - cpf
+      properties:
+        cpf:
+          type: string
+          maxLength: 14         
+    ClientsResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        cpf:
+          type: string
+     
+    ContactsRequest:
+      type: object
+      required:
+        - client_id
+        - type_contact
+        - value_contact
+      properties:
+        client_id:
+          type: integer
+        type_contact:
+          type: string
+          enum:
+            - email
+            - telefone
+        value_contact:
+          type: string
+          maxLength: 100     
+    ContactsResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        client_id:
+          type: integer
+        type_contact:
+          type: string
+        value_contact:
+          type: string      
+     
+    PetsRequest:
+      type: object
+      required:
+        - client_id
+        - breed_id
+        - birth_date
+        - name
+      properties:
+        client_id:
+          type: integer
+        breed_id:
+          type: integer
+        birth_date:
+          type: string
+          format: date
+        name:
+          type: string
+          maxLength: 50       
+    PetsResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        client_id:
+          type: integer
+        breed_id:
+          type: integer
+        birth_date:
+          type: string
+          format: data
+        name:
+          type: string
+       
+    UsersRequest:
+      type: object
+      required:
+        - cpf
+        - name
+        - profile
+        - password
+        - email
+      properties:
+        cpf:
+          type: string
+          maxLength: 14
+          example: "000.000.000-00"
+        name:
+          type: string
+          maxLength: 100
+          example: "Fulano da Silva Sauro"
+        profile:
+          type: string
+          enum:
+            - admin
+            - client
+          example: "admin"
+        password:
+          type: string
+          format: password
+          example: "admin1234"
+        email:
+          type: string
+          maxLength: 120
+          format: email
+          example: "meuemail@email.com"
+    UsersResponse:
+      type: object
+      properties:
+        cpf:
+          type: string
+          example: "000.000.000-00"
+        name:
+          type: string
+          example: "Fulano da Silva Sauro"
+        profile:
+          type: string
+          example: "admin"
+        email:
+          type: string
+          example: "meuemail@email.com"       
+
+  securitySchemes:
+    JWT:
+      type: http
+      scheme: bearer  
+
+        
+          
+  

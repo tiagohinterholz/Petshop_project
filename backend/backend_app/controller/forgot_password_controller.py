@@ -5,7 +5,6 @@ from backend_app.schema_dto.forgot_password_schema_dto import ForgotPasswordSche
 from backend_app import api
 from marshmallow import ValidationError
 class ForgotPassword(Resource):
-    
     def post(self):
         """Gera um token de recuperação de senha e envia por e-mail."""
         try:

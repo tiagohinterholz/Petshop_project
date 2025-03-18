@@ -1,5 +1,4 @@
 from flask_jwt_extended import create_access_token, get_jwt_identity
-from backend_app.schema_dto.login_schema_dto import LoginSchemaDTO
 from backend_app.repository.user_repository import UserRepository
 from passlib.hash import pbkdf2_sha256
 from datetime import timedelta
@@ -7,10 +6,6 @@ from backend_app.utils.formatar_cpf import formatar_cpf
 
 def authenticate_user(data):
     """Autentica o user verificando cpf e senha"""
-    validation_errors = LoginSchemaDTO.validate_login(data)
-    if validation_errors:
-        return validation_errors
-    
     cpf = formatar_cpf(data.get("cpf"))
     password = data.get("password")
     

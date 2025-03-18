@@ -4,7 +4,6 @@ from backend_app.services.reset_password_service import reset_password
 from backend_app.schema_dto.reset_password_schema_dto import ResetPasswordSchemaDTO
 from backend_app import api
 from marshmallow import ValidationError
-from flasgger import swag_from
 
 class ResetPassword(Resource):
     def post(self):

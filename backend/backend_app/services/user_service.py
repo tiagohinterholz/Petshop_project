@@ -19,7 +19,6 @@ class UserService:
     def register(validated_data):
         """Cadastra um novo usuário."""
         try:
-            print(f"🔍 Tentando cadastrar usuário: {validated_data}")  # <-- DEBUG
             new_user, status = UserRepository.create(validated_data)
             return UserSchemaDTO().dump(new_user), status
         except IntegrityError:

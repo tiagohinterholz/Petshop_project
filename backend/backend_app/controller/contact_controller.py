@@ -5,7 +5,6 @@ from backend_app.services.contact_service import ContactService
 from backend_app.schema_dto.contact_schema_dto import ContactSchemaDTO
 from marshmallow import ValidationError
 from ..utils.decorators import role_required, client_owns_data
-from flasgger import swag_from
 
 def get_contact_id(id):
     contact = ContactService.list_contact_id(id)

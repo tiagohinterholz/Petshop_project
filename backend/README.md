@@ -11,7 +11,7 @@ API para gerenciamento de petshop, permitindo cadastro de usuários (com perfil 
 - **Autenticação**: JWT (JSON Web Token)
 - **Testes**: Unittest
 - **Containerização**: Docker (planejado para implementação futura)
-- **Documentação**: Flassger (Swagger integrado ao Flask)
+- **Documentação**: Swagger
 - **
 ---
 

@@ -5,7 +5,6 @@ from backend_app.services.pet_service import PetService
 from backend_app.schema_dto.pet_schema_dto import PetSchemaDTO
 from ..utils.decorators import role_required, client_owns_data
 from marshmallow import ValidationError
-from flasgger import swag_from
 
 def get_pet_id(id):
     pet = PetService.list_pet_id(id)

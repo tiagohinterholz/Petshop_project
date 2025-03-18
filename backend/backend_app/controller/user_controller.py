@@ -5,7 +5,6 @@ from backend_app.services.user_service import UserService
 from backend_app.schema_dto.user_schema_dto import UserSchemaDTO
 from ..utils.decorators import role_required, client_owns_data
 from marshmallow import ValidationError
-from flasgger import swag_from
 
 def get_user_cpf(cpf):
     """Retorna o CPF do usuário solicitado"""
@@ -18,9 +17,10 @@ class UserList(Resource):
     @role_required('admin')
     def get(self):
         """Listar todos os usuários"""
+        
         users, status = UserService.list_users()
         return make_response(jsonify(users), status)
-
+    
     @role_required('admin')
     def post(self):
         """Cadastrar novo usuário"""
@@ -53,7 +53,7 @@ class UserDetail(Resource):
             return make_response(jsonify(updated_user), status)
         except ValidationError as err:
             return {"error": err.messages}, 400
-
+        
     @role_required('admin')
     def delete(self, cpf):
         """Excluir usuário por CPF"""
