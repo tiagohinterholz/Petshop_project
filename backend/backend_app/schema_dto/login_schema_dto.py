@@ -15,7 +15,7 @@ class LoginSchemaDTO(Schema):
     def validate_password(self, value):
         """Valida se a senha tem pelo menos 6 caracteres."""
         if len(value) < 6:
-            raise ValidationError("A senah deve ter no mínimo 6 caracteres")
+            raise ValidationError("A senha deve ter no mínimo 6 caracteres")
     
     @classmethod
     def validate_login(cls, data):

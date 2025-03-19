@@ -27,8 +27,8 @@ class AppointmentList(Resource):
             new_appointment, status = AppointmentService.register(schema_dto)
             return make_response(jsonify(new_appointment), status)
         except ValidationError as err:
-            return {"error": err.messages}, 400    
-
+            status_code = 400 if "missing" in str(err.messages).lower() else 422
+            return {"error": err.messages}, status_code   
 class AppointmentDetail(Resource):
     
     @client_owns_data(get_appointment_pet_id)
@@ -49,7 +49,8 @@ class AppointmentDetail(Resource):
             updated_appointment, status = AppointmentService.update(id, schema_dto)        
             return make_response(jsonify(updated_appointment), status)
         except ValidationError as err:
-            return {"error": err.messages}, 400  
+            status_code = 400 if "missing" in str(err.messages).lower() else 422
+            return {"error": err.messages}, status_code  
 
     @client_owns_data(get_appointment_pet_id)
     def delete(self, id):

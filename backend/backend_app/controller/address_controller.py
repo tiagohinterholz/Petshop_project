@@ -26,7 +26,8 @@ class AddressList(Resource):
             new_address, status = AddressService.register(schema_dto)
             return make_response(jsonify(new_address), status)
         except ValidationError as err:
-            return {"error": err.messages}, 400
+            status_code = 400 if "missing" in str(err.messages).lower() else 422
+            return {"error": err.messages}, status_code
 class AddressDetail(Resource):
     
     @client_owns_data(get_address_id)
@@ -47,7 +48,8 @@ class AddressDetail(Resource):
             updated_address, status = AddressService.update(id, schema_dto)        
             return make_response(jsonify(updated_address), status)
         except ValidationError as err:
-            return {"error": err.messages}, 400  
+            status_code = 400 if "missing" in str(err.messages).lower() else 422
+            return {"error": err.messages}, status_code  
     
     @role_required('admin')
     def delete(self, id):

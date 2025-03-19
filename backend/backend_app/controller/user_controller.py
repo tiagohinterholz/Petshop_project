@@ -29,9 +29,10 @@ class UserList(Resource):
             new_user, status = UserService.register(schema_dto)
             return make_response(jsonify(new_user), status)
         except ValidationError as err:
-            return {"error": err.messages}, 400
-        except Exception as e:
-            return {"error": "Erro inesperado ao cadastrar usuário", "details": str(e)}, 500 
+            status_code = 400 if "missing" in str(err.messages).lower() else 422
+            return {"error": err.messages}, status_code
+        except Exception:
+            return {"error": "Erro inesperado ao cadastrar usuário"}, 500 
 class UserDetail(Resource):
     
     @client_owns_data(get_user_cpf)
@@ -52,7 +53,8 @@ class UserDetail(Resource):
             updated_user, status = UserService.update(cpf, schema_dto)
             return make_response(jsonify(updated_user), status)
         except ValidationError as err:
-            return {"error": err.messages}, 400
+            status_code = 400 if "missing" in str(err.messages).lower() else 422
+            return {"error": err.messages}, status_code
         
     @role_required('admin')
     def delete(self, cpf):

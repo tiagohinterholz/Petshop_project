@@ -9,6 +9,9 @@ def authenticate_user(data):
     cpf = formatar_cpf(data.get("cpf"))
     password = data.get("password")
     
+    if not cpf or not password:
+        return {"error": "CPF e senha são obrigatórios"}, 400
+    
     # Buscar usuário no banco de dados
     user = UserRepository.get_user_by_cpf(cpf)
     
@@ -28,5 +31,5 @@ def get_current_user():
     """Obtem user autenticado pelo token"""
     identity = get_jwt_identity()
     if not identity:
-        return {"error": "Usuário não autenticado"}, 400
+        return {"error": "Usuário não autenticado"}, 401
     return identity

@@ -13,7 +13,7 @@ class UserService:
         """Busca usuário pelo CPF."""
         user = UserRepository.get_user_by_cpf(cpf)
         if not user:
-            return {"error": "User não encontrado"}, 404
+            return {"error": "Usuário não encontrado"}, 404
         return UserSchemaDTO().dump(user), 200 
 
     def register(validated_data):
@@ -24,7 +24,7 @@ class UserService:
         except IntegrityError:
             return {"error": "Problema nos dados de cadastro"}, 400  # Melhor mensagem de erro
         except Exception:
-            return {"error": "Erro inesperado ao cadastrar user"}, 500
+            return {"error": "Erro inesperado ao cadastrar Usuário"}, 500
 
     def update(cpf, validated_data):
         """Atualiza um usuário."""
@@ -36,19 +36,18 @@ class UserService:
             updated_user = UserRepository.update(user_db, validated_data)
             return UserSchemaDTO().dump(updated_user), 200
         except Exception:
-            return {"error": "Erro ao atualizar User."}, 500
+            return {"error": "Erro ao atualizar Usuário."}, 500
 
     def delete(cpf):
         """Exclui um usuário pelo CPF."""
         user = UserRepository.get_user_by_cpf(cpf)
         if not user:
-            return {"error": "User não encontrado"}, 404  
+            return {"error": "Usuário não encontrado"}, 404  
 
         try:
             success = UserRepository.delete(user)
             if success:
-                return {"message": "User deletado com sucesso"}, 200
-        except Exception as e:
-            logging.error(f"Erro ao excluir user: {str(e)}")
-            return {"error": "Erro ao excluir user."}, 500
+                return {"message": "Usuário deletado com sucesso"}, 200
+        except Exception:
+            return {"error": "Erro ao excluir Usuário."}, 500
 

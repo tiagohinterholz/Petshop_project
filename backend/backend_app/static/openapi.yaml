@@ -9,6 +9,7 @@ info:
     email: fh.tiago@gmail.com
 servers:
   - url: http://localhost:5000
+  
 tags:
   - name: "Auth"
     description: "Endpoint relacionado à autenticação"
@@ -33,7 +34,7 @@ paths:
       tags:
         - 'Users'
       operationId: cadastrarUser
-      description: Cadastro de User
+      summary: Cadastro de Usuário
       security:
         - JWT: []
       requestBody:
@@ -70,7 +71,7 @@ paths:
       tags:
         - 'Users'
       operationId: listarUsers
-      description: Lista de Users
+      summary: Listagem de Usuários
       security:
         - JWT: []
       responses:
@@ -93,7 +94,7 @@ paths:
       tags:
         - 'Users'
       operationId: detalharUser
-      description: "Detalhar User por CPF"
+      summary: "Detalhar Usuário pelo CPF"
       parameters:
         - name: usercpf
           in: path
@@ -131,12 +132,12 @@ paths:
     put:
       tags:
         - 'Users'
-      description: "Atualizar cadastro de Users"
+      summary: "Atualizar cadastro de Usuário pelo CPF"
       operationId: atualizarUser
       parameters:
         - name: usercpf
           in: path
-          description: "cpf do User a ser atualziado"
+          description: "cpf do User a ser atualizado"
           required: true
           schema:
             type: string
@@ -176,7 +177,7 @@ paths:
       tags:
         - 'Users'
       operationId: deletarUser
-      description: "Deletar User"
+      summary: "Deletar Usuário pelo CPF"
       parameters:
         - name: usercpf
           in: path
@@ -208,12 +209,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse' 
                 
-  /client:
+  /clients:
     post:
       tags:
         - 'Clients'
       operationId: cadastrarClient
-      description: Cadastro de Client
+      summary: Cadastro de Clientes
       security:
         - JWT: []
       requestBody:
@@ -250,7 +251,7 @@ paths:
       tags:
         - 'Clients'
       operationId: listarClients
-      description: Lista de Clients
+      summary: Listagem de Clientes
       security:
         - JWT: []
       responses:
@@ -268,12 +269,12 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/ErrorResponse'    
-  /client/{client_id}:
+  /clients/{client_id}:
     get:
       tags:
         - 'Clients'
       operationId: detalharClient
-      description: "Detalhar cliente por Id Cliente"
+      summary: "Detalhar Cliente pelo client_id"
       parameters:
         - name: client_id
           in: path
@@ -311,12 +312,12 @@ paths:
     put:
       tags:
         - 'Clients'
-      description: "Atualizar cadastro de Clients"
+      summary: "Atualizar cadastro do Cliente pelo client_id"
       operationId: atualizarClient
       parameters:
         - name: client_id
           in: path
-          description: "ID do cliente a ser atualziado"
+          description: "ID do cliente a ser atualizado"
           required: true
           schema:
             type: integer
@@ -356,7 +357,7 @@ paths:
       tags:
         - 'Clients'
       operationId: deletarClient
-      description: "Deletar Client"
+      summary: "Deletar Cliente pelo client_id"
       parameters:
         - name: client_id
           in: path
@@ -393,7 +394,7 @@ paths:
       tags: 
         - "Auth"
       operationId: forgotPassword
-      description: Envio do Token para reset de password
+      summary: Envio do Token para reset de password
       requestBody:
         content:
           'application/json':
@@ -429,7 +430,7 @@ paths:
       tags: 
         - "Auth"
       operationId: login
-      description: Realizar login do usuário com as credenciais
+      summary: Realizar login do usuário com as credenciais
       requestBody:
         content:
           'application/json':
@@ -467,19 +468,56 @@ paths:
     get:
       tags: 
         - "Auth"
-      
+      security:
+          - BearerAuth: []
+      summary: Obtém o perfil do usuário autenticado
+      description: Retorna as informações do usuário atualmente autenticado com base no token JWT.
+      responses:
+        200:
+          description: Perfil do usuário retornado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  nome:
+                    type: string
+                    example: "Tiago Hinterholz"
+                  email:
+                    type: string
+                    example: "tiago@email.com"
+        401:
+          description: Token inválido ou expirado
   /logout:
     post:
-      tags: 
-        - "Auth"
-      operationId: logout
-      description: Invalidar token utilizado
-  /refresh-token:                
+      tags:
+        - Auth
+      security:
+        - BearerAuth: []
+      summary: Invalida o token JWT do usuário logado
+      description: Adiciona o token atual à blacklist para impedir seu uso futuro.
+      responses:
+        200:
+          description: Logout realizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Logout realizado com sucesso."
+        401:
+          description: Token inválido ou expirado      
+  /refresh-token:
     post:
       tags:
         - "Auth"
       operationId: refresh
-      description: Autenticar o usuário através do refresh token
+      summary: Autenticar o usuário através do refresh token
       requestBody:
         content:
           'application/json':
@@ -497,7 +535,7 @@ paths:
       tags: 
         - "Auth"
       operationId: resetPassword
-      description: Redefinição de password atraves de email e token
+      summary: Redefinição de password atraves de email e token
       requestBody:
         content:
           'application/json':
@@ -529,6 +567,905 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /pets:
+    post:
+      tags:
+        - 'Pets'
+      operationId: cadastrarPet
+      summary: Cadastro de Pets
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/PetsRequest'
+      responses:
+        '201':
+         description: "Pet cadastrado com sucesso"
+         content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/PetsResponse'
+        '400':
+          description: "Problema nos dados de cadastro"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuário não autenticado para esta operação"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+        '500':
+          description: "Erro inesperado ao cadastrar pet"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - 'Pets'
+      operationId: listarPets
+      summary: Listagem de Pets
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Listagem de pets realizada com sucesso"
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PetsResponse'
+        '401':
+          description: 'Usuário não autorizado'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /pets/{pet_id}:
+    get:
+      tags:
+        - 'Pets'
+      operationId: detalharPet
+      summary: "Detalhar Pet pelo pet_id"
+      parameters:
+        - name: pet_id
+          in: path
+          description: "ID do pet a ser detalhado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Pet detalhado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PetsResponse"
+        '400':
+          description: "Dados inseridos inválidos"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuario não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Pet não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'   
+    put:
+      tags:
+        - 'Pets'
+      summary: "Atualizar cadastro de Pet pelo pet_id"
+      operationId: atualizarPet
+      parameters:
+        - name: pet_id
+          in: path
+          description: "ID do pet a ser atualizado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/PetsRequest"
+      responses:
+        '200':
+          description: "Pet atualizado com sucesso"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PetsResponse'
+        '400':
+          description: "Dados inseridos inválidos"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuario não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Pet não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+    delete:
+      tags:
+        - 'Pets'
+      operationId: deletarPet
+      summary: "Deletar Pet pelo pet_id"
+      parameters:
+        - name: pet_id
+          in: path
+          description: "ID do pet a ser deletado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Pet deletado com sucesso"
+        '401':
+          description: "User não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Pet não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: "Erro ao excluir Pet"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+
+  /contacts:
+    post:
+      tags:
+        - 'Contacts'
+      operationId: cadastrarContact
+      summary: Cadastro de Contatos
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/ContactsRequest'
+      responses:
+        '201':
+         description: "Contact cadastrado com sucesso"
+         content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/ContactsResponse'
+        '400':
+          description: "Problema nos dados de cadastro"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuário não autenticado para esta operação"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+        '500':
+          description: "Erro inesperado ao cadastrar contact"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - 'Contacts'
+      operationId: listarContacts
+      summary: Listagem de Contatos
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Listagem de contatos realizada com sucesso"
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContactsResponse'
+        '401':
+          description: 'Usuário não autorizado'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /contacts/{contact_id}:
+    get:
+      tags:
+        - 'Contacts'
+      operationId: detalharContact
+      summary: "Detalhar Contato pelo contact_id"
+      parameters:
+        - name: contact_id
+          in: path
+          description: "ID do contato a ser detalhado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Contato detalhado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactsResponse"
+        '400':
+          description: "Dados inseridos inválidos"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuario não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Contato não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'   
+    put:
+      tags:
+        - 'Contacts'
+      summary: "Atualizar cadastro de Contato pelo contact_id"
+      operationId: atualizarContact
+      parameters:
+        - name: contact_id
+          in: path
+          description: "ID do contato a ser atualizado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/ContactsRequest"
+      responses:
+        '200':
+          description: "Contact atualizado com sucesso"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ContactsResponse'
+        '400':
+          description: "Dados inseridos inválidos"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuario não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Contato não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+    delete:
+      tags:
+        - 'Contacts'
+      operationId: deletarContact
+      summary: "Deletar Contato pelo contact_id"
+      parameters:
+        - name: contact_id
+          in: path
+          description: "ID do contato a ser deletado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Contato deletado com sucesso"
+        '401':
+          description: "User não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Client não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: "Erro ao excluir cliente"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /breeds:
+    post:
+      tags:
+        - 'Breeds'
+      operationId: cadastrarBreed
+      summary: Cadastro de Raças de Pets
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/BreedsRequest'
+      responses:
+        '201':
+         description: "Breed cadastrada com sucesso"
+         content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/BreedsResponse'
+        '400':
+          description: "Problema nos dados de cadastro"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuário não autenticado para esta operação"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+        '500':
+          description: "Erro inesperado ao cadastrar breed"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - 'Breeds'
+      operationId: listarContacts
+      summary: Listagem de Raças de Pets
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Listagem de raças realizada com sucesso"
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BreedsResponse'
+        '401':
+          description: 'Usuário não autorizado'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /breeds/{breed_id}:
+    get:
+      tags:
+        - 'Breeds'
+      operationId: detalharContact
+      summary: "Detalhar Raça do Pet pelo breed_id"
+      parameters:
+        - name: breed_id
+          in: path
+          description: "ID da raça a ser detalhado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Raça detalhada com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BreedsResponse"
+        '400':
+          description: "Dados inseridos inválidos"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuario não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Raça não encontrada"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'   
+    put:
+      tags:
+        - 'Breeds'
+      summary: "Atualizar cadastro de Raças pelo breed_id"
+      operationId: atualizarContact
+      parameters:
+        - name: breed_id
+          in: path
+          description: "ID da Raça do Pet a ser atualizada"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/BreedsRequest"
+      responses:
+        '200':
+          description: "Raça atualizada com sucesso"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/BreedsResponse'
+        '400':
+          description: "Dados inseridos inválidos"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuario não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Raça não encontrada"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+    delete:
+      tags:
+        - 'Breeds'
+      operationId: deletarBreed
+      summary: "Deletar Raça pelo breed_id"
+      parameters:
+        - name: breed_id
+          in: path
+          description: "ID da raça a ser deletada"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Raça deletada com sucesso"
+        '401':
+          description: "User não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Raça não encontrada"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: "Erro ao excluir raça"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  
+  /appointments:
+    post:
+      tags:
+        - 'Appointments'
+      operationId: cadastrarBreed
+      summary: Cadastro de Agendamento de Pets
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/AppointmentsRequest'
+      responses:
+        '201':
+         description: "Agendamento cadastrado com sucesso"
+         content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/AppointmentsResponse'
+        '400':
+          description: "Problema nos dados de cadastro"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuário não autenticado para esta operação"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+        '500':
+          description: "Erro inesperado ao cadastrar appointment"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - 'Appointments'
+      operationId: listarAppointments
+      summary: Listagem de Agendamentos de Pets
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Listagem de agendamentos realizada com sucesso"
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AppointmentsResponse'
+        '401':
+          description: 'Usuário não autorizado'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /appointments/{appointment_id}:
+    get:
+      tags:
+        - 'Appointments'
+      operationId: detalharAppointment
+      summary: "Detalhar Agendamento de Pet pelo appointment_id"
+      parameters:
+        - name: appointment_id
+          in: path
+          description: "ID do agendamento a ser detalhado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Agendamento detalhada com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppointmentsResponse"
+        '400':
+          description: "Dados inseridos inválidos"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuario não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Agendamento não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'   
+    put:
+      tags:
+        - 'Appointments'
+      summary: "Atualizar Agendamento de Pets pelo appointment_id"
+      operationId: atualizarContact
+      parameters:
+        - name: breed_id
+          in: path
+          description: "ID do Agendamento do Pet a ser atualizado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/AppointmentsRequest"
+      responses:
+        '200':
+          description: "Agendamento atualizado com sucesso"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AppointmentsResponse'
+        '400':
+          description: "Dados inseridos inválidos"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuario não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Agendamento não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+    delete:
+      tags:
+        - 'Appointments'
+      operationId: deletarAppointment
+      summary: "Deletar Agendamento de Pet pelo appointment_id"
+      parameters:
+        - name: appointment_id
+          in: path
+          description: "ID do Agendamento a ser deletado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Agendamento deletado com sucesso"
+        '401':
+          description: "User não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Agendamento não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: "Erro ao excluir raça"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /addresses:
+    post:
+      tags:
+        - 'Addresses'
+      operationId: cadastrarAddress
+      summary: Cadastro de Endereços
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/AddressesRequest'
+      responses:
+        '201':
+         description: "Endereço cadastrado com sucesso"
+         content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/AddressesResponse'
+        '400':
+          description: "Problema nos dados de cadastro"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuário não autenticado para esta operação"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+        '500':
+          description: "Erro inesperado ao cadastrar address"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - 'Addresses'
+      operationId: listarAddress
+      summary: Listagem de Endereços
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Listagem de Endereços realizada com sucesso"
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AddressesResponse'
+        '401':
+          description: 'Usuário não autorizado'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /addresses/{address_id}:
+    get:
+      tags:
+        - 'Addresses'
+      operationId: detalharAddress
+      summary: "Detalhar Endereço do Cliente pelo address_id"
+      parameters:
+        - name: address_id
+          in: path
+          description: "ID do endereço a ser detalhado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Endereço detalhado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddressesResponse"
+        '400':
+          description: "Dados inseridos inválidos"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuario não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Endereço não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'   
+    put:
+      tags:
+        - 'Addresses'
+      summary: "Atualizar Endereço de Cliente pelo address_id"
+      operationId: atualizarAddress
+      parameters:
+        - name: address_id
+          in: path
+          description: "ID do endereço a ser atualizado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/AddressesRequest"
+      responses:
+        '200':
+          description: "Endereço atualizado com sucesso"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AddressesResponse'
+        '400':
+          description: "Dados inseridos inválidos"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: "Usuario não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Endereço não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+    delete:
+      tags:
+        - 'Addresses'
+      operationId: deletarAddress
+      summary: "Deletar Endereço pelo address_id"
+      parameters:
+        - name: address_id
+          in: path
+          description: "ID do Endereço a ser deletado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Agendamento deletado com sucesso"
+        '401':
+          description: "User não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: "Endereço não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: "Erro ao excluir Endereço"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   schemas:
@@ -545,9 +1482,11 @@ components:
       properties: 
         cpf: 
           type: string
+          example: "000.000.000-00"
         senha:
           type: string
           format: password
+          example: "admin123"
     TokenResponse:
       type: object
       properties:
@@ -562,6 +1501,7 @@ components:
       properties:
         refresh_token:
           type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
     ForgotPasswordRequest:
       type: object
       required:
@@ -613,18 +1553,23 @@ components:
       properties:
         client_id:
           type: integer
+          example: 1
         street:
           type: string
           maxLength: 50
+          example: "Rua dos Pampas"
         city:
           type: string
           maxLength: 50
+          example: "Brasília"
         neighborhood:
           type: string
           maxLength: 50
+          example: "Bairro Biriquí"
         complement:
           type: string
           maxLength: 50
+          exemplo: "Número 23"
     AddressesResponse:
       type: object
       properties:
@@ -651,15 +1596,19 @@ components:
       properties:
         pet_id:
           type: integer
+          example: 1
         desc_appoint:
           type: string
           maxLength: 50
+          example: "Banho e tosa"
         price:
           type: number
           format: float
+          examploe: "550,00"
         date_appoint:
           type: string
           format: date
+          example: "2025-05-31"
     AppointmentsResponse:
       type: object
       properties:
@@ -681,7 +1630,8 @@ components:
       properties:
         description:
           type: string
-          maxLength: 50 
+          maxLength: 50
+          example: "Gato Siamês / Cachorro Buldogue" 
     BreedsResponse:
       type: object
       properties:
@@ -698,7 +1648,8 @@ components:
       properties:
         cpf:
           type: string
-          maxLength: 14         
+          maxLength: 14
+          example: "000.000.000-00"         
     ClientsResponse:
       type: object
       properties:
@@ -716,14 +1667,17 @@ components:
       properties:
         client_id:
           type: integer
+          example: 1
         type_contact:
           type: string
           enum:
             - email
             - telefone
+          example: "email"
         value_contact:
           type: string
-          maxLength: 100     
+          maxLength: 100
+          example: "tiago@email.com"     
     ContactsResponse:
       type: object
       properties:
@@ -746,14 +1700,18 @@ components:
       properties:
         client_id:
           type: integer
+          example: 1
         breed_id:
           type: integer
+          example: 5
         birth_date:
           type: string
           format: date
+          example: "2020-01-25"
         name:
           type: string
-          maxLength: 50       
+          maxLength: 50
+          example: "Tommy"       
     PetsResponse:
       type: object
       properties:

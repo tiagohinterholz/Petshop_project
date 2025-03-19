@@ -22,7 +22,7 @@ class BreedService:
        
         existing_breed = BreedRepository.get_by_description(validated_data["description"])
         if existing_breed:
-            return {"error": "Já existe uma raça cadastrada com essa descrição."}, 400
+            return {"error": "Raça já cadastrada com descrição informada."}, 422
         
         try:         
             new_breed = BreedRepository.create(validated_data)

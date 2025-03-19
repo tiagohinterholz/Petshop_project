@@ -21,11 +21,11 @@ class PetService:
         """Cadastra um novo pet."""
         existing_client = ClientRepository.get_by_id(validated_data["client_id"])
         if not existing_client: # verifica se existe um cliente
-            return {"error":"Cliente informado não cadastrado."}, 400
+            return {"error":"Cliente informado não cadastrado."}, 404
         
         existing_breed = BreedRepository.get_by_id(validated_data["breed_id"])
         if not existing_breed: # verifica se ja existe uma raça cadastrada
-            return {"error":"Raça informada não cadastrada."}, 400 
+            return {"error":"Raça informada não cadastrada."}, 404 
         
         try:
             new_pet = PetRepository.create(validated_data)
@@ -42,11 +42,11 @@ class PetService:
         
         existing_client = ClientRepository.get_by_id(validated_data["client_id"])
         if not existing_client: # verifica se existe um cliente
-            return {"error":"Cliente informado não cadastrado."}, 400
+            return {"error":"Cliente informado não cadastrado."}, 404
         
         existing_breed = PetRepository.get_by_id(validated_data["breed_id"])
         if not existing_breed: # verifica se ja existe uma raça cadastrada
-            return {"error":"Raça informada não cadastrada."}, 400 
+            return {"error":"Raça informada não cadastrada."}, 404 
                
         try:
             updated_pet = PetRepository.update(id, validated_data)

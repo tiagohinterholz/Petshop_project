@@ -24,7 +24,7 @@ class AppointmentService:
         
         pet = PetRepository.get_by_id(validated_data["pet_id"])
         if not pet:
-            return {"error": "O pet informado não existe."}, 400
+            return {"error": "Pet informado não existe."}, 404
         
         try:
             new_appointment = AppointmentRepository.create(validated_data)
@@ -41,7 +41,7 @@ class AppointmentService:
         
         pet = PetRepository.get_by_id(validated_data["pet_id"])
         if not pet:
-            return {"error": "O pet informado não existe."}, 400
+            return {"error": "Pet informado não existe."}, 404
 
         try:
             updated_appointment = AppointmentRepository.update(appointment_db, validated_data)

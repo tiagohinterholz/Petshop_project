@@ -21,7 +21,8 @@ class BreedList(Resource):
             new_breed, status = BreedService.register(schema_dto)
             return make_response(jsonify(new_breed), status)
         except ValidationError as err:
-            return {"error": err.messages}, 400
+            status_code = 400 if "missing" in str(err.messages).lower() else 422
+            return {"error": err.messages}, status_code
 class BreedDetail(Resource):
     
     role_required('client')
@@ -41,7 +42,8 @@ class BreedDetail(Resource):
             updated_breed, status = BreedService.update(id, schema_dto)
             return make_response(jsonify(updated_breed), status)
         except ValidationError as err:
-            return {"error": err.messages}, 400
+            status_code = 400 if "missing" in str(err.messages).lower() else 422
+            return {"error": err.messages}, status_code
 
     @role_required('admin')
     def delete(self, id):

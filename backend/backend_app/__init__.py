@@ -6,6 +6,7 @@ from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
 from flask_jwt_extended import JWTManager
 from flask_swagger_ui import get_swaggerui_blueprint
+from flask_cors import CORS
 
 # Inicializa as extensões, mas sem associar a nenhum app ainda
 db = SQLAlchemy()
@@ -40,6 +41,8 @@ def create_app(env="development"):
     db.init_app(app)
     ma.init_app(app)
     migrate.init_app(app, db)
+    jwt.init_app(app)
+    CORS(app)
         
     # Registro de rotas
     from .controller import (

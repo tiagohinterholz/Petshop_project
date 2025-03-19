@@ -28,7 +28,8 @@ class ClientList(Resource):
             new_client, status = ClientService.register(schema_dto)
             return make_response(jsonify(new_client), status)
         except ValidationError as err:
-            return {"error": err.messages}, 400    
+            status_code = 400 if "missing" in str(err.messages).lower() else 422
+            return {"error": err.messages}, status_code   
 class ClientDetail(Resource):
 
     @client_owns_data(get_client_cpf)
@@ -49,7 +50,8 @@ class ClientDetail(Resource):
             updated_client, status = ClientService.update(id, schema_dto)
             return make_response(jsonify(updated_client), status)
         except ValidationError as err:
-            return {"error": err.messages}, 400
+            status_code = 400 if "missing" in str(err.messages).lower() else 422
+            return {"error": err.messages}, status_code
 
     @role_required('admin')
     def delete(self, id):

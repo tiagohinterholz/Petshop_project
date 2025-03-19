@@ -20,7 +20,7 @@ class ContactService:
         """Cadastra um novo contato."""
         existing_client = ClientRepository.get_by_id(validated_data["client_id"])
         if not existing_client: # verifica se ja existe CPF cadastrado
-            return {"error":"Cliente informado não cadastrado."}, 400        
+            return {"error":"Cliente informado não cadastrado."}, 404        
         try: 
             new_contact = ContactRepository.create(validated_data)
             return ContactSchemaDTO().dump(new_contact), 201
@@ -35,7 +35,7 @@ class ContactService:
         
         existing_client = ClientRepository.get_by_id(validated_data["id"])
         if not existing_client: # verifica se ja existe CPF cadastrado
-            return {"error":"Cliente informado não cadastrado."}, 400
+            return {"error":"Cliente informado não cadastrado."}, 404
         try:
             updated_contact = ContactRepository.update(contact_db, validated_data)
             return ContactSchemaDTO().dump(updated_contact), 200

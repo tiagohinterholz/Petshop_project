@@ -15,7 +15,8 @@ class Login(Resource):
             tokens, status = authenticate_user(schema_dto)  
             return make_response(jsonify(tokens), status)
         except ValidationError as err:
-            return {"error": err.messages}, 400       
+            status_code = 400 if "missing" in str(err.messages).lower() else 422
+            return {"error": err.messages}, status_code       
 
 class UserProfile(Resource):
     @jwt_required()

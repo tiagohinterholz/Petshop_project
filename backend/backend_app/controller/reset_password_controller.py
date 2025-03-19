@@ -13,7 +13,8 @@ class ResetPassword(Resource):
             response, status = reset_password(schema_dto)
             return make_response(jsonify(response), status)
         except ValidationError as err:
-            return {"error": err.messages}, 400
+            status_code = 400 if "missing" in str(err.messages).lower() else 422
+            return {"error": err.messages}, status_code
             
 
 api.add_resource(ResetPassword, '/reset-password')

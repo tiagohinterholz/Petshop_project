@@ -23,7 +23,7 @@ class AddressService:
         """Cadastra um novo endereço para um cliente."""
         client = ClientRepository.get_by_id(validated_data["client_id"])
         if not client:
-            return {"error": "Cliente informado não existe."}, 400
+            return {"error": "Cliente informado não existe."}, 404
                
         try:
             new_address = AddressRepository.create(validated_data)
@@ -40,7 +40,7 @@ class AddressService:
         
         client = ClientRepository.get_by_id(validated_data["client_id"])
         if not client:
-            return {"error": "O cliente informado não existe."}, 400
+            return {"error": "Cliente informado não existe."}, 404
 
         try:
             updated_address = AddressRepository.update(address_db, validated_data)

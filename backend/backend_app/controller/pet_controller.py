@@ -27,7 +27,8 @@ class PetList(Resource):
             new_pet, status = PetService.register(schema_dto)
             return make_response(jsonify(new_pet), status)
         except ValidationError as err:
-            return {"error": err.messages}, 400 
+            status_code = 400 if "missing" in str(err.messages).lower() else 422
+            return {"error": err.messages}, status_code 
 class PetDetail(Resource):
     
     @client_owns_data(get_pet_id)
@@ -48,7 +49,8 @@ class PetDetail(Resource):
             updated_pet, status = PetService.update(id, schema_dto)
             return make_response(jsonify(updated_pet), status)
         except ValidationError as err:
-            return {"error": err.messages}, 400 
+            status_code = 400 if "missing" in str(err.messages).lower() else 422
+            return {"error": err.messages}, status_code 
     
     @client_owns_data(get_pet_id)
     def delete(self, id):
