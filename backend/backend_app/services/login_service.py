@@ -1,4 +1,4 @@
-from flask_jwt_extended import create_access_token, get_jwt_identity
+from flask_jwt_extended import create_access_token, get_jwt_identity, create_refresh_token
 from backend_app.repository.user_repository import UserRepository
 from passlib.hash import pbkdf2_sha256
 from datetime import timedelta
@@ -25,11 +25,26 @@ def authenticate_user(data):
         expires_delta=timedelta(hours=1)
     )
     
-    return {"access_token": access_token}, 200
+    refresh_token = create_refresh_token(
+        identity=str(user.cpf),
+        expires_delta=timedelta(days=7)  # Refresh token dura mais tempo
+    )
+    
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token
+    }, 200
 
 def get_current_user():
     """Obtem user autenticado pelo token"""
-    identity = get_jwt_identity()
-    if not identity:
+    cpf = get_jwt_identity()
+    if not cpf:
         return {"error": "Usuário não autenticado"}, 401
-    return identity
+    
+    user = UserRepository.get_user_by_cpf(cpf)
+    if not user:
+        return {"error": "Usuário não encontrado"}, 404
+        
+    return {"cpf": user.cpf,
+            "nome": user.name,
+            "perfil": user.profile.value}, 200

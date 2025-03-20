@@ -63,3 +63,36 @@ def client_owns_data(get_client_id_func):
         return wrapper
     
     return decorator
+
+def client_owns_cpf(get_client_cpf_func):
+    """
+    Decorator para garantir que o cliente só acesse os próprios dados com base no CPF.
+    :param get_client_cpf_func: Função que retorna o CPF do cliente da requisição.
+    """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            verify_jwt_in_request()
+            claims = get_jwt()
+            user_role = claims.get("profile")
+            user_cpf = get_jwt_identity()  # CPF do usuário autenticado no token
+            
+            # Obtém o CPF do recurso que está sendo acessado
+            requested_cpf = get_client_cpf_func(**kwargs)  # CPF vindo da requisição
+            
+            if requested_cpf is None:
+                return {"message": "Recurso não encontrado."}, 404
+            
+            # Se for admin, permite acesso total
+            if user_role == "admin":
+                return func(*args, **kwargs)
+
+            # Se for client, verifica se está acessando o próprio CPF
+            if user_role == "client" and user_cpf != requested_cpf:
+                return {"message": "Acesso negado. Você só pode acessar seus próprios dados."}, 403
+
+            return func(*args, **kwargs)
+        
+        return wrapper
+    
+    return decorator

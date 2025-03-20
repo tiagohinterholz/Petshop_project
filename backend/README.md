@@ -11,7 +11,7 @@ API para gerenciamento de petshop, permitindo cadastro de usuários (com perfil 
 - **Autenticação**: JWT (JSON Web Token)
 - **Testes**: Unittest
 - **Containerização**: Docker (planejado para implementação futura)
-- **Documentação**: Swagger
+- **Documentação**: Flask-Swagger-UI
 - **
 ---
 
@@ -21,12 +21,12 @@ API para gerenciamento de petshop, permitindo cadastro de usuários (com perfil 
 backend/
 │── backend_app/
 │   ├── controller/       # Rotas da API
-│   ├── docs/             # Documentação dos endpoits separados por rotas e métodos
 │   ├── entities/         # Definição dos objetos das entidades
 │   ├── models/           # Definição dos models do SQLAlchemy
 │   ├── repository/       # Validação de ações no banco de dados
 │   ├── schema_dto/       # Validação do payload da API
 │   ├── services/         # Lógica das Regras de negócios
+│   ├── static/           # Documentação dos endpoits 
 │   ├── utils/            # Funções decoradoras de proteção
 │   ├── config.py         # Configurações da aplicação
 │   ├── __init__.py       # Inicialização da aplicação
