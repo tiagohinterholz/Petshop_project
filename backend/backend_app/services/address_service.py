@@ -1,6 +1,7 @@
 from backend_app.repository.address_repository import AddressRepository
 from backend_app.repository.client_repository import ClientRepository
 from backend_app.schema_dto.address_schema_dto import AddressSchemaDTO
+from backend_app.schema_dto.address_update_schema_dto import AddressUpdateSchemaDTO
 
 class AddressService:
 
@@ -35,16 +36,15 @@ class AddressService:
     def update(id, validated_data):
         """Atualiza um endereço."""
         address_db = AddressRepository.get_by_id(id)
-        if not address_db:
-            return {"error": "Endereço não encontrado"}, 404
-        
-        client = ClientRepository.get_by_id(validated_data["client_id"])
-        if not client:
-            return {"error": "Cliente informado não existe."}, 404
+        client_id = validated_data.get("client_id")
+        if client_id:       
+            client = ClientRepository.get_by_id(client_id)
+            if not client:
+                return {"error": "Cliente informado não existe."}, 404
 
         try:
             updated_address = AddressRepository.update(address_db, validated_data)
-            return AddressSchemaDTO().dump(updated_address), 200
+            return AddressUpdateSchemaDTO().dump(updated_address), 200
         except Exception:
             return {"error": "Erro ao atualizar endereço."}, 500
         

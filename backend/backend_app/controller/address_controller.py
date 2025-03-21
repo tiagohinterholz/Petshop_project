@@ -4,6 +4,7 @@ from backend_app import api
 from backend_app.services.address_service import AddressService
 from ..utils.decorators import role_required, client_owns_data
 from backend_app.schema_dto.address_schema_dto import AddressSchemaDTO
+from backend_app.schema_dto.address_update_schema_dto import AddressUpdateSchemaDTO
 from marshmallow import ValidationError
 
 def get_address_id(id):
@@ -44,7 +45,7 @@ class AddressDetail(Resource):
             return make_response(jsonify(address_db), status)
         
         try:
-            schema_dto = AddressSchemaDTO().load(request.json)
+            schema_dto = AddressUpdateSchemaDTO().load(request.json)
             updated_address, status = AddressService.update(id, schema_dto)        
             return make_response(jsonify(updated_address), status)
         except ValidationError as err:

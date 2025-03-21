@@ -30,11 +30,11 @@ class AddressRepository:
     @staticmethod
     def update(address, new_data):
         """Atualiza um endereço no banco de dados."""
-        address.client_id = new_data["client_id"]
-        address.street = new_data["street"]
-        address.city = new_data["city"]
-        address.neighborhood = new_data["neighborhood"]
-        address.complement = new_data["complement"]
+        address.client_id = new_data.get("client_id", address.client_id)
+        address.street = new_data.get("street", address.street)
+        address.city = new_data.get("city", address.city)
+        address.neighborhood = new_data.get("neighborhood", address.neighborhood)
+        address.complement = new_data.get("complement", address.complement)
         """Confirma as alterações no banco de dados."""
         db.session.commit()
         return address

@@ -10,7 +10,7 @@ from backend_app.schema_dto.client_schema_dto import ClientSchemaDTO
 def get_client_cpf(id, **kwargs):
     client = ClientService.list_client_id(id)
     if client and isinstance(client[0], dict):
-        return client[0].get("cpf")
+        return client[0].get("id")
     return None
 class ClientList(Resource):
 
@@ -38,20 +38,21 @@ class ClientDetail(Resource):
         client, status = ClientService.list_client_id(id)
         return make_response(jsonify(client), status)
     
-    @client_owns_data(get_client_cpf)
-    def put(self, id):
-        """Atualizar cliente por ID"""
-        client_db, status = ClientService.list_client_id(id)
-        if status != 200:
-            return make_response(jsonify(client_db), status)
+    # @client_owns_data(get_client_cpf) - O METODO PUT do client vai ficar desativado por enquanto
+    # MOTIVO: NAME VEM DO USER, REGISTER DATE É AUTOMATICO, CPF É SÓ PRA CONFERIR SE BATE COM USER, NÂO TEM COMO MUDAR CPF.
+    # def put(self, id):
+    #     """Atualizar cliente por ID"""
+    #     client_db, status = ClientService.list_client_id(id)
+    #     if status != 200:
+    #         return make_response(jsonify(client_db), status)
         
-        try:
-            schema_dto = ClientSchemaDTO().load(request.json)
-            updated_client, status = ClientService.update(id, schema_dto)
-            return make_response(jsonify(updated_client), status)
-        except ValidationError as err:
-            status_code = 400 if "missing" in str(err.messages).lower() else 422
-            return {"error": err.messages}, status_code
+    #     try:
+    #         schema_dto = ClientSchemaDTO().load(request.json)
+    #         updated_client, status = ClientService.update(id, schema_dto)
+    #         return make_response(jsonify(updated_client), status)
+    #     except ValidationError as err:
+    #         status_code = 400 if "missing" in str(err.messages).lower() else 422
+    #         return {"error": err.messages}, status_code
 
     @role_required('admin')
     def delete(self, id):

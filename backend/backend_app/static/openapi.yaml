@@ -212,7 +212,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error403Response' 
         '404':
-          description: "Endereço informado não encontrado"
+          description: "Endereço ou cliente informado não encontrado"
           content:
             'application/json':
               schema:
@@ -752,50 +752,6 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/Error404Response'   
-    put:
-      tags:
-        - 'Clients'
-      summary: "Atualizar cadastro do Cliente pelo client_id"
-      operationId: atualizarClient
-      parameters:
-        - name: client_id
-          in: path
-          description: "ID do cliente a ser atualizado"
-          required: true
-          schema:
-            type: integer
-      security:
-        - JWT: []
-      requestBody:
-        content:
-          'application/json':
-            schema:
-              $ref: "#/components/schemas/ClientsRequest"
-      responses:
-        '200':
-          description: "Client atualizado com sucesso"
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/ClientsResponse'
-        '400':
-          description: "Dados inseridos inválidos"
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/Error400Response'
-        '401':
-          description: "Usuario não autenticado"
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/Error401Response'
-        '404':
-          description: "Cliente não encontrado"
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/Error404Response' 
     delete:
       tags:
         - 'Clients'
@@ -814,13 +770,19 @@ paths:
         '200':
           description: "Client deletado com sucesso"
         '401':
-          description: "User não autenticado"
+          description: "Usuário não autenticado"
           content:
             'application/json':
               schema:
                 $ref: '#/components/schemas/Error401Response'
+        '403':
+          description: "Permissão negada. Acesso somente para administradores"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error403Response'
         '404':
-          description: "Client não encontrado"
+          description: "Cliente não encontrado"
           content:
             'application/json':
               schema:
@@ -1789,6 +1751,11 @@ components:
           type: integer
         cpf:
           type: string
+        name:
+          type: string
+        register_date:
+          type: string
+          format: dat
      
     ContactsRequest:
       type: object
