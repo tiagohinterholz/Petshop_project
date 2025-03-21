@@ -37,19 +37,20 @@ class PetService:
     def update(id, validated_data):
         """Atualiza os dados de um pet."""
         pet_db = PetRepository.get_by_id(id)
-        if not pet_db:
-            return {"error": "Pet não encontrado"}, 404
+        client_id = validated_data.get("client_id")
+        breed_id = validated_data.get("breed_id")
         
-        existing_client = ClientRepository.get_by_id(validated_data["client_id"])
-        if not existing_client: # verifica se existe um cliente
-            return {"error":"Cliente informado não cadastrado."}, 404
-        
-        existing_breed = PetRepository.get_by_id(validated_data["breed_id"])
-        if not existing_breed: # verifica se ja existe uma raça cadastrada
-            return {"error":"Raça informada não cadastrada."}, 404 
+        if client_id:       
+            client = ClientRepository.get_by_id(client_id)
+            if not client:
+                return {"error": "Cliente informado não existe."}, 404
+        if breed_id:       
+            breed = BreedRepository.get_by_id(breed_id)
+            if not breed:
+                return {"error": "Raça informado não existe."}, 404
                
         try:
-            updated_pet = PetRepository.update(id, validated_data)
+            updated_pet = PetRepository.update(pet_db, validated_data)
             return PetSchemaDTO().dump(updated_pet), 200
         except Exception:
             return {"error": "Erro ao atualizar pet."}, 500

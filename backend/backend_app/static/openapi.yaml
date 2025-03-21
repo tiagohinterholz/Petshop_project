@@ -372,7 +372,7 @@ paths:
       summary: "Atualizar Agendamento de Pets pelo appointment_id"
       operationId: atualizarContact
       parameters:
-        - name: breed_id
+        - name: appointment_id
           in: path
           description: "ID do Agendamento do Pet a ser atualizado"
           required: true
@@ -974,6 +974,12 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/Error401Response'
+        '403':
+          description: "Acesso negado. Somente administradores"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error404Response'
         '404':
           description: "Client não encontrado"
           content:
@@ -1070,7 +1076,7 @@ paths:
       tags: 
         - "Auth"
       security:
-          - BearerAuth: []
+          - JWT: []
       summary: Obtém o perfil do usuário autenticado
       description: Retorna as informações do usuário atualmente autenticado com base no token JWT.
       responses:
@@ -1090,6 +1096,9 @@ paths:
                   email:
                     type: string
                     example: "tiago@email.com"
+                  profile:
+                    type: string
+                    example: "admin"
         '401':
           description: 'Credenciais inválidas'
           content:
@@ -1108,7 +1117,7 @@ paths:
       tags:
         - Auth
       security:
-        - BearerAuth: []
+        - JWT: []
       summary: Invalida o token JWT do usuário logado
       description: Adiciona o token atual à blacklist para impedir seu uso futuro.
       responses:
@@ -1371,6 +1380,12 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/Error401Response'
+        Error403Response:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Acesso negado para dados de outros clientes."
         '404':
           description: "Pet não encontrado"
           content:

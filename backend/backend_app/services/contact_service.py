@@ -3,7 +3,6 @@ from backend_app.repository.client_repository import ClientRepository
 from backend_app.schema_dto.contact_schema_dto import ContactSchemaDTO
 class ContactService:
 
-    @staticmethod
     def list_contacts():
         """Lista todos os contatos."""
         contacts = ContactRepository.list_all()
@@ -26,16 +25,16 @@ class ContactService:
             return ContactSchemaDTO().dump(new_contact), 201
         except Exception:
             return {"error": "Erro ao cadastrar contato."}, 500
-            
+     
     def update(id, validated_data):
         """Atualiza um contato."""
         contact_db = ContactRepository.get_by_id(id)
-        if not contact_db:
-            return {"error": "Contato não encontrado"}, 404
+        client_id = validated_data.get("client_id")
         
-        existing_client = ClientRepository.get_by_id(validated_data["id"])
-        if not existing_client: # verifica se ja existe CPF cadastrado
-            return {"error":"Cliente informado não cadastrado."}, 404
+        if client_id:       
+            client = ClientRepository.get_by_id(client_id)
+            if not client:
+                return {"error": "Cliente informado não existe."}, 404
         try:
             updated_contact = ContactRepository.update(contact_db, validated_data)
             return ContactSchemaDTO().dump(updated_contact), 200

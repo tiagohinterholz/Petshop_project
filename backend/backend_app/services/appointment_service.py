@@ -3,13 +3,11 @@ from backend_app.repository.pet_repository import PetRepository
 from backend_app.schema_dto.appointment_schema_dto import AppointmentSchemaDTO
 class AppointmentService:
     """Classe responsável pelas regras de negócio dos agendamentos."""
-    @staticmethod
     def list_appointments():
         """Retorna todos os agendamentos."""
         appoints = AppointmentRepository.list_all()
-        return AppointmentSchemaDTO(many=True).dump(appoints), 200
-        
-    @staticmethod
+        return AppointmentSchemaDTO(many=True).dump(appoints), 200     
+
     def list_appointment_id(id):
         """Retorna um agendamento pelo ID."""
         
@@ -18,7 +16,6 @@ class AppointmentService:
             return {"error": "Agendamento não encontrado"}, 404
         return AppointmentSchemaDTO().dump(appointment), 200
 
-    @staticmethod
     def register(validated_data):
         """Cadastra um novo agendamento."""
         
@@ -32,7 +29,6 @@ class AppointmentService:
         except Exception:
             return {"error": "Erro ao cadastrar agendamento."}, 500
 
-    @staticmethod
     def update(id, validated_data):
         """Atualiza um agendamento."""
         appointment_db = AppointmentRepository.get_by_id(id)
@@ -49,7 +45,6 @@ class AppointmentService:
         except Exception:
             return {"error": "Erro ao atualizar agendamento."}, 500
 
-    @staticmethod
     def delete(id):
         """Exclui um agendamento."""
         appointment = AppointmentRepository.get_by_id(id)

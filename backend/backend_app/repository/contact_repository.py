@@ -28,7 +28,7 @@ class ContactRepository:
     @staticmethod
     def update(contact, new_data):
         """Atualiza um contato no banco de dados."""
-        contact.contact_id = new_data["contact_id"]
+        contact.client_id = new_data["client_id"]
         contact.type_contact = new_data["type_contact"]
         contact.value_contact = new_data["value_contact"]
         """Confirma as alterações no banco de dados."""

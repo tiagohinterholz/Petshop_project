@@ -5,13 +5,11 @@ from backend_app.schema_dto.address_update_schema_dto import AddressUpdateSchema
 
 class AddressService:
 
-    @staticmethod
     def list_addresses():
         """Lista todos os endereços cadastrados."""
         addresses = AddressRepository.list_all()
         return AddressSchemaDTO(many=True).dump(addresses), 200
     
-    @staticmethod
     def list_address_id(id):
         """Retorna um endereço pelo ID."""
         address = AddressRepository.get_by_id(id)
@@ -19,7 +17,6 @@ class AddressService:
             return {"error": "Endereço não encontrado"}, 404
         return AddressSchemaDTO().dump(address), 200
     
-    @staticmethod
     def register(validated_data):
         """Cadastra um novo endereço para um cliente."""
         client = ClientRepository.get_by_id(validated_data["client_id"])
@@ -32,7 +29,6 @@ class AddressService:
         except Exception:
             return {"error": "Erro ao cadastrar endereço."}, 500
         
-    @staticmethod
     def update(id, validated_data):
         """Atualiza um endereço."""
         address_db = AddressRepository.get_by_id(id)
@@ -48,7 +44,6 @@ class AddressService:
         except Exception:
             return {"error": "Erro ao atualizar endereço."}, 500
         
-    @staticmethod
     def delete(id):
         """Exclui um endereço."""
         address = AddressRepository.get_by_id(id)
