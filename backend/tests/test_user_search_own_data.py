@@ -122,8 +122,7 @@ class UserTestCase(unittest.TestCase):
         
         #cadastrando client com id = 1 
         client = {
-            "cpf": "111.222.333-44",
-            "register_date": "2025-03-14"
+            "cpf": "111.222.333-44"
         }
         
         response = self.client.post('/clients', json=client, headers={

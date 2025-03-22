@@ -71,7 +71,6 @@ class CreateCompleteUser(unittest.TestCase):
         
         client = {
             "cpf": user['cpf'],
-            "register_date": "2025-03-14"
         }
         
         response = self.client.post('/clients', json=client, headers={
@@ -135,7 +134,7 @@ class CreateCompleteUser(unittest.TestCase):
             "pet_id": pet_id,
             "desc_appoint": "Banho e tosa na molenga",
             "price": "500",
-            "date_appoint": "2025-03-20"
+            "date_appoint": "2025-04-30"
         }        
         response = self.client.post('/appointments', json=appointment, headers={
             "Authorization": f"Bearer {self.client_token}"

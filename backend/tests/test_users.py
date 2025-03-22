@@ -10,6 +10,7 @@ class UserTestCase(unittest.TestCase):
         self.client = self.app.test_client()
         self.admin_cpf = "000.000.000-00"
         self.admin_password = "admin123"
+        self.email = "tiago@gmail.com"
        
         # Criar um ADMIN fixo direto no banco
         with self.app.app_context():
@@ -19,7 +20,8 @@ class UserTestCase(unittest.TestCase):
                     cpf=self.admin_cpf,
                     name="Admin Teste",
                     profile=ProfileEnum.ADMIN,
-                    password=self.admin_password
+                    password=self.admin_password,
+                    email=self.email
                 )
                 new_admin.encrypt_password()  # Criptografa a senha antes de salvar
                 db.session.add(new_admin)
@@ -42,9 +44,27 @@ class UserTestCase(unittest.TestCase):
 
         """Cria 3 usuários diferentes"""
         users = [
-            {"cpf": "111.222.333-44", "name": "Usuário Um", "profile": "client", "password": "senha123"},
-            {"cpf": "555.666.777-88", "name": "Usuário Dois", "profile": "client", "password": "senha123"},
-            {"cpf": "999.000.111-22", "name": "Usuário Três", "profile": "client", "password": "senha123"}
+            {
+                "cpf": "111.222.333-44", 
+                "name": "Usuário Um", 
+                "profile": "client", 
+                "password": "senha123", 
+                "email": "teste1@email.com"
+                },
+            {
+                "cpf": "555.666.777-88", 
+                "name": "Usuário Dois", 
+                "profile": "client", 
+                "password": "senha123", 
+                "email": "teste2@email.com"
+                },
+            {
+                "cpf": "999.000.111-22", 
+                "name": "Usuário Três", 
+                "profile": "client", 
+                "password": "senha123", 
+                "email": "teste3@email.com"
+                }
         ]
 
         for user in users:
@@ -52,7 +72,6 @@ class UserTestCase(unittest.TestCase):
                 "Authorization": f"Bearer {self.admin_token}"
             })
             data = response.get_json()
-            print(f"📌 Criando usuário {user['cpf']} - Status: {response.status_code}, Resposta: {data}")  
                    
             self.assertEqual(response.status_code, 201, f"Erro ao criar usuário {user['cpf']}: {data}")
         
@@ -65,8 +84,8 @@ class UserTestCase(unittest.TestCase):
         data = response.get_json()
         self.assertEqual(response.status_code, 200)  # Garante que o login foi bem-sucedido
         self.assertIn("access_token", data)  # Garante que o token foi retornado
-        self.client_token = data["access_token"]
-        
+        self.client_token = data["access_token"]    
+               
     def tearDown(self):
         """Remove todos os usuários criados nos testes"""
         with self.app.app_context():
@@ -111,18 +130,20 @@ class UserTestCase(unittest.TestCase):
 
         # Dados novos para atualização
         updated_data = {
-            "cpf": cpf_teste,  # CPF pode ser obrigatório
-            "name": "Usuário Atualizado",
-            "profile": "client",  # Certifique-se de que o perfil está correto
-            "password": "nova_senha123"
+            "name": "Usuário Atualizado SIM",
+            "profile": "client",
+            "password": "nova_senha123",
+            "email": "teste5@gmail.com"
         }
 
         response = self.client.put(f'/users/{cpf_teste}', json=updated_data, headers={
-            "Authorization": f"Bearer {self.admin_token}"
+            "Authorization": f"Bearer {self.client_token}"
         })
 
         data = response.get_json()
-
+        
+        self.assertIn("name", data, "Campo 'name' ausente na resposta!")
+        self.assertEqual(data["email"], "teste5@gmail.com")
         self.assertEqual(response.status_code, 200)  # Deve retornar 200 OK
         print(data["name"], "Usuário Atualizado")  # O nome deve estar atualizado
 
