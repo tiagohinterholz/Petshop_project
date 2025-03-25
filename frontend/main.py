@@ -1,4 +1,6 @@
 import flet as ft
+from auth.login_page import login_view
+from auth.forgot_password import forgot_password_view
 
 def main(page:ft.Page):
     
@@ -7,14 +9,11 @@ def main(page:ft.Page):
         page.views.clear() # limpa as views atuais
         
         if page.route == "/login":
-            page.views.append(
-                ft.View(
-                    route="/login",
-                    controls=[
-                        ft.Text("Tela de Login (Temporária)")
-                    ],
-                )
-            )
+            page.views.append(login_view(page))
+        
+        elif page.route == "/forgot-password":
+            page.views.append(forgot_password_view(page))
+        
         elif page.route == "/":
             page.views.append(
                 ft.View(
