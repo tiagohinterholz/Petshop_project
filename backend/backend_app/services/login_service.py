@@ -20,13 +20,13 @@ def authenticate_user(data):
     
     # Gerar tokens JWT
     access_token = create_access_token(
-        identity=str(user.cpf),
+        identity=str(user.id),
         additional_claims={"profile": user.profile.value},
         expires_delta=timedelta(hours=1)
     )
     
     refresh_token = create_refresh_token(
-        identity=str(user.cpf),
+        identity=str(user.id),
         expires_delta=timedelta(days=7)  # Refresh token dura mais tempo
     )
     

@@ -38,9 +38,9 @@ def client_owns_data(get_client_id_func):
             verify_jwt_in_request()
             claims = get_jwt()
             user_role = claims.get("profile")
-            user_cpf = get_jwt_identity()
+            user_id = get_jwt_identity()
             
-            # Obtém o CPF do usuário referente à requisição
+            # Obtém o ID do usuário referente à requisição
             requested_client_id = get_client_id_func(**kwargs)  # Obtém ID do cliente a partir da requisição
             
             if requested_client_id is None:
@@ -53,7 +53,7 @@ def client_owns_data(get_client_id_func):
             # Se for client, verifica se está acessando os próprios dados
             if user_role == "client":
                 from backend_app.repository.client_repository import ClientRepository  # Import dinâmico para evitar import circular
-                user_client = ClientRepository.get_client_by_cpf(user_cpf)
+                user_client = ClientRepository.get_client_by_cpf(user_id)
             
                 if not user_client or user_client.id != requested_client_id:
                     return {"message": "Acesso negado. Você só pode acessar seus próprios dados."}, 403
@@ -64,35 +64,25 @@ def client_owns_data(get_client_id_func):
     
     return decorator
 
-def client_owns_cpf(get_client_cpf_func):
+def owner_or_admin_required(param_user_id_name="id"):
     """
-    Decorator para garantir que o cliente só acesse os próprios dados com base no CPF.
-    :param get_client_cpf_func: Função que retorna o CPF do cliente da requisição.
+    Decorator que permite acesso se o user_id do token for igual ao do recurso
+    OU se o usuário for admin.
     """
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
             verify_jwt_in_request()
+            jwt_user_id = int(get_jwt_identity())  # ID vindo do token
             claims = get_jwt()
-            user_role = claims.get("profile")
-            user_cpf = get_jwt_identity()  # CPF do usuário autenticado no token
-            
-            # Obtém o CPF do recurso que está sendo acessado
-            requested_cpf = get_client_cpf_func(**kwargs)  # CPF vindo da requisição
-            
-            if requested_cpf is None:
-                return {"message": "Recurso não encontrado."}, 404
-            
-            # Se for admin, permite acesso total
-            if user_role == "admin":
+            profile = claims.get("profile")
+
+            resource_user_id = int(kwargs.get(param_user_id_name))  # user_id da rota
+
+            if profile == "admin" or jwt_user_id == resource_user_id:
                 return func(*args, **kwargs)
 
-            # Se for client, verifica se está acessando o próprio CPF
-            if user_role == "client" and user_cpf != requested_cpf:
-                return {"message": "Acesso negado. Você só pode acessar seus próprios dados."}, 403
+            return {"message": "Acesso negado. Não pertence ao usuário logado."}, 403
 
-            return func(*args, **kwargs)
-        
         return wrapper
-    
     return decorator

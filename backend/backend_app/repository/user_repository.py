@@ -9,8 +9,8 @@ class UserRepository:
         return db.session.query(User).filter_by(email=email).first()
     
     @staticmethod
-    def get_user_by_cpf(cpf):
-        return db.session.query(User).filter_by(cpf=cpf).first()
+    def get_user_by_id(id):
+        return db.session.query(User).filter_by(id=id).first()
 
     @staticmethod
     def list_all():
@@ -37,6 +37,7 @@ class UserRepository:
         """Atualiza um user no banco de dados."""
 
         # Atualiza apenas os campos enviados
+        user.cpf = new_data.get("cpf", user.cpf)
         user.name = new_data.get("name", user.name)
         user.email = new_data.get("email", user.email)  # Adicionado para permitir atualização de e-mail
         user.profile = new_data.get("profile", user.profile)  # Caso precise permitir alteração de perfil

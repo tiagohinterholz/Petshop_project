@@ -10,9 +10,9 @@ class UserService:
         users = UserRepository.list_all()
         return UserSchemaDTO(many=True).dump(users), 200
 
-    def list_user_id(cpf):
-        """Busca usuário pelo CPF."""
-        user = UserRepository.get_user_by_cpf(cpf)
+    def list_user_id(id):
+        """Busca usuário pelo ID."""
+        user = UserRepository.get_user_by_id(id)
         if not user:
             return {"error": "Usuário não encontrado"}, 404
         return UserSchemaDTO().dump(user), 200 
@@ -33,7 +33,7 @@ class UserService:
 
     def update(cpf, validated_data):
         """Atualiza um usuário."""
-        user_db = UserRepository.get_user_by_cpf(cpf)
+        user_db = UserRepository.get_user_by_id(id)
         
         try:
             # Valida se o usuário está tentando atualizar seu perfil para um ADMIN
@@ -45,9 +45,9 @@ class UserService:
         except Exception:
             return {"error": "Erro ao atualizar Usuário."}, 500
 
-    def delete(cpf):
-        """Exclui um usuário pelo CPF."""
-        user = UserRepository.get_user_by_cpf(cpf)
+    def delete(id):
+        """Exclui um usuário pelo ID."""
+        user = UserRepository.get_user_by_id(id)
         if not user:
             return {"error": "Usuário não encontrado"}, 404  
 
