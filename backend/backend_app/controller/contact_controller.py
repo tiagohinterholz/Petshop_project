@@ -4,13 +4,7 @@ from backend_app import api
 from backend_app.services.contact_service import ContactService
 from backend_app.schema_dto.contact_schema_dto import ContactSchemaDTO
 from marshmallow import ValidationError
-from ..utils.decorators import role_required, client_owns_data
-
-def get_contact_id(id):
-    contact = ContactService.list_contact_id(id)
-    if contact and isinstance(contact[0], dict):
-        return contact[0].get("client_id")
-    return None 
+from ..utils.decorators import role_required, contact_belongs_to_user_or_admin
 class ContactList(Resource):
     
     @role_required('admin')
@@ -31,13 +25,13 @@ class ContactList(Resource):
             return {"error": err.messages}, status_code
 class ContactDetail(Resource):
     
-    @client_owns_data(get_contact_id)
+    @contact_belongs_to_user_or_admin("id")
     def get(self, id):
         """Buscar contato pelo ID"""
         contact, status = ContactService.list_contact_id(id)
         return make_response(jsonify(contact), status)
 
-    @client_owns_data(get_contact_id)
+    @contact_belongs_to_user_or_admin("id")
     def put(self, id):
         """Atualizar contato por ID"""
         contact_db, status = ContactService.list_contact_id(id)

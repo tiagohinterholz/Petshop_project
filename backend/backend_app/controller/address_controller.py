@@ -2,16 +2,11 @@ from flask import request, jsonify, make_response
 from flask_restful import Resource
 from backend_app import api
 from backend_app.services.address_service import AddressService
-from ..utils.decorators import role_required, client_owns_data
+from ..utils.decorators import role_required, address_belongs_to_user_or_admin
 from backend_app.schema_dto.address_schema_dto import AddressSchemaDTO
 from backend_app.schema_dto.address_update_schema_dto import AddressUpdateSchemaDTO
 from marshmallow import ValidationError
 
-def get_address_id(id):
-    address = AddressService.list_address_id(id)
-    if address and isinstance(address[0], dict):
-        return address[0].get("client_id")
-    return None
 class AddressList(Resource):
     @role_required('admin')
     def get(self):
@@ -31,13 +26,13 @@ class AddressList(Resource):
             return {"error": err.messages}, status_code
 class AddressDetail(Resource):
     
-    @client_owns_data(get_address_id)
+    @address_belongs_to_user_or_admin("id")
     def get(self, id):
         """Buscar endereço pelo ID"""
         address, status = AddressService.list_address_id(id)
         return make_response(jsonify(address), status)
 
-    @client_owns_data(get_address_id)
+    @address_belongs_to_user_or_admin("id")
     def put(self, id):
         """Atualizar endereço por ID"""
         address_db, status = AddressService.list_address_id(id)

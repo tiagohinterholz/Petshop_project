@@ -4,14 +4,9 @@ from backend_app import api
 from backend_app.services.client_service import ClientService
 from marshmallow import ValidationError
 from flask_jwt_extended import jwt_required
-from ..utils.decorators import role_required, client_owns_data
+from ..utils.decorators import role_required, client_belongs_to_user_or_admin
 from backend_app.schema_dto.client_schema_dto import ClientSchemaDTO
 
-def get_client_cpf(id, **kwargs):
-    client = ClientService.list_client_id(id)
-    if client and isinstance(client[0], dict):
-        return client[0].get("id")
-    return None
 class ClientList(Resource):
 
     @role_required('admin')
@@ -32,13 +27,13 @@ class ClientList(Resource):
             return {"error": err.messages}, status_code   
 class ClientDetail(Resource):
 
-    @client_owns_data(get_client_cpf)
+    @client_belongs_to_user_or_admin("id")
     def get(self, id):
         """Buscar cliente pelo ID"""
         client, status = ClientService.list_client_id(id)
         return make_response(jsonify(client), status)
     
-    # @client_owns_data(get_client_cpf) - O METODO PUT do client vai ficar desativado por enquanto
+    # @client_belongs_to_user_or_admin("id") - O METODO PUT do client vai ficar desativado por enquanto
     # MOTIVO: NAME VEM DO USER, REGISTER DATE É AUTOMATICO, CPF É SÓ PRA CONFERIR SE BATE COM USER, NÂO TEM COMO MUDAR CPF.
     # def put(self, id):
     #     """Atualizar cliente por ID"""

@@ -2,18 +2,9 @@ from flask import request, jsonify, make_response
 from flask_restful import Resource
 from backend_app import api
 from backend_app.services.appointment_service import AppointmentService
-from backend_app.services.pet_service import PetService
-from ..utils.decorators import role_required, client_owns_data
+from ..utils.decorators import role_required, appointment_belongs_to_user_or_admin
 from backend_app.schema_dto.appointment_schema_dto import AppointmentSchemaDTO
 from marshmallow import ValidationError
-    
-def get_client_id_by_appointment_id(id):
-    appointment = AppointmentService.list_appointment_id(id)
-    if appointment and isinstance(appointment[0], dict):
-        pet_id = appointment[0].get("pet_id")
-        pet, status = PetService.list_pet_id(pet_id)
-        return pet.get("client_id")
-    return None
 
 class AppointmentList(Resource):
     @role_required('admin')
@@ -34,13 +25,13 @@ class AppointmentList(Resource):
             return {"error": err.messages}, status_code   
 class AppointmentDetail(Resource):
     
-    @client_owns_data(get_client_id_by_appointment_id)
+    @appointment_belongs_to_user_or_admin("id")
     def get(self, id):
         """Buscar atendimento pelo ID"""
         appointment, status = AppointmentService.list_appointment_id(id)        
         return make_response(jsonify(appointment), status)
 
-    @client_owns_data(get_client_id_by_appointment_id)
+    @appointment_belongs_to_user_or_admin("id")
     def put(self, id):
         """Atualizar atendimento por ID"""
         appointment_db, status = AppointmentService.list_appointment_id(id)
@@ -55,7 +46,7 @@ class AppointmentDetail(Resource):
             status_code = 400 if "missing" in str(err.messages).lower() else 422
             return {"error": err.messages}, status_code  
 
-    @client_owns_data(get_client_id_by_appointment_id)
+    @appointment_belongs_to_user_or_admin("id")
     def delete(self, id):
         """Excluir atendimento por ID""" 
         response, status = AppointmentService.delete(id)

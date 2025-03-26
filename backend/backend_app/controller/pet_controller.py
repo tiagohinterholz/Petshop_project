@@ -3,14 +3,9 @@ from flask_restful import Resource
 from backend_app import api
 from backend_app.services.pet_service import PetService
 from backend_app.schema_dto.pet_schema_dto import PetSchemaDTO
-from ..utils.decorators import role_required, client_owns_data
+from ..utils.decorators import role_required, pet_belongs_to_user_or_admin
 from marshmallow import ValidationError
 
-def get_pet_id(id):
-    pet = PetService.list_pet_id(id)
-    if pet and isinstance(pet[0], dict):
-        return pet[0].get("client_id")
-    return None
 class PetList(Resource):
     
     @role_required('admin')
@@ -31,13 +26,13 @@ class PetList(Resource):
             return {"error": err.messages}, status_code 
 class PetDetail(Resource):
     
-    @client_owns_data(get_pet_id)
+    @pet_belongs_to_user_or_admin("id")
     def get(self, id):
         """Buscar pet pelo ID"""
         pet, status = PetService.list_pet_id(id)
         return make_response(jsonify(pet), status)
 
-    @client_owns_data(get_pet_id)
+    @pet_belongs_to_user_or_admin("id")
     def put(self, id):
         """Atualizar pet por ID"""
         pet_db, status = PetService.list_pet_id(id)
@@ -52,7 +47,7 @@ class PetDetail(Resource):
             status_code = 400 if "missing" in str(err.messages).lower() else 422
             return {"error": err.messages}, status_code 
     
-    @client_owns_data(get_pet_id)
+    @pet_belongs_to_user_or_admin("id")
     def delete(self, id):
         """Excluir pet por ID"""
         response, status = PetService.delete(id)
