@@ -45,6 +45,7 @@ def get_current_user():
     if not user:
         return {"error": "Usuário não encontrado"}, 404
         
-    return {"cpf": user.cpf,
+    return {"id": user.id,
+            "cpf": user.cpf,
             "nome": user.name,
             "perfil": user.profile.value}, 200

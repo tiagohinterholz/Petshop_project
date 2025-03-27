@@ -10,7 +10,11 @@ class UserRepository:
     
     @staticmethod
     def get_user_by_id(id):
-        return db.session.query(User).filter_by(id=id).first()
+        return db.session.get(User, id)
+   
+    @staticmethod
+    def get_user_by_cpf(cpf):
+        return db.session.query(User).filter_by(cpf=cpf).first()
 
     @staticmethod
     def list_all():

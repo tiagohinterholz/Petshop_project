@@ -5,10 +5,6 @@ from datetime import datetime, timezone
 class ClientRepository:
     
     @staticmethod
-    def get_client_by_cpf(cpf):
-        return db.session.query(Client).filter_by(cpf=cpf).first()
-
-    @staticmethod
     def list_all():
         """Lista todos clientes."""
         return Client.query.all()
@@ -23,7 +19,7 @@ class ClientRepository:
         """Cria um novo cliente."""
         new_client = Client(
             name=validated_data["name"],
-            cpf=validated_data["cpf"],
+            user_id=validated_data["user_id"],
             register_date = datetime.now(timezone.utc).date()
             )
         db.session.add(new_client)
@@ -32,15 +28,14 @@ class ClientRepository:
         
         return new_client
     
-    @staticmethod
-    def update(client, new_data):
-        """Atualiza um cliente no banco de dados."""
-        client.name = new_data["name"]
-        client.cpf = new_data["cpf"]
-        client.register_date = datetime.now(timezone.utc).date()
-        """Confirma as alterações no banco de dados."""
-        db.session.commit()
-        return client
+    # @staticmethod
+    # def update(client, new_data):
+    #     """Atualiza um cliente no banco de dados."""
+    #     client.name = new_data["name"]
+    #     client.register_date = datetime.now(timezone.utc).date()
+    #     """Confirma as alterações no banco de dados."""
+    #     db.session.commit()
+    #     return client
 
     @staticmethod
     def delete(client):

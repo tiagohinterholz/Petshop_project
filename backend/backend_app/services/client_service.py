@@ -22,14 +22,8 @@ class ClientService:
     @staticmethod
     def register(validated_data):
         """Cadastrar um novo cliente."""
-     
-        existing_client = ClientRepository.get_client_by_cpf(validated_data["cpf"])
-        if existing_client: # verifica se ja existe CPF cadastrado
-            return {"error":"CPF já cadastrado para outro cliente."}, 422
-           
-        existing_user = UserRepository.get_user_by_cpf(validated_data["cpf"])
-        if not existing_user: # verifica se não existe cpf em USER pq dai nao da pra cadastrar client
-            return {"error": "Usuário informado com CPF não encontrado."}, 404
+                
+        existing_user = UserRepository.get_user_by_id(validated_data["user_id"])
         
         validated_data["name"] = existing_user.name
                 
@@ -39,25 +33,25 @@ class ClientService:
         except Exception:
             return {"error": "Erro ao cadastrar cliente."}, 500
             
-    def update(id, validated_data):
-        """Atualizar um cliente."""
-        client_db = ClientRepository.get_by_id(id)
-        if not client_db:
-            return {"error": "Cliente não encontrado"}, 404  
-        # na atualização verificar de novo pq se passa um cpf que já existe nao pode atualizar
-        existing_client = ClientRepository.get_client_by_cpf(validated_data["cpf"])
-        if existing_client: # verifica se ja existe CPF cadastrado
-            return {"error":"CPF já cadastrado."}, 422
-        # na atualização verificar de novo pq se passa um cpf que nao tem user, nao pode atualizar
-        existing_user = UserRepository.get_user_by_cpf(validated_data["cpf"])
-        if not existing_user: # verifica se não existe cpf em USER pq dai nao da pra cadastrar client
-            return {"error": "NUsuário com CPF não cadastrado."}, 404
+    # def update(id, validated_data):
+    #     """Atualizar um cliente."""
+    #     client_db = ClientRepository.get_by_id(id)
+    #     if not client_db:
+    #         return {"error": "Cliente não encontrado"}, 404  
+    #     # na atualização verificar de novo pq se passa um cpf que já existe nao pode atualizar
+    #     existing_client = ClientRepository.get_client_by_cpf(validated_data["cpf"])
+    #     if existing_client: # verifica se ja existe CPF cadastrado
+    #         return {"error":"CPF já cadastrado."}, 422
+    #     # na atualização verificar de novo pq se passa um cpf que nao tem user, nao pode atualizar
+    #     existing_user = UserRepository.get_user_by_cpf(validated_data["cpf"])
+    #     if not existing_user: # verifica se não existe cpf em USER pq dai nao da pra cadastrar client
+    #         return {"error": "NUsuário com CPF não cadastrado."}, 404
         
-        try:
-            updated_client = ClientRepository.update(client_db, validated_data)
-            return ClientSchemaDTO().dump(updated_client), 200
-        except Exception:
-            return {"error": "Erro ao atualizar cliente."}, 500
+    #     try:
+    #         updated_client = ClientRepository.update(client_db, validated_data)
+    #         return ClientSchemaDTO().dump(updated_client), 200
+    #     except Exception:
+    #         return {"error": "Erro ao atualizar cliente."}, 500
             
     def delete(id):
         """Excluir um cliente."""

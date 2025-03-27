@@ -1,6 +1,7 @@
 import unittest
 from backend_app.models.user_model import User, ProfileEnum
 from backend_app import create_app, db
+from tests.test_utils import reset_test_database
 
 class UserTestCase(unittest.TestCase):
     
@@ -14,6 +15,7 @@ class UserTestCase(unittest.TestCase):
        
         # Criar um ADMIN fixo direto no banco
         with self.app.app_context():
+            reset_test_database()
             admin = db.session.query(User).filter_by(cpf=self.admin_cpf).first()
             if not admin:
                 new_admin = User(
@@ -26,8 +28,9 @@ class UserTestCase(unittest.TestCase):
                 new_admin.encrypt_password()  # Criptografa a senha antes de salvar
                 db.session.add(new_admin)
                 db.session.commit()
-        
-         
+                self.admin_id = new_admin.id
+            else:
+                self.admin_id = admin.id
         """Testa se o admin consegue logar e pegar um token"""
         response = self.client.post('/login', json={
             "cpf": self.admin_cpf,
@@ -108,25 +111,25 @@ class UserTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)  # Deve retornar 200 OK
         self.assertGreaterEqual(len(data), 3)  # Deve ter pelo menos 3 usuários cadastrados
     
-    def test_get_user_by_cpf(self):
+    def test_get_user_by_id(self):
         """Testa a busca de um usuário pelo CPF"""
-        cpf_teste = "111.222.333-44"  # Um dos CPFs cadastrados no teste anterior
-        print(f"📌 Buscando usuário com CPF: {repr(cpf_teste)}")
+        user_id = 1  # Um dos id's dos users cadastrados no teste anterior
+        print(f"📌 Buscando usuário com ID: {repr(user_id)}")
                
-        response = self.client.get(f'/users/{cpf_teste}', headers={
+        response = self.client.get(f'/users/{user_id}', headers={
             "Authorization": f"Bearer {self.admin_token}"
         })
 
         data = response.get_json()
 
-        print(f"📌 Resposta da API para GET /users/{cpf_teste}: {response.status_code}, {data}")
+        print(f"📌 Resposta da API para GET /users/{user_id}: {response.status_code}, {data}")
         
         self.assertEqual(response.status_code, 200)  # Deve retornar 200 OK
-        self.assertEqual(data["cpf"], cpf_teste)  # O CPF deve ser o mesmo
+        self.assertEqual(data["id"], user_id)  # O ID deve ser o mesmo
     
     def test_update_user(self):
         """Testa a atualização dos dados de um usuário"""
-        cpf_teste = "111.222.333-44"  # CPF de um usuário já cadastrado
+        user_id = 2  # ID de um usuário já cadastrado
 
         # Dados novos para atualização
         updated_data = {
@@ -136,7 +139,7 @@ class UserTestCase(unittest.TestCase):
             "email": "teste5@gmail.com"
         }
 
-        response = self.client.put(f'/users/{cpf_teste}', json=updated_data, headers={
+        response = self.client.put(f'/users/{user_id}', json=updated_data, headers={
             "Authorization": f"Bearer {self.client_token}"
         })
 
@@ -151,7 +154,7 @@ class UserTestCase(unittest.TestCase):
         # CLIENT tenta atualizar um outro usuário (o admin, por exemplo)
         update_data = {"cpf": self.admin_cpf, "name": "Hacker Client", "profile": "admin", "password": "nova_senha123"}
 
-        response = self.client.put(f'/users/{self.admin_cpf}', json=update_data, headers={
+        response = self.client.put(f'/users/{self.admin_id}', json=update_data, headers={
             "Authorization": f"Bearer {self.client_token}"
         })
 

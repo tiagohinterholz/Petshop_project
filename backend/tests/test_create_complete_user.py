@@ -57,7 +57,8 @@ class CreateCompleteUser(unittest.TestCase):
      
         data = response.get_json()
         self.assertEqual(response.status_code, 201, f"Erro ao criar usuário: {data}")
-        
+        user_id = data.get("id")
+     
         # agora vou logar com o user client e pegar o token pra começar o cadastro
         response = self.client.post('/login', json={
             "cpf": "222.222.333-44",
@@ -70,7 +71,7 @@ class CreateCompleteUser(unittest.TestCase):
         self.client_token = data["access_token"]
         
         client = {
-            "cpf": user['cpf'],
+            "user_id": user_id,
         }
         
         response = self.client.post('/clients', json=client, headers={
@@ -78,7 +79,7 @@ class CreateCompleteUser(unittest.TestCase):
         })
         client_data = response.get_json()
         self.assertEqual(response.status_code, 201, f"Erro ao criar cliente: {client_data}")
-        #print(client_data)
+        print(client_data)
         client_id = client_data.get("id")
         
         address = {
@@ -93,7 +94,7 @@ class CreateCompleteUser(unittest.TestCase):
         })
         data = response.get_json()
         self.assertEqual(response.status_code, 201, f"Erro ao criar endereço: {data}")
-        #print(f"Endereço cadastrado: {data}")
+        print(f"Endereço cadastrado: {data}")
         
         contact = {
             "client_id": client_id,
@@ -115,7 +116,7 @@ class CreateCompleteUser(unittest.TestCase):
         breed_id = breed_data.get("id")
         print(breed_data)
         self.assertEqual(response.status_code, 201, f"Erro ao criar raça: {breed_data}")
-        #print(f"Raça cadastrada: {breed_data}")
+        print(f"Raça cadastrada: {breed_data}")
         
         pet = {"client_id": client_id,
                "breed_id": breed_id,
@@ -128,7 +129,7 @@ class CreateCompleteUser(unittest.TestCase):
         pet_data = response.get_json()
         pet_id = pet_data.get("id")
         self.assertEqual(response.status_code, 201, f"Erro ao criar pet: {pet_data}")
-        #print(f"Pet cadastrado: {pet_data}")
+        print(f"Pet cadastrado: {pet_data}")
         
         appointment = {
             "pet_id": pet_id,
@@ -141,7 +142,7 @@ class CreateCompleteUser(unittest.TestCase):
         })
         data = response.get_json()
         self.assertEqual(response.status_code, 201, f"Erro ao criar agendamento: {data}")
-        #print(f"Agendamento cadastrado: {data}")
+        print(f"Agendamento cadastrado: {data}")
         
         response = self.client.post('/forgot-password', json={"email": "fh.tiago@gmail.com"})
         data = response.get_json()
@@ -190,6 +191,7 @@ class CreateCompleteUser(unittest.TestCase):
             reset_sequence("contact_id_seq")
             reset_sequence("client_id_seq")
             reset_sequence("breed_id_seq")
+            reset_sequence("users_id_seq")
             db.session.commit()
      
 if __name__ == "__main__":

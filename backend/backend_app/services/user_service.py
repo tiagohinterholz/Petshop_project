@@ -23,15 +23,21 @@ class UserService:
             # Valida se o usuário está tentando criar um ADMIN
             if validated_data["profile"] == ProfileEnum.ADMIN:
                 return {"error": "Não é permitido criar um usuário ADMIN via Rota API"}, 403
-            new_user, status = UserRepository.create(validated_data)
             
+            # Verifica se o CPF já existe
+            existing_user = UserRepository.get_user_by_cpf(validated_data["cpf"])
+            if existing_user:
+                return {"error": "CPF já cadastrado."}, 409
+            
+            new_user, status = UserRepository.create(validated_data)
+                        
             return UserSchemaDTO().dump(new_user), status
         except IntegrityError:
             return {"error": "Problema nos dados de cadastro"}, 422  # Melhor mensagem de erro
         except Exception:
             return {"error": "Erro inesperado ao cadastrar Usuário"}, 500
 
-    def update(cpf, validated_data):
+    def update(id, validated_data):
         """Atualiza um usuário."""
         user_db = UserRepository.get_user_by_id(id)
         

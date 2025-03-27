@@ -4,6 +4,7 @@ import re
 
 class UserSchemaDTO(Schema):
     
+    id = fields.Int(dump_only=True)
     cpf = fields.String(required=True)
     name = fields.String(required=True)
     profile = fields.Enum(ProfileEnum, by_value=True, required=True)

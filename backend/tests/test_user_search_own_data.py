@@ -2,6 +2,7 @@ import unittest
 from backend_app.models.user_model import User, ProfileEnum
 from backend_app import create_app, db
 from sqlalchemy import text
+from tests.test_utils import reset_test_database
 
 
 class UserTestCase(unittest.TestCase):
@@ -17,6 +18,7 @@ class UserTestCase(unittest.TestCase):
        
         # Criar um ADMIN fixo direto no banco
         with self.app.app_context():
+            reset_test_database()
             admin = db.session.query(User).filter_by(cpf=self.admin_cpf).first()
             if not admin:
                 new_admin = User(
@@ -65,8 +67,8 @@ class UserTestCase(unittest.TestCase):
             "cpf": "111.222.333-44",
             "password": "senha123"
         })
-        
         data1 = response.get_json()
+                
         self.assertEqual(response.status_code, 200)  # Garante que o login foi bem-sucedido
         self.assertIn("access_token", data1)  # Garante que o token foi retornado
         self.client1_token = data1["access_token"]  
@@ -80,8 +82,8 @@ class UserTestCase(unittest.TestCase):
         data2 = response.get_json()
         self.assertEqual(response.status_code, 200)  # Garante que o login foi bem-sucedido
         self.assertIn("access_token", data2)  # Garante que o token foi retornado
-        self.client2_token = data2["access_token"]  
-
+        self.client2_token = data2["access_token"]
+                
     def tearDown(self):
         with self.app.app_context():
             from backend_app.models.password_reset_model import PasswordReset
@@ -116,15 +118,16 @@ class UserTestCase(unittest.TestCase):
             reset_sequence("contact_id_seq")
             reset_sequence("client_id_seq")
             reset_sequence("breed_id_seq")
+            reset_sequence("users_id_seq")
             db.session.commit()
      
     def test_search_own_data(self):
         
         #cadastrando client com id = 1 
         client = {
-            "cpf": "111.222.333-44"
+            "user_id": 2
         }
-        
+
         response = self.client.post('/clients', json=client, headers={
             "Authorization": f"Bearer {self.client1_token}"
         })
