@@ -17,6 +17,14 @@ class Dashboard(Resource):
         if status != 200:
             return make_response(jsonify(client), status)
         
+        if not client or "id" not in client:
+            return make_response(jsonify({
+            "client": [],
+            "address": [],
+            "contact": [],
+            "pets": []
+        }), 200)
+        
         client_id = client["id"]
         address, status = AddressService.list_address_client_id(client_id)
         contact, status = ContactService.list_contact_client_id(client_id)

@@ -993,6 +993,53 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error500Response'
 
+  /dashboard/{user_id}:
+    get:
+      tags:
+        - 'Dashboard'
+      operationId: detalharUser
+      summary: "Detalhar Usuário pelo ID"
+      parameters:
+        - name: user_id
+          in: path
+          description: "ID do Usuário a ser detalhado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Usuário detalhado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardResponse"
+        '400':
+          description: "Dados inseridos inválidos"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error400Response'
+        '401':
+          description: "Usuario não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error401Response'
+        '404':
+          description: "Usuário não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error404Response'
+        '500':
+          description: "Erro interno do servidor"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error500Response' 
+
   /forgot-password:
     post:
       tags: 
@@ -1960,6 +2007,27 @@ components:
         email:
           type: string
           example: "meuemail@email.com"       
+
+    DashboardResponse:
+      type: object
+      properties:
+        client:
+          $ref: '#/components/schemas/ClientsResponse'
+        address:
+          $ref: '#/components/schemas/AddressesResponse'
+        contact:
+          $ref: '#/components/schemas/ContactsResponse'
+        pets:
+          type: array
+          items:
+            type: object
+            properties:
+              pet:
+                $ref: '#/components/schemas/PetsResponse'
+              appointments:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AppointmentsResponse'    
 
   securitySchemes:
     JWT:

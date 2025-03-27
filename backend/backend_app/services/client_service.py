@@ -25,7 +25,7 @@ class ClientService:
         
         client = ClientRepository.get_by_user_id(user_id)
         if not client:
-            return {"clinet": []}, 200
+            return {"client": []}, 200
         return ClientSchemaDTO().dump(client), 200
     
     @staticmethod
