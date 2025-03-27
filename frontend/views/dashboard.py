@@ -2,36 +2,54 @@ import flet as ft
 import requests
 
 def dashboard_view(page: ft.Page):
-    token = page.session.get("token")
-    get_cpf = page.session.get("cpf")
+    token = page.session.get("access_token")
+    user_id = page.session.get("user_id")
      
-    saudacao = ft.Text("Bem- vindo", size=25, weight="bold")
+    saudacao = ft.Text("Bem- vindo", size=20, weight="bold")
     perfil = ft.Text()
     dados_usuario = ft.Text()
+    lista_pets_view = ft.Text()
+    lista_agendamentos_view = ft.Text()
     
     try:
         response = requests.get(
-            f"http://localhost:5000/users/{get_cpf}",
+            f"http://localhost:5000/dashboard/{user_id}",
             headers={"authorization": f"Bearer {token}"}
         )
         if response.status_code == 200:
             data = response.json()
-            nome = data.get("name")
-            email = data.get("email"),
-            role = "Administrador" if data.get("is_admin") else "Cliente"
-
+            client = data.get("client") or {}
+            contact = data.get("contact") or {}
+            pets = data.get("pets") or []
+                        
+            nome = client.get("name")
+            role = "Administrador" if page.session.get("profile") == 'admin' else "Cliente"
+            email = contact.get("value_contact", "N/A")
+            
             saudacao.value = f"Bem-vindo, {nome}"
-            perfil.value = ""
-            dados_usuario.value = f"Perfil Logado: {role}"
+            dados_usuario.value = f"Perfil: {role} | Contato: {email}"
             
+            pets_text = ""
+            agendamentos_text = ""
             
+            for pet in pets:
+                nome_pet = pet.get("name", "Sem nome")
+                breed_id = pet.get("breed_id")
+                pets_text += f"{nome_pet} - Raça ID: {breed_id}\n"
+
+                for a in pet.get("appointments", []):
+                    agendamentos_text += f"{a.get('desc_appoint')} - {a.get('date_appoint')}\n"
+            
+            lista_pets_view.value = pets_text or "Nenhum pet cadastrado."
+            lista_agendamentos_view.value = agendamentos_text or "Nenhum agendamento cadastrado" 
+        else:
+            saudacao.value = "Erro ao carregar dados do usuário."
+            dados_usuario.value = f"Status: {response.status_code}"
+           
     except Exception as err:
         saudacao.value = "Erro de conexão."
         dados_usuario.value = str(err)
-    
-    lista_pets = ft.Text("Pets Cadastrados...")
-    lista_agendamentos = ft.Text("Agendamentos Cadastrados...")
-    
+        
     layout = ft.Column(
         controls=[
             saudacao,
@@ -39,12 +57,21 @@ def dashboard_view(page: ft.Page):
             ft.Divider(),
             dados_usuario,
             ft.Divider(),
-            lista_pets,
-            ft.Divider(),
-            lista_agendamentos
+            ft.Row(
+                controls=[
+                    ft.Container(
+                        content=lista_pets_view,
+                        expand=True,
+                    ),
+                    ft.Container(
+                        content=lista_agendamentos_view,
+                        expand=True,
+                    )
+                ]
+            )
         ],
         scroll=ft.ScrollMode.ADAPTIVE,
-        spacing=20
+        spacing=5
     )
     
     return ft.View(

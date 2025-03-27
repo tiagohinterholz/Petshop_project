@@ -15,7 +15,7 @@ def main(page:ft.Page):
         elif page.route == "/forgot-password":
             page.views.append(forgot_password_view(page))
         
-        elif page.route == "/":
+        elif page.route == "/dashboard":
             page.views.append(dashboard_view(page))
             
         page.update()    

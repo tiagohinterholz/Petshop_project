@@ -1,6 +1,8 @@
 import flet as ft
 import requests
-import jwt
+from utils.decode_token import decode_jwt
+
+
 
 def login_view(page: ft.Page):
     
@@ -11,7 +13,7 @@ def login_view(page: ft.Page):
     
     password_input=ft.TextField(label="Senha", password=True, can_reveal_password=True)
     error_text = ft.Text(value="", color=ft.colors.RED)
-    
+
     def formatar_cpf(e):
         texto = cpf_input.value
         so_numeros = ''.join(filter(str.isdigit, texto))[:11]
@@ -43,14 +45,15 @@ def login_view(page: ft.Page):
             )
             
             if response.status_code == 200:
-                token = response.json().get("access_token")
-                refresh_token = response.json().get("refresh_token")
-                payload = jwt.decode(token, options={"verify_signature": False}, algorithms=["HS256"])
-                cpf = payload.get("sub")
-                page.session.set("token", token)
-                page.session.set("cpf", cpf)
-                page.session.set("refresh", refresh_token)
-                page.go("/")
+                data = response.json()
+                page.session.set("access_token", data["access_token"])
+                page.session.set("refresh_token", data["refresh_token"])
+                payload = decode_jwt(data["access_token"])
+                user_id = payload.get("sub")
+                profile = payload.get("profile")
+                page.session.set("user_id", user_id)
+                page.session.set("profile", profile)
+                page.go("/dashboard")  # <- redireciona para o dashboard após login bem-sucedido
             else:
                 error_text.value = "Credenciais inválidas."
                 page.update()
