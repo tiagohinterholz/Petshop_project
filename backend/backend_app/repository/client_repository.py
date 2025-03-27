@@ -13,6 +13,11 @@ class ClientRepository:
     def get_by_id(id):
         """Busca um cliente pelo ID."""
         return db.session.get(Client, id)
+    
+    @staticmethod
+    def get_by_user_id(user_id):
+        """Busca um cliente pelo USER ID."""
+        return db.session.query(Client).filter_by(user_id=user_id).first()
 
     @staticmethod
     def create(validated_data):

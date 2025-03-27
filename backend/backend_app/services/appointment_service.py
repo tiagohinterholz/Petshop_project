@@ -16,6 +16,13 @@ class AppointmentService:
             return {"error": "Agendamento não encontrado"}, 404
         return AppointmentSchemaDTO().dump(appointment), 200
 
+    def list_appointment_pet_id(pet_id):
+        """Retorna um aagendamento pelo pet ID."""
+        appointments = AppointmentRepository.get_by_pet_id(pet_id)
+        if not appointments:
+            return [], 200
+        return AppointmentSchemaDTO(many=True).dump(appointments), 200
+
     def register(validated_data):
         """Cadastra um novo agendamento."""
         

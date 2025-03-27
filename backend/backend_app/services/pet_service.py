@@ -17,6 +17,13 @@ class PetService:
             return {"error": "Pet não encontrado"}, 404
         return PetSchemaDTO().dump(pet), 200
         
+    def list_pet_client_id(client_id):
+        """Retorna um pet pelo client ID."""
+        pets = PetRepository.get_by_client_id(client_id)
+        if not pets:
+            return [], 200
+        return PetSchemaDTO(many=True).dump(pets), 200
+    
     def register(validated_data):
         """Cadastra um novo pet."""
         existing_client = ClientRepository.get_by_id(validated_data["client_id"])

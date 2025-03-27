@@ -11,6 +11,11 @@ class AddressRepository:
     def get_by_id(id):
         """Busca um endereço pelo ID."""
         return db.session.get(Address, id)
+    
+    @staticmethod
+    def get_by_client_id(client_id):
+        """Busca um endereço pelo CLIENT ID."""
+        return db.session.query(Address).filter_by(client_id=client_id).first()
 
     @staticmethod
     def create(validated_data):

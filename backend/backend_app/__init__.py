@@ -51,6 +51,7 @@ def create_app(env="development"):
         breed_controller,
         client_controller,
         contact_controller,
+        dashboard_controller,
         forgot_password_controller,
         login_controller,
         logout_controller,

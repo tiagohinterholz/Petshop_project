@@ -14,6 +14,15 @@ class ContactService:
         if not contact:
             return {"error": "Contato não encontrado"}, 404
         return ContactSchemaDTO().dump(contact), 200
+    
+    @staticmethod
+    def list_contact_client_id(client_id):
+        """Buscar um contato pelo client ID."""
+        
+        contact = ContactRepository.get_by_client_id(client_id)
+        if not contact:
+            return {"contact": []}, 200
+        return ContactSchemaDTO().dump(contact), 200
             
     def register(validated_data):
         """Cadastra um novo contato."""

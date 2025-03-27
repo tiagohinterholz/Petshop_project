@@ -20,6 +20,15 @@ class ClientService:
         return ClientSchemaDTO().dump(client), 200
     
     @staticmethod
+    def list_client_user_id(user_id):
+        """Buscar um cliente pelo ID."""
+        
+        client = ClientRepository.get_by_user_id(user_id)
+        if not client:
+            return {"clinet": []}, 200
+        return ClientSchemaDTO().dump(client), 200
+    
+    @staticmethod
     def register(validated_data):
         """Cadastrar um novo cliente."""
                 

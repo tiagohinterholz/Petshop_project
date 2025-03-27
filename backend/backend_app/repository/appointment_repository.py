@@ -13,6 +13,11 @@ class AppointmentRepository:
     def get_by_id(id):
         """Busca um agendamento pelo ID."""
         return db.session.get(Appointment, id)
+    
+    @staticmethod
+    def get_by_pet_id(pet_id):
+        """Busca todos appointments pelo PET ID."""
+        return db.session.query(Appointment).filter_by(pet_id=pet_id).all()
 
     @staticmethod
     def create(validated_data):

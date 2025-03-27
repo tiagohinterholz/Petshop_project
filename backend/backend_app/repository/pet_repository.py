@@ -9,8 +9,13 @@ class PetRepository:
     
     @staticmethod
     def get_by_id(id):
-        """Busca um contato pelo ID."""
+        """Busca um pet pelo ID."""
         return db.session.get(Pet, id)
+    
+    @staticmethod
+    def get_by_client_id(client_id):
+        """Busca todos pets pelo CLIENT ID."""
+        return db.session.query(Pet).filter_by(client_id=client_id).all()
     
     @staticmethod
     def create(validated_data):

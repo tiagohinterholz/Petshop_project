@@ -11,6 +11,11 @@ class ContactRepository:
     def get_by_id(id):
         """Busca um contato pelo ID."""
         return db.session.get(Contact, id)
+    
+    @staticmethod
+    def get_by_client_id(client_id):
+        """Busca um contato pelo CLIENT ID."""
+        return db.session.query(Contact).filter_by(client_id=client_id).first()
 
     @staticmethod
     def create(validated_data):

@@ -31,7 +31,7 @@ class UserDetail(Resource):
     
     @owner_or_admin_required()
     def get(self, id):
-        """Buscar usuário pelo CPF"""
+        """Buscar usuário pelo ID"""
         user, status = UserService.list_user_id(id)
         return make_response(jsonify(user), status)
     

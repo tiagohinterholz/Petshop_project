@@ -17,6 +17,14 @@ class AddressService:
             return {"error": "Endereço não encontrado"}, 404
         return AddressSchemaDTO().dump(address), 200
     
+    def list_address_client_id(client_id):
+        """Retorna um endereço pelo client ID."""
+        address = AddressRepository.get_by_client_id(client_id)
+        if not address:
+            return {"address": []}, 200
+        return AddressSchemaDTO().dump(address), 200
+    
+    
     def register(validated_data):
         """Cadastra um novo endereço para um cliente."""
         client = ClientRepository.get_by_id(validated_data["client_id"])
