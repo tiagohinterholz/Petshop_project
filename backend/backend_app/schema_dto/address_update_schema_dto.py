@@ -6,4 +6,4 @@ class AddressUpdateSchemaDTO(Schema):
     street = fields.String(required=False)
     city = fields.String(required=False)
     neighborhood = fields.String(required=False)
-    complement = fields.String(load_default=None)
+    complement = fields.String(required=False)
