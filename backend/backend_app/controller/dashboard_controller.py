@@ -29,20 +29,12 @@ class Dashboard(Resource):
         address, status = AddressService.list_address_client_id(client_id)
         contact, status = ContactService.list_contact_client_id(client_id)
         pets, status = PetService.list_pet_client_id(client_id)
-        
-        pets_with_appointments = []
-        
-        for pet in pets:
-            pet_id = pet["id"]
-            appointments, _ = AppointmentService.list_appointment_pet_id(pet_id)
-            pet["appointments"] = appointments
-            pets_with_appointments.append(pet)
-        
+            
         return make_response(jsonify({
             "client": client,
             "address": address,
             "contact": contact,
-            "pets": pets_with_appointments
+            "pets": pets
         }), 200)
         
 api.add_resource(Dashboard, '/dashboard/<int:id>')    

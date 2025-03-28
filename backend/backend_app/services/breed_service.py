@@ -9,13 +9,21 @@ class BreedService:
         return BreedSchemaDTO(many=True).dump(breeds), 200
     
     @staticmethod
+    def get_description_by_id(breed_id):
+        """Retorna apenas a descrição da raça, sem DTO nem status."""
+        breed = BreedRepository.get_by_id(breed_id)
+        if not breed:
+            return None
+        return breed.description
+    
+    @staticmethod
     def list_breed_id(id):
         """Busca uma raça pelo ID."""
         breed = BreedRepository.get_by_id(id)
         if not breed:
             return {"error": "Raça não encontrada"}, 404
         return BreedSchemaDTO().dump(breed), 200
-    
+        
     @staticmethod
     def register(validated_data):
         """Cadastra uma nova raça."""

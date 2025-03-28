@@ -3,6 +3,8 @@ from backend_app.repository.pet_repository import PetRepository
 from backend_app.repository.breed_repository import BreedRepository
 from backend_app.repository.client_repository import ClientRepository
 from backend_app.schema_dto.pet_schema_dto import PetSchemaDTO
+from backend_app.schema_dto.appointment_schema_dto import AppointmentSchemaDTO
+from backend_app.services.breed_service import BreedService
 class PetService:
     
     def list_pets():
@@ -22,7 +24,20 @@ class PetService:
         pets = PetRepository.get_by_client_id(client_id)
         if not pets:
             return [], 200
-        return PetSchemaDTO(many=True).dump(pets), 200
+        pets_data = []
+        for pet in pets:
+            pet_dict = PetSchemaDTO().dump(pet)
+            pet_dict["breed_description"] = BreedService.get_description_by_id(pet.breed_id)
+            
+            # Evita erro no frontend caso appointments venha nulo
+            pet_dict["appointments"] = [
+                AppointmentSchemaDTO().dump(app)
+                for app in pet.appointments
+            ] if pet.appointments else []
+
+            pets_data.append(pet_dict)
+
+        return pets_data, 200
     
     def register(validated_data):
         """Cadastra um novo pet."""
