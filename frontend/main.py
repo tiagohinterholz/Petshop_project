@@ -2,6 +2,11 @@ import flet as ft
 from auth.login_page import login_view
 from auth.forgot_password import forgot_password_view
 from views.dashboard import dashboard_view
+from views.profile import profile_view
+from views.createaddress import create_address_view
+from views.createcontact import create_contact_view
+from views.editaddress import edit_address_view
+from views.editcontact import edit_contact_view
 
 def main(page:ft.Page):
     
@@ -17,6 +22,21 @@ def main(page:ft.Page):
         
         elif page.route == "/dashboard":
             page.views.append(dashboard_view(page))
+        
+        elif page.route == "/profile":
+            page.views.append(profile_view(page))
+            
+        elif page.route == "/create-address":
+            page.views.append(create_address_view(page))
+        
+        elif page.route == "/create-contact":
+            page.views.append(create_contact_view(page))
+        
+        elif page.route == "/edit-address":
+            page.views.append(edit_address_view(page))
+        
+        elif page.route == "/edit-contact":
+            page.views.append(edit_contact_view(page))
             
         page.update()    
         

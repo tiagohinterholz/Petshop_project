@@ -1,5 +1,7 @@
 import flet as ft
 import requests
+from components.header import build_header
+from components.sidebar import build_sidebar
 
 def dashboard_view(page: ft.Page):
     token = page.session.get("access_token")
@@ -34,11 +36,11 @@ def dashboard_view(page: ft.Page):
             
             for pet in pets:
                 nome_pet = pet.get("name", "Sem nome")
-                breed_id = pet.get("breed_id")
-                pets_text += f"{nome_pet} - Raça ID: {breed_id}\n"
+                description = pet.get("breed_description")
+                pets_text += f"{nome_pet} - Raça: {description}\n"
 
                 for a in pet.get("appointments", []):
-                    agendamentos_text += f"{a.get('desc_appoint')} - {a.get('date_appoint')}\n"
+                    agendamentos_text += f"Agendamento: {a.get('desc_appoint')} - Data de atendimento:{a.get('date_appoint')}\n"
             
             lista_pets_view.value = pets_text or "Nenhum pet cadastrado."
             lista_agendamentos_view.value = agendamentos_text or "Nenhum agendamento cadastrado" 
@@ -50,32 +52,40 @@ def dashboard_view(page: ft.Page):
         saudacao.value = "Erro de conexão."
         dados_usuario.value = str(err)
         
-    layout = ft.Column(
+    layout = ft.Row(
         controls=[
-            saudacao,
-            perfil,
-            ft.Divider(),
-            dados_usuario,
-            ft.Divider(),
-            ft.Row(
+            build_sidebar(page),
+            ft.VerticalDivider(width=1),
+            ft.Column(
                 controls=[
-                    ft.Container(
-                        content=lista_pets_view,
-                        expand=True,
-                    ),
-                    ft.Container(
-                        content=lista_agendamentos_view,
-                        expand=True,
+                    build_header(page),
+                    saudacao,
+                    perfil,
+                    ft.Divider(),
+                    dados_usuario,
+                    ft.Divider(),
+                    ft.Row(
+                        controls=[
+                            ft.Container(
+                                content=lista_pets_view,
+                                expand=True,
+                            ),
+                            ft.Container(
+                                content=lista_agendamentos_view,
+                                expand=True,
+                            )
+                        ]
                     )
-                ]
+                ],
+                scroll=ft.ScrollMode.ADAPTIVE,
+                expand=True,
+                spacing=7
             )
-        ],
-        scroll=ft.ScrollMode.ADAPTIVE,
-        spacing=5
+        ]   
     )
     
     return ft.View(
-        route="/",
+        route="/dashboard",
         controls=[layout],
         padding=20
     )
