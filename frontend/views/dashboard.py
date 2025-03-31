@@ -52,37 +52,32 @@ def dashboard_view(page: ft.Page):
         saudacao.value = "Erro de conexão."
         dados_usuario.value = str(err)
         
-    layout = ft.Row(
+    layout = ft.Column(
         controls=[
-            build_sidebar(page),
-            ft.VerticalDivider(width=1),
-            ft.Column(
+            build_header(page),
+            ft.Row(
                 controls=[
-                    build_header(page),
-                    saudacao,
-                    perfil,
-                    ft.Divider(),
-                    dados_usuario,
-                    ft.Divider(),
-                    ft.Row(
+                    build_sidebar(page),
+                    ft.VerticalDivider(width=1),
+                    ft.Column(
                         controls=[
-                            ft.Container(
-                                content=lista_pets_view,
-                                expand=True,
-                            ),
-                            ft.Container(
-                                content=lista_agendamentos_view,
-                                expand=True,
-                            )
-                        ]
+                            saudacao,
+                            perfil,
+                            ft.Divider(),
+                            dados_usuario,
+                        ],
+                        scroll=ft.ScrollMode.ADAPTIVE,
+                        expand=True,
+                        spacing=7,
                     )
                 ],
-                scroll=ft.ScrollMode.ADAPTIVE,
-                expand=True,
-                spacing=7
+                expand=True, # Faz o conteúdo ocupar toda a largura
+                vertical_alignment=ft.CrossAxisAlignment.START
             )
-        ]   
+        ],
+        expand=True,
     )
+
     
     return ft.View(
         route="/dashboard",

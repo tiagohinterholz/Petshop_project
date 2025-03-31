@@ -78,16 +78,22 @@ def profile_view(page: ft.Page):
     return ft.View(
         route="/profile",
         controls=[
-            ft.Column(
-                controls=[
-                    title,
-                    dados,
-                    *buttons,
-                    erro,
-                    voltar_button
-                ],
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=20
+            ft.Container(
+                content=ft.Column(
+                    controls=[
+                        title,
+                        dados,
+                        ft.Row(
+                            controls=[*buttons],
+                            alignment=ft.MainAxisAlignment.CENTER
+                        ),
+                        erro,
+                        voltar_button
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    spacing=20
+                ),
+                alignment=ft.alignment.center
             )
         ],
         padding=20

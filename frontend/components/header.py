@@ -2,7 +2,7 @@ import flet as ft
 
 def build_header(page: ft.Page):
     return ft.Container(
-        bgcolor=ft.colors.BLUE_100,
+        bgcolor=ft.colors.GREEN_400,
         padding=ft.padding.symmetric(horizontal=20),
         content=ft.Row(
             controls=[

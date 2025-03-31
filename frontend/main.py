@@ -7,6 +7,7 @@ from views.createaddress import create_address_view
 from views.createcontact import create_contact_view
 from views.editaddress import edit_address_view
 from views.editcontact import edit_contact_view
+from views.pets import pets_view
 
 def main(page:ft.Page):
     
@@ -37,6 +38,9 @@ def main(page:ft.Page):
         
         elif page.route == "/edit-contact":
             page.views.append(edit_contact_view(page))
+            
+        elif page.route == "/pets":
+            page.views.append(pets_view(page))
             
         page.update()    
         
