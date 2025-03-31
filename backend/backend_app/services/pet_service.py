@@ -63,7 +63,7 @@ class PetService:
         client_id = validated_data.get("client_id")
         breed_id = validated_data.get("breed_id")
         
-        if client_id:       
+        if client_id is not None:       
             client = ClientRepository.get_by_id(client_id)
             if not client:
                 return {"error": "Cliente informado não existe."}, 404

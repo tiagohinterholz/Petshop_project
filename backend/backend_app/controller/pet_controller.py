@@ -15,7 +15,7 @@ class PetList(Resource):
         pets, status = PetService.list_pets()
         return make_response(jsonify(pets), status)
     
-    @role_required('client')
+    @role_required('client', 'admin')
     def post(self):
         """Cadastrar novo pet"""
         try:

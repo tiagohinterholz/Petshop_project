@@ -34,10 +34,10 @@ class PetRepository:
     @staticmethod
     def update(pet, new_data):
         """Atualiza um pet no banco de dados."""
-        pet.client_id = new_data["client_id"]
-        pet.breed_id = new_data["breed_id"] 
-        pet.birth_date = new_data["birth_date"]
-        pet.name = new_data["name"]
+        pet.client_id = new_data.get("client_id", pet.client_id)
+        pet.breed_id = new_data.get("breed_id", pet.breed_id)
+        pet.birth_date = new_data.get("birth_date", pet.birth_date)
+        pet.name = new_data.get("name", pet.name)
         """Confirma as alterações no banco de dados."""
         db.session.commit()
         return pet

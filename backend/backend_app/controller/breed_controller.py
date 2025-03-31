@@ -7,13 +7,13 @@ from backend_app.schema_dto.breed_schema_dto import BreedSchemaDTO
 from marshmallow import ValidationError
 
 class BreedList(Resource):
-    role_required('client')
+    role_required('client', 'admin')
     def get(self):
         """Listar todas as raças"""
         breeds, status = BreedService.list_breeds()
         return make_response(jsonify(breeds), status)
 
-    @role_required('client')  # Client pode cadastrar novas raças
+    @role_required('client', 'admin')  # Client pode cadastrar novas raças
     def post(self):
         """Cadastrar nova raça"""
         try:
@@ -25,7 +25,7 @@ class BreedList(Resource):
             return {"error": err.messages}, status_code
 class BreedDetail(Resource):
     
-    role_required('client')
+    role_required('client', 'admin')
     def get(self, id):
         """Buscar raça pelo ID"""
         breed, status = BreedService.list_breed_id(id)
