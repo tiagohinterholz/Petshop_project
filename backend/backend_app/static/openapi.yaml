@@ -1421,6 +1421,12 @@ paths:
       responses:
         '200':
           description: "Pet deletado com sucesso"
+        '400':
+          description: "Pet com agendamentos não pode ser excluído"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error400Response'
         '401':
           description: "User não autenticado"
           content:

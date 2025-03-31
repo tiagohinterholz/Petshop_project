@@ -1,8 +1,9 @@
-from backend_app import db
+from backend_app.repository.appointment_repository import AppointmentRepository
 from backend_app.repository.pet_repository import PetRepository
 from backend_app.repository.breed_repository import BreedRepository
 from backend_app.repository.client_repository import ClientRepository
 from backend_app.schema_dto.pet_schema_dto import PetSchemaDTO
+from backend_app.schema_dto.pet_update_schema_dto import PetUpdateSchemaDTO
 from backend_app.schema_dto.appointment_schema_dto import AppointmentSchemaDTO
 from backend_app.services.breed_service import BreedService
 class PetService:
@@ -73,7 +74,7 @@ class PetService:
                
         try:
             updated_pet = PetRepository.update(pet_db, validated_data)
-            return PetSchemaDTO().dump(updated_pet), 200
+            return PetUpdateSchemaDTO().dump(updated_pet), 200
         except Exception:
             return {"error": "Erro ao atualizar pet."}, 500
         
@@ -81,7 +82,13 @@ class PetService:
         """Exclui um pet pelo ID."""
         pet = PetRepository.get_by_id(id)
         if not pet:
-            return {"error": "Pet não encontrado"}, 404  
+            return {"error": "Pet não encontrado"}, 404
+        
+        #verifica se há agendamentos para o pet
+        appoints = AppointmentRepository.get_by_pet_id(id)
+        if appoints:
+            return {"error": "Pet possui agendamentos e não pode ser excluído."}, 400
+          
         try:
             success = PetRepository.delete(pet)
             if success:

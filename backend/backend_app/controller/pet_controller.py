@@ -3,6 +3,7 @@ from flask_restful import Resource
 from backend_app import api
 from backend_app.services.pet_service import PetService
 from backend_app.schema_dto.pet_schema_dto import PetSchemaDTO
+from backend_app.schema_dto.pet_update_schema_dto import PetUpdateSchemaDTO
 from ..utils.decorators import role_required, pet_belongs_to_user_or_admin
 from marshmallow import ValidationError
 
@@ -40,7 +41,7 @@ class PetDetail(Resource):
             return make_response(jsonify(pet_db), status)
 
         try:
-            schema_dto = PetSchemaDTO().load(request.json)
+            schema_dto = PetUpdateSchemaDTO().load(request.json)
             updated_pet, status = PetService.update(id, schema_dto)
             return make_response(jsonify(updated_pet), status)
         except ValidationError as err:
