@@ -8,6 +8,9 @@ from views.createcontact import create_contact_view
 from views.editaddress import edit_address_view
 from views.editcontact import edit_contact_view
 from views.pets import pets_view
+from views.createpet import create_pet_view
+from views.editpet import edit_pet_view
+from views.createbreed import create_breed_view
 
 def main(page:ft.Page):
     
@@ -42,6 +45,15 @@ def main(page:ft.Page):
         elif page.route == "/pets":
             page.views.append(pets_view(page))
             
+        elif page.route == "/create-pet":
+            page.views.append(create_pet_view(page))
+        
+        elif page.route == "/create-breed":
+            page.views.append(create_breed_view(page))
+        
+        elif page.route.startswith("/edit-pet"):
+            page.views.append(edit_pet_view(page))
+                    
         page.update()    
         
     page.on_route_change = route_change
