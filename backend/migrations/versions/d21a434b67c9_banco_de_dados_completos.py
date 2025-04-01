@@ -1,8 +1,8 @@
-"""Nova Versão Banco de Dados
+"""Banco de Dados Completos
 
-Revision ID: db4b96f99814
+Revision ID: d21a434b67c9
 Revises: 
-Create Date: 2025-03-26 14:21:13.988614
+Create Date: 2025-04-01 11:15:19.908626
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'db4b96f99814'
+revision = 'd21a434b67c9'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,6 +23,13 @@ def upgrade():
     sa.Column('description', sa.String(length=50), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('description')
+    )
+    op.create_table('procedure',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('price', sa.Numeric(precision=10, scale=2), nullable=False),
+    sa.Column('description', sa.String(length=255), nullable=False),
+    sa.Column('time_service', sa.Integer(), nullable=False),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('users',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
@@ -85,10 +92,10 @@ def upgrade():
     op.create_table('appointment',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('pet_id', sa.Integer(), nullable=False),
-    sa.Column('desc_appoint', sa.String(length=50), nullable=False),
-    sa.Column('price', sa.Numeric(precision=10, scale=2), nullable=False),
-    sa.Column('date_appoint', sa.Date(), nullable=False),
+    sa.Column('procedure_id', sa.Integer(), nullable=False),
+    sa.Column('date_appoint', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['pet_id'], ['pet.id'], ),
+    sa.ForeignKeyConstraint(['procedure_id'], ['procedure.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
@@ -103,5 +110,6 @@ def downgrade():
     op.drop_table('password_reset')
     op.drop_table('client')
     op.drop_table('users')
+    op.drop_table('procedure')
     op.drop_table('breed')
     # ### end Alembic commands ###

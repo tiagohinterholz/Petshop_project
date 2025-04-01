@@ -370,7 +370,7 @@ paths:
       tags:
         - 'Appointments'
       summary: "Atualizar Agendamento de Pets pelo appointment_id"
-      operationId: atualizarContact
+      operationId: atualizarAppointment
       parameters:
         - name: appointment_id
           in: path
@@ -1452,6 +1452,193 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error500Response' 
 
+  /procedures:
+    post:
+      tags:
+        - 'Procedures'
+      operationId: cadastrarProcedimento
+      summary: Cadastro de Procedimentos
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/ProceduresRequest'
+      responses:
+        '201':
+         description: "Procedimento cadastrado com sucesso"
+         content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/ProceduresResponse'
+        '400':
+          description: "Problema nos dados de cadastro"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error400Response'
+        '403':
+          description: "Somente Usuário Administrador"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error403Response' 
+        '500':
+          description: "Erro interno do servidor"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error500Response'
+    get:
+      tags:
+        - 'Procedures'
+      operationId: listarProcedimentos
+      summary: Listagem de Contatos
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Listagem de procedimentos realizada com sucesso"
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProceduresResponse'
+        '401':
+          description: 'Usuário não autorizado'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error401Response'
+  
+  /procedures/{procedure_id}:
+    get:
+      tags:
+        - 'Procedures'
+      operationId: detalharProcedimento
+      summary: "Detalhar Procedimento cadastrado"
+      parameters:
+        - name: procedure_id
+          in: path
+          description: "ID do procedimento a ser detalhado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Procedimento detalhado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProceduresResponse"
+        '400':
+          description: "Dados inseridos inválidos"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error400Response'
+        '401':
+          description: "Usuario não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error401Response'
+        '404':
+          description: "Procedimento não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error404Response'   
+    put:
+      tags:
+        - 'Procedures'
+      summary: "Atualizar procedimentos procedure_id"
+      operationId: atualizarProcedimento
+      parameters:
+        - name: procedure_id
+          in: path
+          description: "ID do procedimentos do Pet a ser atualizado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/ProceduresRequest"
+      responses:
+        '200':
+          description: "Procedimento atualizado com sucesso"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ProceduresResponse'
+        '400':
+          description: "Dados inseridos inválidos"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error400Response'
+        '401':
+          description: "Usuario não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error401Response'
+        '404':
+          description: "Procedimento não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error404Response'
+        '500':
+          description: "Erro interno do servidor"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error500Response'
+    delete:
+      tags:
+        - 'Procedures'
+      operationId: deletarProcedure
+      summary: "Deletar Procedimento pelo procedure_id"
+      parameters:
+        - name: procedure_id
+          in: path
+          description: "ID do Procedimento a ser deletado"
+          required: true
+          schema:
+            type: integer
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: "Procedimento deletado com sucesso"
+        '401':
+          description: "User não autenticado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error401Response'
+        '404':
+          description: "Agendamento não encontrado"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error404Response'
+        '500':
+          description: "Erro ao excluir raça"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error500Response'
+
   /users:
     post:
       tags:
@@ -1752,25 +1939,20 @@ components:
       type: object
       required:
         - pet_id
-        - desc_appoint
-        - price
+        - procedure_id
         - date_appoint
       properties:
         pet_id:
           type: integer
           example: 1
-        desc_appoint:
-          type: string
-          maxLength: 50
-          example: "Banho e tosa"
-        price:
-          type: number
-          format: float
-          examploe: "550,00"
+        procedure_id:
+          type: integer
+          example: 11
         date_appoint:
           type: string
-          format: date
-          example: "2025-05-31"
+          format: date-time
+          example: "2025-05-31T12:00"
+          description: Data e hora do agendamento (entre 08:00 e 17:00)
     AppointmentsResponse:
       type: object
       properties:
@@ -1778,10 +1960,8 @@ components:
           type: integer
         pet_id:
           type: integer
-        desc_appoint:
-          type: string
-        price:
-          type: number
+        procedure_id:
+          type: integer
         date_appoint:
           type: string        
      
@@ -1962,7 +2142,40 @@ components:
           format: data
         name:
           type: string
-       
+
+    ProceduresRequest:
+      type: object
+      required:
+        - price
+        - description
+        - time_service
+      properties:
+        price:
+          type: number
+          format: float
+          example: 500
+          description: Preço do procedimento em reais
+        description:
+          type: string
+          example: "Banho e Tosa"
+          description: Descrição do procedimento
+        time_service:
+          type: integer
+          example: "60"
+          description: Duração do serviço em minutos
+    ProceduresResponse:
+      type: object
+      properties:
+        id:
+          type: number
+        price:
+          type: number
+          format: float
+        description:
+          type: string
+        time_service:
+          type: integer
+
     UsersRequest:
       type: object
       required:
@@ -2028,12 +2241,47 @@ components:
           items:
             type: object
             properties:
-              pet:
-                $ref: '#/components/schemas/PetsResponse'
+              id:
+                type: integer
+                example: 3
+              name:
+                type: string
+                example: "Rex"
+              breed_id:
+                type: integer
+                example: 2
+              breed_description:
+                type: string
+                example: "Labrador"
+              birth_date:
+                type: string
+                format: date
+                example: "2020-06-15"
               appointments:
                 type: array
                 items:
-                  $ref: '#/components/schemas/AppointmentsResponse'    
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 7
+                    procedure_id:
+                      type: integer
+                      example: 2
+                    date_appoint:
+                      type: string
+                      format: date-time
+                      example: "2025-05-31T10:00:00"
+                    desc_appoint:
+                      type: string
+                      example: "Banho e Tosa"
+                    price:
+                      type: number
+                      format: float
+                      example: 50.0
+                    time_service:
+                      type: integer
+                      example: 60
 
   securitySchemes:
     JWT:

@@ -4,6 +4,7 @@ from backend_app import api
 from backend_app.services.appointment_service import AppointmentService
 from ..utils.decorators import role_required, appointment_belongs_to_user_or_admin
 from backend_app.schema_dto.appointment_schema_dto import AppointmentSchemaDTO
+from backend_app.schema_dto.appointment_update_schema_dto import AppointmentUpdateSchemaDTO
 from marshmallow import ValidationError
 
 class AppointmentList(Resource):
@@ -13,7 +14,7 @@ class AppointmentList(Resource):
         appointments, status = AppointmentService.list_appointments()
         return make_response(jsonify(appointments), status)
 
-    @role_required('client')
+    @role_required('client', 'admin')
     def post(self):
         """Cadastrar novo atendimento"""
         try:
@@ -39,7 +40,7 @@ class AppointmentDetail(Resource):
             return make_response(jsonify(appointment_db), status)
         
         try:
-            schema_dto = AppointmentSchemaDTO().load(request.json)
+            schema_dto = AppointmentUpdateSchemaDTO().load(request.json)
             updated_appointment, status = AppointmentService.update(id, schema_dto)        
             return make_response(jsonify(updated_appointment), status)
         except ValidationError as err:

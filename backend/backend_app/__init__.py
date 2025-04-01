@@ -56,6 +56,7 @@ def create_app(env="development"):
         login_controller,
         logout_controller,
         pet_controller,
+        procedure_controller,
         refresh_token_controller,
         reset_password_controller,
         user_controller
@@ -83,7 +84,8 @@ def create_app(env="development"):
         contact_model, 
         address_model, 
         pet_model, 
-        appointment_model, 
+        appointment_model,
+        procedure_model, 
         user_model
     )
         

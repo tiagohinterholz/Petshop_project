@@ -21,24 +21,33 @@ class PetService:
         return PetSchemaDTO().dump(pet), 200
         
     def list_pet_client_id(client_id):
-        """Retorna um pet pelo client ID."""
+        """Buca todos os pets do client com todos agendamentos e os procedimentos incluidos"""
         pets = PetRepository.get_by_client_id(client_id)
-        if not pets:
-            return [], 200
-        pets_data = []
+        pets_with_appointments = []
+
         for pet in pets:
+            appointments = AppointmentRepository.get_by_pet_id(pet.id)
+
+            appointments_data = []
+            for appt in appointments:
+                appt_data = {
+                    "id": appt.id,
+                    "date_appoint": appt.date_appoint.isoformat(),
+                    "procedure": {
+                        "id": appt.procedure.id,
+                        "description": appt.procedure.description,
+                        "price": appt.procedure.price,
+                        "time_service": appt.procedure.time_service
+                    }
+                }
+                appointments_data.append(appt_data)
+
             pet_dict = PetSchemaDTO().dump(pet)
-            pet_dict["breed_description"] = BreedService.get_description_by_id(pet.breed_id)
-            
-            # Evita erro no frontend caso appointments venha nulo
-            pet_dict["appointments"] = [
-                AppointmentSchemaDTO().dump(app)
-                for app in pet.appointments
-            ] if pet.appointments else []
+            pet_dict["appointments"] = appointments_data
 
-            pets_data.append(pet_dict)
+            pets_with_appointments.append(pet_dict)
 
-        return pets_data, 200
+        return pets_with_appointments, 200
     
     def register(validated_data):
         """Cadastra um novo pet."""
