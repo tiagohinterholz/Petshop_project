@@ -2146,10 +2146,15 @@ components:
     ProceduresRequest:
       type: object
       required:
+        -name
         - price
         - description
         - time_service
       properties:
+        name:
+          type: string
+          example: "Banho Pequeno"
+          description: Descrição do procedimento
         price:
           type: number
           format: float
@@ -2157,7 +2162,7 @@ components:
           description: Preço do procedimento em reais
         description:
           type: string
-          example: "Banho e Tosa"
+          example: "Higienização completa do animal, incluindo lavagem, secagem e escovação."
           description: Descrição do procedimento
         time_service:
           type: integer
@@ -2168,6 +2173,8 @@ components:
       properties:
         id:
           type: number
+        name:
+          type: string
         price:
           type: number
           format: float
@@ -2272,9 +2279,12 @@ components:
                       type: string
                       format: date-time
                       example: "2025-05-31T10:00:00"
-                    desc_appoint:
+                    name:
                       type: string
                       example: "Banho e Tosa"
+                    description:
+                      type: string
+                      example: "Higienização completa do animal, incluindo lavagem, secagem e escovação."
                     price:
                       type: number
                       format: float

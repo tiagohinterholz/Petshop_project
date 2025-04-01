@@ -17,6 +17,7 @@ class ProcedureRepository:
     def create(validated_data):
         """Cria um novo procedimento."""
         new_procedure = Procedure(
+            name=validated_data["name"],
             price=validated_data["price"],
             description=validated_data["description"],
             time_service=validated_data["time_service"]
@@ -29,6 +30,7 @@ class ProcedureRepository:
     @staticmethod
     def update(procedure, new_data):
         """Atualiza um agendamento no banco de dados."""
+        procedure.name = new_data.get("name", procedure.name)
         procedure.price = new_data.get("price", procedure.price)
         procedure.description = new_data.get("description", procedure.description)
         procedure.time_service = new_data.get("time_service", procedure.time_service)

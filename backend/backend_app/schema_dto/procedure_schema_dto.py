@@ -1,7 +1,8 @@
 from marshmallow import Schema, fields, validates, ValidationError
 
 class ProcedureSchemaDTO(Schema):
-    id = fields.Int(dump_only=True)
+    id = fields.Integer(dump_only=True)
+    name = fields.String(required=True)
     description = fields.String(required=True)
     price = fields.Float(required=True)
     time_service = fields.Integer(required=True)  # minutos
