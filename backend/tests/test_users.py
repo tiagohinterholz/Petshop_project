@@ -158,7 +158,7 @@ class UserTestCase(unittest.TestCase):
             "Authorization": f"Bearer {self.client_token}"
         })
 
-        print(f"📌 Resposta ao tentar atualizar como CLIENT: {response.status_code}, {response.get_json()}")
+        print(f"Resposta ao tentar atualizar como CLIENT: {response.status_code}, {response.get_json()}")
 
         # Deve falhar com 403 Forbidden
         self.assertEqual(response.status_code, 403, "Client conseguiu alterar outro usuário!")     

@@ -183,13 +183,12 @@ class UserTestCase(unittest.TestCase):
         pet_data = response.get_json()
         pet_id = pet_data.get("id")
         self.assertEqual(response.status_code, 201, f"Erro ao criar pet: {pet_data}")
-        print(f"Pet cadastrado: {data}")
+        print(f"Pet cadastrado: {pet_data}")
         
         appointment = {
             "pet_id": pet_id,
-            "desc_appoint": "Banho e tosa na molenga",
-            "price": "500",
-            "date_appoint": "2025-03-29"
+            "procedure_id": 1,
+            "date_appoint": "2025-04-29T12:00:00"
         }        
         response = self.client.post('/appointments', json=appointment, headers={
             "Authorization": f"Bearer {self.client1_token}"

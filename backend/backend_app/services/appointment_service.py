@@ -35,7 +35,7 @@ class AppointmentService:
         procedure_id = validated_data["procedure_id"]
         new_start = validated_data["date_appoint"]
         procedure = ProcedureRepository.get_by_id(procedure_id)
-        new_duration = procedure.get("time_service")
+        new_duration = procedure.time_service
         new_end = new_start + timedelta(minutes=new_duration)
         
         if not (8 <= new_start.hour < 17 or (new_start.hour == 17 and new_start.minute == 0)):
@@ -78,7 +78,7 @@ class AppointmentService:
         procedure = ProcedureRepository.get_by_id(procedure_id)
         if not procedure:
             return {"error": "Procedimento informado não existe."}, 404
-        new_duration = procedure.get("time_service")
+        new_duration = procedure.time_service
         new_end = new_start + timedelta(minutes=new_duration)
         
         if not (8 <= new_start.hour < 17 or (new_start.hour == 17 and new_start.minute == 0)):

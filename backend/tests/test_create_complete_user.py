@@ -133,9 +133,8 @@ class CreateCompleteUser(unittest.TestCase):
         
         appointment = {
             "pet_id": pet_id,
-            "desc_appoint": "Banho e tosa na molenga",
-            "price": "500",
-            "date_appoint": "2025-04-30"
+            "procedure_id": 1,
+            "date_appoint": "2025-04-30T10:00:00"
         }        
         response = self.client.post('/appointments', json=appointment, headers={
             "Authorization": f"Bearer {self.client_token}"
