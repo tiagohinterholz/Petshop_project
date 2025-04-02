@@ -21,7 +21,7 @@ class AddressService:
         """Retorna um endereço pelo client ID."""
         address = AddressRepository.get_by_client_id(client_id)
         if not address:
-            return {"address": []}, 
+            return {"address": []}, 200
         return AddressSchemaDTO().dump(address), 200
     
     
