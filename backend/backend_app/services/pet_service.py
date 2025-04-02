@@ -44,7 +44,7 @@ class PetService:
 
             pet_dict = PetSchemaDTO().dump(pet)
             pet_dict["appointments"] = appointments_data
-
+            pet_dict["breed_description"] = pet.breed.description if pet.breed else "Raça não informada"
             pets_with_appointments.append(pet_dict)
 
         return pets_with_appointments, 200
