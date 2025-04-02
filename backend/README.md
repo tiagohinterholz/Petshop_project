@@ -1,6 +1,6 @@
 # 🐾 Petshop API
 
-API para gerenciamento de petshop, permitindo cadastro de usuários (com perfil ADMIN e CLIENT), clientes (contato e endereço), pets, e agendamentos. Desenvolvida com Flask e PostgreSQL.
+API para gerenciamento de petshop, permitindo cadastro de usuários (com perfil ADMIN e CLIENT), clientes (contato e endereço), pets, agendamentos e procedimentos oferecidos pelo petshop. Desenvolvida com Flask e PostgreSQL.
 
 ---
 
@@ -138,23 +138,31 @@ Authorization: Bearer seu_token_aqui
 
 ### **Clientes**
 - `POST /clients` → Cadastra um cliente (admin ou usuário permitido)
-- `GET /clients/{id}` → Busca um cliente específico (restrito)
+- `GET /clients/{id}` → Busca um cliente específico (admin ou cliente autenticado)
 
 ### **Contatos**
-- `POST /contacts` → Criar contato (restrito)
-- `GET /contacts` → Listar contatos (restrito)
+- `POST /contacts` → Criar contato (admin ou cliente autenticado)
+- `GET /contacts` → Listar contatos (admin ou cliente autenticado)
 
 ### **Endereços**
-- `POST /addresses` → Criar endereço (restrito)
-- `GET /addresses` → Listar endereços (restrito)
+- `POST /addresses` → Criar endereço (admin ou cliente autenticado)
+- `GET /addresses` → Listar endereços (admin ou cliente autenticado)
 
 ### **Pets**
-- `POST /pets` → Cadastra um pet (restrito)
-- `GET /pets/{id}` → Busca um pet específico (cliente autenticado)
+- `POST /pets` → Cadastra um pet (admin ou cliente autenticado)
+- `GET /pets/{id}` → Busca um pet específico (admin ou cliente autenticado)
 
 ### **Agendamentos**
 - `POST /appointments` → Cria um agendamento (cliente autenticado)
 - `GET /appointments` → Lista agendamentos (admin ou cliente autenticado)
+
+### **Raças**
+- `POST /appointments` → Cria uma raça (cliente autenticado)
+- `GET /appointments` → Lista raças (admin ou cliente autenticado)
+
+### **Procedimentos**
+- `POST /procedures` → Cria um procedimento (somente admin)
+- `GET /procedures` → Lista procedimentos (admin ou cliente autenticado)
 
 ### **🚪 Logout**
 - **Endpoint:** `POST /logout`
