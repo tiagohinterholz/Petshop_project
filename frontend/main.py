@@ -8,10 +8,13 @@ from views.createcontact import create_contact_view
 from views.editaddress import edit_address_view
 from views.editcontact import edit_contact_view
 from views.pets import pets_view
+from views.appointments import appointments_view
 from views.createpet import create_pet_view
 from views.editpet import edit_pet_view
 from views.createbreed import create_breed_view
 from views.paineladmin import create_painel_admin_view
+from views.createappoint import create_appointments_view
+#from views.editappoint import edit_appointments_view
 
 def main(page:ft.Page):
     
@@ -33,12 +36,12 @@ def main(page:ft.Page):
             
         elif page.route == "/create-address":
             page.views.append(create_address_view(page))
-        
-        elif page.route == "/create-contact":
-            page.views.append(create_contact_view(page))
-        
+            
         elif page.route == "/edit-address":
             page.views.append(edit_address_view(page))
+        
+        elif page.route == "/create-contact":
+            page.views.append(create_contact_view(page))        
         
         elif page.route == "/edit-contact":
             page.views.append(edit_contact_view(page))
@@ -49,15 +52,24 @@ def main(page:ft.Page):
         elif page.route == "/create-pet":
             page.views.append(create_pet_view(page))
         
+        elif page.route.startswith("/edit-pet"):
+            page.views.append(edit_pet_view(page))
+        
+        elif page.route == "/appointments":
+            page.views.append(appointments_view(page))
+        
+        elif page.route == "/create-appointment":
+            page.views.append(create_appointments_view(page))
+        
+        # elif page.routestartswith("/edit-appointments"):
+        #     page.views.append(edit_appointments_view(page))
+        
         elif page.route == "/create-breed":
             page.views.append(create_breed_view(page))
         
-        elif page.route.startswith("/edit-pet"):
-            page.views.append(edit_pet_view(page))
-            
         elif page.route == "/painel-admin":
             page.views.append(create_painel_admin_view(page))
-                    
+
         page.update()    
         
     page.on_route_change = route_change

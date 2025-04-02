@@ -59,29 +59,12 @@ def pets_view(page:ft.Page):
         icon = ft.Icons.PETS,
         on_click=lambda e: page.go('/create-pet')
     )
-    create_appoint_btn = ft.ElevatedButton(
-        text="Cadastar Agendamento",
-        icon = ft.Icons.SCHEDULE,
-        on_click=lambda e: page.go('/create-appoint')
-    )
-    
-    edit_appoint_btn = ft.ElevatedButton(
-        text="Editar Agendamento",
-        icon=ft.Icons.HOME,
-        on_click=lambda e: page.go('/edit-appoint')
-    )
-    delete_appoint_btn = ft.ElevatedButton(
-        text="Deletar Agendamento",
-        icon=ft.Icons.HOME,
-        on_click=lambda e: page.go('/delete-appoint')
-    )
     
     voltar_button = ft.ElevatedButton(text="Voltar ao Inicio", on_click=lambda e: page.go("/dashboard"))
     
-    title = ft.Text("Pets e Agendamentos", size=30, weight="bold")
+    title = ft.Text("Pets", size=30, weight="bold")
     content_column= ft.Column(spacing=10)
     erro = ft.Text(color=ft.Colors.RED)
-    
     
     try:
         response = requests.get(
@@ -100,11 +83,12 @@ def pets_view(page:ft.Page):
                 
                 future_appoints = [
                     appoint for appoint in appoints
-                    if datetime.strptime(appoint["date_appoint"], '%Y-%m-%d'). date() > date.today()
+                    if datetime.strptime(appoint["date_appoint"], "%Y-%m-%dT%H:%M:%S").date() > date.today()
                 ]
                 future_appoints.sort(key=lambda appoint: appoint["date_appoint"])
                 next_appoint = future_appoints[0] if future_appoints else None
-
+                procedure = next_appoint["procedure"] if next_appoint and "procedure" in next_appoint else None
+             
                 edit_pet_btn = ft.ElevatedButton(
                     text="Editar Pet",
                     icon=ft.Icons.EDIT_ATTRIBUTES,
@@ -126,11 +110,11 @@ def pets_view(page:ft.Page):
                                 ft.Text(f"Raça: {breed}"),
                                 ft.Text(f"Data de Nascimento: {birth_date}"),
                                 ft.Text(
-                                    f"Pŕoximo agendamento: {next_appoint['date_appoint']}"
+                                    f"Pŕoximo agendamento: Data: {next_appoint['date_appoint'].split('T')[0]} | Hora: {next_appoint['date_appoint'].split('T')[1]}"
                                     if next_appoint else "Sem agendamentos futuros"
                                 ),
-                                ft.Text(f"Descrição do serviço: {next_appoint['desc_appoint']}" if next_appoint else "-"),
-                                ft.Text(f"Preço: R$ {str(next_appoint['price']).split('.')[0]},00" if next_appoint else "-"),
+                                ft.Text(f"Serviço Agendado: {procedure['name']}" if procedure else "-"),
+                                ft.Text(f"Preço: R$ {str(procedure['price']).split('.')[0]},00" if procedure else "-"),
                                 ft.Row(
                                     controls=[
                                         edit_pet_btn,
@@ -143,7 +127,7 @@ def pets_view(page:ft.Page):
                         padding=15,
                         width=400,
                         border_radius=10,
-                        bgcolor=ft.Colors.GREEN
+                        bgcolor=ft.Colors.GREEN_900
                     ),
                 )
                 card.pet_id = pet["id"]
@@ -175,7 +159,6 @@ def pets_view(page:ft.Page):
                             controls=[
                                 voltar_button,
                                 create_pet_btn,
-                                create_appoint_btn
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,
                             spacing=20
