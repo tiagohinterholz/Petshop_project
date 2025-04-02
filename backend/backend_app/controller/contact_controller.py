@@ -13,7 +13,7 @@ class ContactList(Resource):
         contacts, status = ContactService.list_contacts()
         return make_response(jsonify(contacts), status)
     
-    @role_required('client')
+    @role_required('client', 'admin')
     def post(self):
         """Cadastrar novo contato"""
         try:

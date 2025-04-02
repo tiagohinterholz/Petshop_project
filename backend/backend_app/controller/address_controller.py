@@ -14,7 +14,7 @@ class AddressList(Resource):
         addresses, status = AddressService.list_addresses()
         return make_response(jsonify(addresses), status)
 
-    @role_required('client')
+    @role_required('client', 'admin')
     def post(self):        
         """Cadastrar novo endereço"""
         try:
