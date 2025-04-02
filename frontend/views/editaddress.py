@@ -10,7 +10,7 @@ def edit_address_view(page: ft.Page):
     city = ft.TextField(label="Cidade", width=300, disabled=True)
     neighborhood = ft.TextField(label="Bairro", width=300, disabled=True)
     complement = ft.TextField(label="Complemento", width=300, disabled=True)
-    message = ft.Text(value="", color=ft.colors.RED)
+    message = ft.Text(value="", color=ft.Colors.RED)
 
     # Checkboxes para habilitar edição
     cb_street = ft.Checkbox(label="Editar Rua", value=False)

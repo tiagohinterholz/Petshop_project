@@ -6,7 +6,7 @@ def create_breed_view(page: ft.Page):
     previous_route = page.session.get("previous_route") or "/create-pet" 
     
     description = ft.TextField(label="Descrição da raça", width=300, autofocus=True)
-    message = ft.Text(value="", color=ft.colors.RED)
+    message = ft.Text(value="", color=ft.Colors.RED)
     
     def salvar_breed(e):
     

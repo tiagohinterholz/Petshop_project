@@ -6,11 +6,9 @@ from components.sidebar import build_sidebar
 def dashboard_view(page: ft.Page):
     token = page.session.get("access_token")
     user_id = page.session.get("user_id")
-     
+       
     saudacao = ft.Text("Bem- vindo", size=20, weight="bold")
-    perfil = ft.Text()
     dados_usuario = ft.Text()
-    lista_pets_view = ft.Text()
     lista_agendamentos_view = ft.Text()
     
     try:
@@ -19,19 +17,17 @@ def dashboard_view(page: ft.Page):
             headers={"authorization": f"Bearer {token}"}
         )
         if response.status_code == 200:
+            pets_text = ""
             data = response.json()
             client = data.get("client") or {}
-            contact = data.get("contact") or {}
             pets = data.get("pets") or []
                         
             nome = client.get("name")
             role = "Administrador" if page.session.get("profile") == 'admin' else "Cliente"
-            email = contact.get("value_contact", "N/A")
             
             saudacao.value = f"Bem-vindo, {nome}"
-            dados_usuario.value = f"Perfil: {role} | Contato: {email}"
+            dados_usuario.value = f"Perfil: {role}"
             
-            pets_text = ""
             agendamentos_text = ""
             
             for pet in pets:
@@ -42,7 +38,6 @@ def dashboard_view(page: ft.Page):
                 for a in pet.get("appointments", []):
                     agendamentos_text += f"Agendamento: {a.get('desc_appoint')} - Data de atendimento:{a.get('date_appoint')}\n"
             
-            lista_pets_view.value = pets_text or "Nenhum pet cadastrado."
             lista_agendamentos_view.value = agendamentos_text or "Nenhum agendamento cadastrado" 
         else:
             saudacao.value = "Erro ao carregar dados do usuário."
@@ -52,32 +47,59 @@ def dashboard_view(page: ft.Page):
         saudacao.value = "Erro de conexão."
         dados_usuario.value = str(err)
         
+    conteudo_principal = ft.Column(
+        controls=[
+            saudacao,
+            ft.Divider(),
+            
+            ft.Container(
+                bgcolor=ft.Colors.GREY_100,
+                border_radius=10,
+                padding=10,
+                content=ft.Text(dados_usuario.value)
+            ),
+            
+            ft.Divider(),
+            
+            ft.Text("Agendamentos Futuros", size=20, weight="bold"),
+            ft.Container(
+                bgcolor=ft.Colors.GREY_200,
+                border_radius=10,
+                padding=10,
+                content=ft.Text(lista_agendamentos_view.value)
+            ),
+            
+            ft.Divider(),
+            
+            ft.Text("Calendário", size=20, weight="bold"),
+            ft.Container(
+                bgcolor=ft.Colors.GREEN_900,
+                border_radius=10,
+                height=200,
+                alignment=ft.alignment.center,
+                content=ft.Text("📅 Aqui vai o calendário futuramente", italic=True)
+            ),
+        ],
+        scroll=ft.ScrollMode.ADAPTIVE,
+        expand=True,
+        spacing=10
+    )
+    
     layout = ft.Column(
         controls=[
             build_header(page),
             ft.Row(
                 controls=[
-                    build_sidebar(page),
-                    ft.VerticalDivider(width=1),
-                    ft.Column(
-                        controls=[
-                            saudacao,
-                            perfil,
-                            ft.Divider(),
-                            dados_usuario,
-                        ],
-                        scroll=ft.ScrollMode.ADAPTIVE,
-                        expand=True,
-                        spacing=7,
-                    )
+                build_sidebar(page),
+                ft.VerticalDivider(width=1),
+                conteudo_principal
                 ],
-                expand=True, # Faz o conteúdo ocupar toda a largura
+                expand=True,
                 vertical_alignment=ft.CrossAxisAlignment.START
             )
         ],
-        expand=True,
+        expand=True
     )
-
     
     return ft.View(
         route="/dashboard",

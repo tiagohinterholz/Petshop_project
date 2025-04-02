@@ -12,7 +12,7 @@ def login_view(page: ft.Page):
                              on_change=lambda e: formatar_cpf(e))
     
     password_input=ft.TextField(label="Senha", password=True, can_reveal_password=True)
-    error_text = ft.Text(value="", color=ft.colors.RED)
+    error_text = ft.Text(value="", color=ft.Colors.RED)
 
     def formatar_cpf(e):
         texto = cpf_input.value

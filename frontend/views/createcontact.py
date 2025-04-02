@@ -15,7 +15,7 @@ def create_contact_view(page: ft.Page):
         ]
     )
     value_contact = ft.TextField(label="Dados", width=300)
-    message = ft.Text(value="", color=ft.colors.RED)
+    message = ft.Text(value="", color=ft.Colors.RED)
     
     def formatar_telefone(e):
         numero = ''.join(filter(str.isdigit, value_contact.value))[:13]

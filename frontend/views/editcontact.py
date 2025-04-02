@@ -16,7 +16,7 @@ def edit_contact_view(page: ft.Page):
         disabled=True
     )
     value_contact = ft.TextField(label="Dados", width=300, disabled=True)
-    message = ft.Text(value="", color=ft.colors.RED)
+    message = ft.Text(value="", color=ft.Colors.RED)
 
     # Checkboxes para habilitar edição
     cb_type = ft.Checkbox(label="Editar Tipo de Contato", value=False)

@@ -3,13 +3,13 @@ import requests
 
 def forgot_password_view(page: ft.Page):
     email_input = ft.TextField(label="E-mail", autofocus=True)
-    feedback_text = ft.Text(value="", color=ft.colors.GREEN)
+    feedback_text = ft.Text(value="", color=ft.Colors.GREEN)
     
     def enviar_link(e):
         email = email_input.value
         if not email:
             feedback_text.value = "Informe seu e-mail:"
-            feedback_text.color = ft.colors.RED
+            feedback_text.color = ft.Colors.RED
             page.update()
             return
         
@@ -20,14 +20,14 @@ def forgot_password_view(page: ft.Page):
             )
             if response.status_code == 200:
                 feedback_text.value = "Link de recuperação enviado!"
-                feedback_text.color = ft.colors.GREEN
+                feedback_text.color = ft.Colors.GREEN
             else:
                 feedback_text.value = "E-mail não encontrado."
-                feedback_text.color = ft.colors.RED
+                feedback_text.color = ft.Colors.RED
         
         except Exception as err:
             feedback_text.value = f"Erro: {err}"
-            feedback_text.color = ft.colors.RED
+            feedback_text.color = ft.Colors.RED
         
         page.update()
     

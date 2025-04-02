@@ -56,23 +56,23 @@ def pets_view(page:ft.Page):
     
     create_pet_btn = ft.ElevatedButton(
         text="Cadastar Pet",
-        icon = ft.icons.PETS,
+        icon = ft.Icons.PETS,
         on_click=lambda e: page.go('/create-pet')
     )
     create_appoint_btn = ft.ElevatedButton(
         text="Cadastar Agendamento",
-        icon = ft.icons.SCHEDULE,
+        icon = ft.Icons.SCHEDULE,
         on_click=lambda e: page.go('/create-appoint')
     )
     
     edit_appoint_btn = ft.ElevatedButton(
         text="Editar Agendamento",
-        icon=ft.icons.HOME,
+        icon=ft.Icons.HOME,
         on_click=lambda e: page.go('/edit-appoint')
     )
     delete_appoint_btn = ft.ElevatedButton(
         text="Deletar Agendamento",
-        icon=ft.icons.HOME,
+        icon=ft.Icons.HOME,
         on_click=lambda e: page.go('/delete-appoint')
     )
     
@@ -107,13 +107,13 @@ def pets_view(page:ft.Page):
 
                 edit_pet_btn = ft.ElevatedButton(
                     text="Editar Pet",
-                    icon=ft.icons.EDIT_ATTRIBUTES,
+                    icon=ft.Icons.EDIT_ATTRIBUTES,
                     on_click=lambda e: page.go(f"/edit-pet?id={pet['id']}")
                 )
                 def make_delete_button(pet_id, nome):
                     return ft.ElevatedButton(
                         text="Deletar Pet",
-                        icon=ft.icons.DELETE,
+                        icon=ft.Icons.DELETE,
                         on_click=lambda e: confirmar_exclusao(pet_id, nome)
                     )
                 delete_pet_btn = make_delete_button(pet["id"], pet["name"])
@@ -143,7 +143,7 @@ def pets_view(page:ft.Page):
                         padding=15,
                         width=400,
                         border_radius=10,
-                        bgcolor=ft.colors.GREEN
+                        bgcolor=ft.Colors.GREEN
                     ),
                 )
                 card.pet_id = pet["id"]
@@ -160,18 +160,28 @@ def pets_view(page:ft.Page):
             dialog,
             ft.Column(
                 controls=[
-                    ft.Row(
+                    ft.Column(
                         controls=[
-                            create_pet_btn,
-                            create_appoint_btn,
+                            content_column,
+                            erro,
                         ],
-                        alignment=ft.MainAxisAlignment.CENTER
+                        scroll=ft.ScrollMode.ADAPTIVE,
+                        expand=True
                     ),
-                    content_column,
-                    erro,
-                    voltar_button,
-                ],                
-                scroll=ft.ScrollMode.ADAPTIVE,
+                    ft.Container(  # Footer fixo com botões
+                        padding=10,
+                        alignment=ft.alignment.center,
+                        content=ft.Row(
+                            controls=[
+                                voltar_button,
+                                create_pet_btn,
+                                create_appoint_btn
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            spacing=20
+                        )
+                    )
+                ],
                 expand=True,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER
             )

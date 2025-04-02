@@ -15,7 +15,7 @@ def edit_pet_view(page: ft.Page):
         options=[]
     )
     
-    message = ft.Text(value="", color=ft.colors.RED)
+    message = ft.Text(value="", color=ft.Colors.RED)
 
     def carregar_racas():
         try:
@@ -62,7 +62,7 @@ def edit_pet_view(page: ft.Page):
     
     register_breed_btn = ft.ElevatedButton(
         text="Cadastrar nova raça",
-        icon=ft.icons.ADD,
+        icon=ft.Icons.ADD,
         on_click=ir_para_cadastrar_raca
     )
 

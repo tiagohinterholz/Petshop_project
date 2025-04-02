@@ -10,7 +10,7 @@ def create_address_view(page: ft.Page):
     city = ft.TextField(label="Cidade", width=300)
     neighborhood = ft.TextField(label="Bairro", width=300)
     complement = ft.TextField(label="Complemento", width=300)
-    message = ft.Text(value="", color=ft.colors.RED)
+    message = ft.Text(value="", color=ft.Colors.RED)
     
     def salvar_endereco(e):
         try:

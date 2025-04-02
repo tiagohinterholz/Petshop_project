@@ -2,13 +2,13 @@ import flet as ft
 
 def build_header(page: ft.Page):
     return ft.Container(
-        bgcolor=ft.colors.GREEN_400,
+        bgcolor=ft.Colors.GREEN_900,
         padding=ft.padding.symmetric(horizontal=20),
         content=ft.Row(
             controls=[
                 ft.Text("Petshop App", size=25, weight="bold"),
                 ft.IconButton(
-                    icon=ft.icons.EXIT_TO_APP,
+                    icon=ft.Icons.EXIT_TO_APP,
                     tooltip="Sair",
                     on_click=lambda _: page.go("/login")
                 )
