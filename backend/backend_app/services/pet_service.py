@@ -35,6 +35,7 @@ class PetService:
                     "date_appoint": appt.date_appoint.isoformat(),
                     "procedure": {
                         "id": appt.procedure.id,
+                        "name": appt.procedure.name,
                         "description": appt.procedure.description,
                         "price": appt.procedure.price,
                         "time_service": appt.procedure.time_service
