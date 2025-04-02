@@ -11,6 +11,7 @@ from views.pets import pets_view
 from views.createpet import create_pet_view
 from views.editpet import edit_pet_view
 from views.createbreed import create_breed_view
+from views.paineladmin import create_painel_admin_view
 
 def main(page:ft.Page):
     
@@ -53,6 +54,9 @@ def main(page:ft.Page):
         
         elif page.route.startswith("/edit-pet"):
             page.views.append(edit_pet_view(page))
+            
+        elif page.route == "/painel-admin":
+            page.views.append(create_painel_admin_view(page))
                     
         page.update()    
         

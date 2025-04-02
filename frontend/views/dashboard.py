@@ -90,7 +90,7 @@ def dashboard_view(page: ft.Page):
             build_header(page),
             ft.Row(
                 controls=[
-                build_sidebar(page),
+                build_sidebar(page, role),
                 ft.VerticalDivider(width=1),
                 conteudo_principal
                 ],
