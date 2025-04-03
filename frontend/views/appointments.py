@@ -92,7 +92,7 @@ def appointments_view(page:ft.Page):
                         edit_appoint_btn = ft.ElevatedButton(
                             text="Editar",
                             icon=ft.Icons.EDIT,
-                            on_click=lambda e, id=appoint_id: page.go(f"/edit-appoint?id={id}")
+                            on_click=lambda e, id=appoint_id: page.go(f"/edit-appointment?id={id}")
                         )
 
                         delete_appoint_btn = ft.ElevatedButton(
