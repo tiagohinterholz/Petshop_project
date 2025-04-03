@@ -1,4 +1,5 @@
 import flet as ft
+import requests
 from auth.login_page import login_view
 from auth.forgot_password import forgot_password_view
 from views.dashboard import dashboard_view
@@ -24,6 +25,14 @@ def main(page:ft.Page):
         
         if page.route == "/login":
             page.views.append(login_view(page))
+        
+        elif page.route == "/logout":
+            token = page.session.get("access_token")
+            requests.post(
+                "http://localhost:5000/logout",
+                headers={"Authorization": f"Bearer {token}"}
+            )
+            page.session.clear()
         
         elif page.route == "/forgot-password":
             page.views.append(forgot_password_view(page))

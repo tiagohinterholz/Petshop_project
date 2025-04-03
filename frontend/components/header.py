@@ -10,7 +10,7 @@ def build_header(page: ft.Page):
                 ft.IconButton(
                     icon=ft.Icons.EXIT_TO_APP,
                     tooltip="Sair",
-                    on_click=lambda _: page.go("/login")
+                    on_click=lambda _: page.go("/logout")
                 )
             ],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
