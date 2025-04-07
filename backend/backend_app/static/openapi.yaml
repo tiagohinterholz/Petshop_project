@@ -2272,26 +2272,12 @@ components:
                     id:
                       type: integer
                       example: 7
-                    procedure_id:
-                      type: integer
-                      example: 2
                     date_appoint:
                       type: string
                       format: date-time
                       example: "2025-05-31T10:00:00"
-                    name:
-                      type: string
-                      example: "Banho e Tosa"
-                    description:
-                      type: string
-                      example: "Higienização completa do animal, incluindo lavagem, secagem e escovação."
-                    price:
-                      type: number
-                      format: float
-                      example: 50.0
-                    time_service:
-                      type: integer
-                      example: 60
+                    procedure:
+                      $ref: '#/components/schemas/ProceduresResponse'
 
   securitySchemes:
     JWT:
