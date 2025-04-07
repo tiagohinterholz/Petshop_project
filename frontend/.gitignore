@@ -8,3 +8,5 @@ build/
 # Logs
 *.log
 storage/
+
+*.pyc
