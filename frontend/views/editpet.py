@@ -12,7 +12,8 @@ def edit_pet_view(page: ft.Page):
     breed_dropdown = ft.Dropdown(
         label="Raça",
         width=300,
-        options=[]
+        options=[],
+        disabled=True
     )
     
     message = ft.Text(value="", color=ft.Colors.RED)
