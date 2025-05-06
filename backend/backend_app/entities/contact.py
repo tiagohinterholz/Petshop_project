@@ -33,7 +33,7 @@ class Contact:
         if self.type_contact == "email":
             if not self.is_valid_email(value_contact):
                 raise ValueError("Invalid email format")
-        elif self.type_contact = "phone":
+        elif self.type_contact == "phone":
             if not self.is_valid_phone(value_contact):
                 raise ValueError("Invalid phone number format")
 
